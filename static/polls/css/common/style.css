@@ -1,0 +1,33 @@
+@charset "UTF-8";
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote {
+	margin: 0;
+	padding: 0;
+	outline: none;
+	font-family: Verdana, Meiryo, sans-serif;
+	font-weight: 500;
+	user-select: none;
+}
+
+#header_outline {
+	z-index:100000;
+    top:0px;
+    left: 0px;
+}
+
+#header .last_cell{
+    right: 0px;
+    width: 320px;
+}
+
+#header .last_cell .menus{
+	display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+
+
+
+
+

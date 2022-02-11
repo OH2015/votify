@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,11 +26,12 @@ SECRET_KEY = 'django-insecure-skhk7tx@d%r3%$%l_hn*po2xa+g1lr8j-%o5$pm)c_q1mt@=d1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# デプロイ用設定
 ALLOWED_HOSTS = ['merverick.pythonanywhere.com','localhost']
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'bootstrap4',
     'accounts.apps.AccountsConfig',
