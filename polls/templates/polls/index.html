@@ -1,12 +1,10 @@
 <!-- templates/home.html -->
 {% extends 'base.html' %}
 {% block title %}Home{% endblock %}
+<!-- 子・メインコンテンツ -->
 {% block content %}
-
-{% load static %}
-
-<link rel="stylesheet" type="text/css" href="{% static 'polls/css/style.css' %}">
-
+<!-- {% load static %} -->
+<div style="background: white url("{% static 'polls/images/sample.gif' %} ") no-repeat"></div>
 {% if latest_question_list %}
     <ul>
     {% for question in latest_question_list %}
@@ -17,11 +15,4 @@
     <p>No polls are available.</p>
 {% endif %}
 
-{% if user.is_authenticated %}
-  Hi {{ user.username }}!
-  <p><a href="{% url 'logout' %}">logout</a></p>
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a>
-{% endif %}
 {% endblock %}

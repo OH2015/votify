@@ -5,14 +5,66 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'polls/css/common/style.css' %}">
+
+	<link href="{% static 'polls/css/common/style_pc.css' %}" rel="stylesheet" type="text/css" media="screen and (min-width: 768px)">
+	<link href="{% static 'polls/css/common/style_sp.css' %}" rel="stylesheet" type="text/css" media="screen and (max-width: 767px)">
 
     <title>{% block title %}{% endblock %}</title>
 </head>
 
 <body>
-    {% block content %}
+    <!-- ヘッダー -->
+    <div id="header_outline">
+        <div id="header">
+            <div class="logo_cell">
+                <a href="{% url 'polls:index' %}">
+                    <div class="main_text"><span style="letter-spacing: 0.5em;">みんなで作る投票サイト</span><br />Votify</div>
+                </a>
+            </div>
 
-    {% endblock %}
+            <div class="last_cell">
+                <div class="message">
+                    {% if user.is_authenticated %}
+                        <p>{{ user.username }}でログイン中</p>
+                    {% endif %}
+                </div>
+                <div class="menus">
+                    <div class="update_history_cell"><a href="{% url 'polls:update_history' %}">更新履歴</a></div>
+                    <div class="login_cell">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'logout' %}">ログアウト</a>
+                        {% else %}
+                            <a href="{% url 'login' %}">ログイン</a>
+                        {% endif %}
+                    </div>
+                    <div class="signup_cell"><a href="{% url 'accounts:signup' %}">新規登録</a></div>
+                    <div class="create_cell"><a href="{% url 'polls:create' %}">投稿</a></div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <!-- メイン -->
+    <div id="main_content">
+        <!-- 左メニュー -->
+        <div class="content_left">
+            <div class="body_left">
+
+            </div>
+        </div>
+
+        <!-- メインコンテンツ -->
+        <div class="content_center">
+			{% block content %}
+
+            {% endblock %}
+		</div>
+        
+
+    </div>
 </body>
 
 </html>

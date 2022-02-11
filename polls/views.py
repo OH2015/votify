@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from .models import Question,Choice
+from .models import Question,Choice,UpdateContent
 from django.shortcuts import render
 from django.views import generic
 from django.utils import timezone
@@ -52,5 +52,44 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+
+# 更新履歴
+def UpdateHistory(request):
+    # POST
+    if request.method == "POST":
+        # 登録
+        if request.POST.get('content_text',None):
+            UpdateContent.objects.create(content_text=request.POST.get('content_text',None))
+        # 完了
+        if request.POST.get('completed_id',None):
+            id = request.POST.get('completed_id',None)
+            try:
+                completed_content = UpdateContent.objects.get(pk=id)
+            except UpdateContent.DoesNotExist:
+                completed_content = None
+            else:
+                completed_content.is_completed = True
+                completed_content.save()
+
+        # 削除
+        if request.POST.get('deleted_id',None):
+            id = request.POST.get('deleted_id',None)
+            try:
+                completed_content = UpdateContent.objects.get(pk=id)
+            except UpdateContent.DoesNotExist:
+                completed_content = None
+            else:
+                completed_content.delete()
+            
+
+    contents = UpdateContent.objects.all
+    return render(request,"polls/update_history.html",{"contents":contents})
+
+    
+
+# 投稿
+def Create(request):
+    return render(request,"polls/create.html")
 
 
