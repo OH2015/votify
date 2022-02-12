@@ -2,16 +2,31 @@
 {% block title %}詳細画面{% endblock %}
 
 {% block content %}
+<a class="btn btn-default" href="{% url 'polls:edit_question' question.id %}">編集</a>
+<a class="btn btn-default" href="{% url 'polls:create_choice' question.id %}">選択肢追加</a>
 <form action="{% url 'polls:vote' question.id %}" method="post">
     {% csrf_token %}
     <fieldset>
+        
         <legend><h1>{{ question.question_text }}</h1></legend>
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
         {% for choice in question.choice_set.all %}
-            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            <div class="choice_inline">
+                <div>
+                    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+                </div>
+                <a class="btn btn-default" href="{% url 'polls:edit_choice' choice.id %}">編集</a>
+            </div>
         {% endfor %}
     </fieldset>
-    <input type="submit" value="Vote">
+    
+    <input type="submit" value="投票">
 </form>
+<style>
+.choice_inline{
+    display: flex;
+    justify-content: space-between;
+}
+</style>
 {% endblock %}

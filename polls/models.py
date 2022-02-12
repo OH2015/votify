@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 import datetime
 
@@ -9,6 +10,10 @@ from django.contrib import admin
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
+    author = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+    )
     # 作成/更新日時
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -37,7 +37,7 @@
 <div class="completed">
 <p>更新履歴</p>
 <table> 
-    <tr><th>内容</th><th>追加日</th></tr>
+    <tr><th>内容</th><th>完了日</th></tr>
     {% for cont in contents %}
         {% if cont.is_completed %}
             <tr><td>{{cont.content_text}}</td>

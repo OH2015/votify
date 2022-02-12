@@ -1,11 +1,12 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from .models import Question,Choice,UpdateContent
 from django.shortcuts import render
 from django.views import generic
 from django.utils import timezone
-
+from .forms import ChoiceForm, QuestionForm
+from django.contrib.auth.decorators import login_required
 
 
 class IndexView(generic.ListView):
@@ -87,9 +88,74 @@ def UpdateHistory(request):
     return render(request,"polls/update_history.html",{"contents":contents})
 
     
+# 質問作成
+@login_required
+def create_question(request):
+    if request.method == "POST":
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.author = request.user
+            question.pub_date = timezone.now()
+            question.save()
+            return redirect('polls:detail', pk=question.pk)
+    else:
+        form = QuestionForm()
+    return render(request, 'polls/create.html', {'form': form})
 
-# 投稿
-def Create(request):
-    return render(request,"polls/create.html")
+
+# 選択肢作成
+@login_required
+def create_choice(request,pk):
+    question = get_object_or_404(Question, pk=pk)
+    if request.method == "POST":
+        form = ChoiceForm(request.POST)
+        if form.is_valid():
+            choice = form.save(commit=False)
+            choice.author = request.user
+            choice.save()
+            question = choice.question
+            return redirect('polls:detail', pk=question.pk)
+    else:
+        form = ChoiceForm(initial=dict(question=question))
+    return render(request, 'polls/create.html', {'form': form})
+
+
+# 質問編集
+@login_required
+def edit_question(request,pk):
+    question = get_object_or_404(Question, pk=pk)
+    
+    if request.method == "POST":
+        form = QuestionForm(request.POST, instance=question)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.author = request.user
+            question.pub_date = timezone.now()
+            question.save()
+            return redirect('polls:detail', pk=question.id)
+    else:
+        form = QuestionForm(instance=question)
+
+    return render(request, 'polls/edit.html', {'form': form,'question':question})
+
+# 選択肢編集
+@login_required
+def edit_choice(request,pk):
+    choice = get_object_or_404(Choice, pk=pk)
+    
+    if request.method == "POST":
+        form = ChoiceForm(request.POST, instance=choice)
+        if form.is_valid():
+            choice = form.save(commit=False)
+            choice.author = request.user
+            choice.save()
+            question = choice.question
+            print("choiceの更新が完了しました")
+            return redirect('polls:detail', pk=question.id)
+    else:
+        form = ChoiceForm(instance=choice)
+
+    return render(request, 'polls/edit.html', {'form': form})
 
 
