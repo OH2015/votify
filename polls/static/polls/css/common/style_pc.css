@@ -8,44 +8,13 @@ html {
 	overflow-y: scroll;
 }
 
-#header_outline {
-	width: 100% - 50px;
-	height: 45px;
-	padding: 12px 25px;
-	background: linear-gradient(to bottom, #ffffff, #f8f8f6);
-	border-color: #bcbcbc;
-	border-style: solid;
-	border-width: 0 0 1px 0;
-	box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+.header-dropmenu-cell{
+	display: none;
+}
+.update_history_cell,.login_cell,.signup_cell,.create_cell{
+	display: block;
 }
 
-#header_outline #header {
-    display: flex;
-    justify-content:space-between;
-	width: 100%;
-}
-
-#header_outline #header > .logo_cell {
-	width: 280px;
-    height: 100%;
-	min-width: 280px;
-	padding: 2px 0;
-	cursor: pointer;
-}
-
-#header_outline #header > .logo_cell > a > .main_text {
-	float: left;
-	font-size: 11px;
-	line-height: 13px;
-	color: #484848;
-	padding: 8px 8px 7px 0;
-}
-#header_outline #header > .logo_cell > a > .main_logo {
-	float: left;
-	background-size: 168px 39px;
-	width: 168px;
-	height: 39px;
-}
 
 #main_content {
 	display: table;
