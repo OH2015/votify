@@ -165,11 +165,11 @@ background: #f8f8f8;
 
 #main_content .content_center {
 	/* display: table-cell;
-	width: calc(100% - 620px);
+	width: calc(100% - 620px); */
 	min-width: 400px;
-	vertical-align: top;
-	margin-top: 50px;
-	padding: 30px 50px 30px 50px; */
+	/* vertical-align: top; */
+	/* margin-top: 50px; */
+	padding: 30px 50px 30px 50px;
 }
 
 /* 
@@ -237,7 +237,7 @@ color: #ccc;
 /* 画面幅が780px以下の場合（タブレット用） */
 @media screen and (max-width:780px) {
 	body {
-		/* -webkit-text-size-adjust: 100%; */
+		-webkit-text-size-adjust: 100%;
 	}
 	.header_user_name{
 		display: none;
@@ -249,28 +249,18 @@ color: #ccc;
 		display: none;
 	}
 	
-	#main_content {
-		/* display: table;
-		width: 100%; */
-	}
-	
 	#main_content .content_left {
 		display: none;
 	}
 	
 	#main_content .content_center {
-		display: inline-block;
-		/* width: calc(100% - 40px); */
-		min-width: calc(320px - 40px);
-		height: 100%;
-		margin: 115px 0 100px 0;
+		min-height: 500px;
+		/* height: 100%; */
+		/* margin: 115px 0 100px 0; */
 		padding: 15px 20px 15px 20px;
 	}
-	
-	
-	/* SPのみ */
+
 	#footer {
-		/* display: block; */
 		text-align: center;
 		width: 100%;
 	}
@@ -288,6 +278,6 @@ color: #ccc;
 
 	#footer .nav li a {
 		padding: 12px 20px;
-		text-align: left;
+		/* text-align: left; */
 	}
 }

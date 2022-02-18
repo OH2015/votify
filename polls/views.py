@@ -7,6 +7,7 @@ from django.views import generic
 from django.utils import timezone
 from .forms import ChoiceForm, QuestionForm
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 
 class IndexView(generic.ListView):
@@ -49,45 +50,78 @@ def vote(request, question_id):
     else:
         selected_choice.votes += 1
         selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
+ 
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 
 # 更新履歴
 def UpdateHistory(request):
-    # POST
-    if request.method == "POST":
-        # 登録
-        if request.POST.get('content_text',None):
-            UpdateContent.objects.create(content_text=request.POST.get('content_text',None))
-        # 完了
-        if request.POST.get('completed_id',None):
-            id = request.POST.get('completed_id',None)
-            try:
-                completed_content = UpdateContent.objects.get(pk=id)
-            except UpdateContent.DoesNotExist:
-                completed_content = None
-            else:
-                completed_content.is_completed = True
-                completed_content.save()
-
-        # 削除
-        if request.POST.get('deleted_id',None):
-            id = request.POST.get('deleted_id',None)
-            try:
-                completed_content = UpdateContent.objects.get(pk=id)
-            except UpdateContent.DoesNotExist:
-                completed_content = None
-            else:
-                completed_content.delete()
-            
-
     contents = UpdateContent.objects.all
     return render(request,"polls/update_history.html",{"contents":contents})
 
-    
+
+# 更新履歴削除 JSON返却
+def DeleteUpdateContent(request):
+    # POST
+    if request.method == "POST" and request.POST.get('id',None):
+        id = request.POST.get('id',None)
+        try:
+            content = UpdateContent.objects.get(pk=id)
+        except UpdateContent.DoesNotExist:
+            content = None
+        else:
+            content.delete()
+        
+        data = {
+            "category":"delete",
+            "id": id,
+        }
+
+        return JsonResponse(data)
+
+# 更新履歴編集 JSON返却
+def EditUpdateContent(request):
+    # POST
+    if request.method == "POST" and request.POST.get('id',None):
+        id = request.POST.get('id',None)
+        # content_text = request.POST.get('content_text',None)
+        is_completed = request.POST.get('is_completed',None)
+        try:
+            content = UpdateContent.objects.get(pk=id)
+        except UpdateContent.DoesNotExist:
+            content = None
+        else:
+            # content.content_text = content_text
+            content.is_completed = True
+            content.save()
+        
+        data = {
+            "category":"edit",
+            "id": id,
+            "content_text": content.content_text,
+            "is_completed":content.is_completed,
+            "updated_at":content.updated_at,
+        }
+
+        return JsonResponse(data)
+
+# 更新履歴作成 JSON返却
+def CreateUpdateContent(request):
+    # POST
+    if request.method == "POST" and request.POST.get('content_text',None):
+        # 登録
+        content = UpdateContent.objects.create(content_text=request.POST.get('content_text',None))
+        
+        data = {
+            "category":"create",
+            "id": content.id,
+            "content_text": content.content_text,
+            "is_completed":content.is_completed,
+            "updated_at":content.updated_at,
+        }
+
+        return JsonResponse(data)
+
 # 質問作成
 @login_required
 def create_question(request):
