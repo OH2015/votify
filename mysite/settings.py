@@ -34,6 +34,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Application definition
 INSTALLED_APPS = [
     'bootstrap4',
+    'crossword.apps.CrosswordConfig',
     'accounts.apps.AccountsConfig',
     'polls.apps.PollsConfig',
     'django.contrib.admin',
