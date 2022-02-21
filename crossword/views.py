@@ -13,17 +13,13 @@ def search(request):
     text = request.POST.get('text',None)
     regex = request.POST.get('regex',None)
 
-    mask = []
-    regex.replace("◯","○")
-    for c in regex:
-        if re.fullmatch(r'[ア-ン]', c):
-            mask.append(c)
-        elif c == "○":
-            mask.append(c)
+    regex_list = []
+    regex = re.sub('[^ア-ン]','.',regex)
     
-    stop_words=['']
-    df = s.search_answers(mask, text,stop_words)
-    print(f'結果: {type(df)}個\n{df.head(50)}')
+    is_wait = False
+    print(f'regex: {regex}, \ntext: {text}')
+    df = s.search_answers(regex, text,is_wait)
+    print(f'結果: {len(df)}個\n{df.head(50)}')
     
     data = {
         "data":df.to_json(),

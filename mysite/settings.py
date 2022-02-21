@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['merverick.pythonanywhere.com','localhost']
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # ログファイル出力先
-logging.basicConfig(filename='logfile/logger.log', level=logging.DEBUG)
+logging.basicConfig(filename=BASE_DIR / 'logfile/logger.log', level=logging.DEBUG)
 
 
 # Application definition

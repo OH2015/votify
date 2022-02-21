@@ -19,27 +19,23 @@ driver.implicitly_wait(10)
 driver.set_page_load_timeout(10)
 
 # [○,○,○,ケ、○],「あいうえお」ときたら？
-def search_answers(target_list,keyword,is_wait=False):
+def search_answers(regex,keyword,is_wait=False):
+  # 検索URL
   url = 'https://www.google.co.jp/search?q=' + keyword
-  target_length = len(target_list)
-  
-  reg_pattern = ''
-
-  # 目標の文字列の正規表現作成　例：○,○,○,ケ、○ → '...ケ.'
-  for i in range(target_length):
-    reg_pattern += '.' if target_list[i] == '○' else target_list[i]
+  # 目的の文字数
+  target_length = len(regex)
 
   # URLにアクセス
   driver.get(url)
 
   html = driver.page_source.encode('utf-8')
   soup = BeautifulSoup(html, "html.parser")
+  links = [i.get('href') for i in soup.find_all('a')]
 
   word_list = pd.DataFrame({'word' :[], 'count' : [],})
   startTime = time.time()
-  for link in soup.find_all('a'):
+  for url in links:
     start = time.time()
-    url = link.get('href')
 
     if not url or 'google' in url or 'facebook' in url or 'youtube' in url or 'en.wik' in url or not url[:4] == 'http' or url[-4:] == '.pdf':
       continue
@@ -84,7 +80,7 @@ def search_answers(target_list,keyword,is_wait=False):
         node = node.next
         continue
 
-      if re.fullmatch(r'' + reg_pattern, katakana):
+      if re.fullmatch(r'' + regex, katakana):
         print(katakana + "を発見")
         tmp_df = pd.DataFrame({'word':[katakana],'count':[1],})
         word_list = pd.concat([word_list,tmp_df])
