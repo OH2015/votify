@@ -20,7 +20,6 @@ driver.set_page_load_timeout(10)
 
 # [○,○,○,ケ、○],「あいうえお」ときたら？
 def search_answers(target_list,keyword,is_wait=False):
-  print('search.py 23')
   url = 'https://www.google.co.jp/search?q=' + keyword
   target_length = len(target_list)
   
@@ -79,8 +78,6 @@ def search_answers(target_list,keyword,is_wait=False):
         word_list.loc[word_list['word'].isin([katakana]),['count']] += 1
         node = node.next
         continue
-      
-      print(katakana)
 
       # 名詞のみ抽出,何も無し、文字数確認
       if word_type != '名詞' or katakana == '*' or len(katakana) != target_length:

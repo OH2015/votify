@@ -1,0 +1,264 @@
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.google.co.jp/search?q=\u304a\u6b63\u6708"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/source {}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/source HTTP/1.1" 200 491354
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.kibun.co.jp/knowledge/shogatsu/iware/index.html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/d27df09b-d376-4b70-a75e-e93ab0f3f364/text {"id": "d27df09b-d376-4b70-a75e-e93ab0f3f364"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/d27df09b-d376-4b70-a75e-e93ab0f3f364/text HTTP/1.1" 200 3940
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.kurashiru.com/articles/5b978e1e-8e39-444e-ad72-54fffaad4cbb"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/33fe4bf5-8fe4-4ee2-b673-1ce9453307b1/text {"id": "33fe4bf5-8fe4-4ee2-b673-1ce9453307b1"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/33fe4bf5-8fe4-4ee2-b673-1ce9453307b1/text HTTP/1.1" 200 12244
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://happy-card.jp/ne/oshiete/history/2840.html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/aacaaab5-cf08-4db8-a164-6b98a9165c2d/text {"id": "aacaaab5-cf08-4db8-a164-6b98a9165c2d"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/aacaaab5-cf08-4db8-a164-6b98a9165c2d/text HTTP/1.1" 200 76950
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.jalan.net/news/article/502797/"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/86f42c16-bd0d-4a93-a203-b80fbc7e8123/text {"id": "86f42c16-bd0d-4a93-a203-b80fbc7e8123"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/86f42c16-bd0d-4a93-a203-b80fbc7e8123/text HTTP/1.1" 200 17309
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.jalan.net/news/article/502797/#05"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/86f42c16-bd0d-4a93-a203-b80fbc7e8123/text {"id": "86f42c16-bd0d-4a93-a203-b80fbc7e8123"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/86f42c16-bd0d-4a93-a203-b80fbc7e8123/text HTTP/1.1" 200 17309
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.jalan.net/news/article/502797/#08"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/86f42c16-bd0d-4a93-a203-b80fbc7e8123/text {"id": "86f42c16-bd0d-4a93-a203-b80fbc7e8123"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/86f42c16-bd0d-4a93-a203-b80fbc7e8123/text HTTP/1.1" 200 17309
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.jalan.net/news/article/502797/#09"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/86f42c16-bd0d-4a93-a203-b80fbc7e8123/text {"id": "86f42c16-bd0d-4a93-a203-b80fbc7e8123"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/86f42c16-bd0d-4a93-a203-b80fbc7e8123/text HTTP/1.1" 200 17309
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.jalan.net/news/article/502797/#11"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/86f42c16-bd0d-4a93-a203-b80fbc7e8123/text {"id": "86f42c16-bd0d-4a93-a203-b80fbc7e8123"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/86f42c16-bd0d-4a93-a203-b80fbc7e8123/text HTTP/1.1" 200 17309
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.enjoytokyo.jp/feature/newyear/article_knowledge/"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/29af4248-c850-4cfe-bf67-034301162de0/text {"id": "29af4248-c850-4cfe-bf67-034301162de0"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/29af4248-c850-4cfe-bf67-034301162de0/text HTTP/1.1" 200 6786
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.hibiyakadan.com/nenga/"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/46cb316d-bfc0-4dfc-896b-653033330449/text {"id": "46cb316d-bfc0-4dfc-896b-653033330449"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/46cb316d-bfc0-4dfc-896b-653033330449/text HTTP/1.1" 200 12962
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://www.kikkoman.co.jp/homecook/college/10shoga/basic.html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/457f8f7e-3869-4d8b-96ec-217cb9fe09f2/text {"id": "457f8f7e-3869-4d8b-96ec-217cb9fe09f2"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/457f8f7e-3869-4d8b-96ec-217cb9fe09f2/text HTTP/1.1" 200 5594
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/url {"url": "https://loft.omni7.jp/fair/geisyun"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "POST /session/b4a239a4d2b24d07b8de59426e28e655/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:49739/session/b4a239a4d2b24d07b8de59426e28e655/element/3be083ca-2978-4173-add8-a55560ae6b97/text {"id": "3be083ca-2978-4173-add8-a55560ae6b97"}
+DEBUG:urllib3.connectionpool:http://localhost:49739 "GET /session/b4a239a4d2b24d07b8de59426e28e655/element/3be083ca-2978-4173-add8-a55560ae6b97/text HTTP/1.1" 200 3751
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+INFO:django.utils.autoreload:/Users/hiroyuki/Python/env1/webapps/poll/crossword/search.py changed, reloading.
+INFO:django.utils.autoreload:Watching for file changes with StatReloader
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session {"capabilities": {"firstMatch": [{}], "alwaysMatch": {"browserName": "chrome", "pageLoadStrategy": "normal", "goog:chromeOptions": {"extensions": [], "args": ["--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}}, "desiredCapabilities": {"browserName": "chrome", "pageLoadStrategy": "normal", "goog:chromeOptions": {"extensions": [], "args": ["--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}}
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): localhost:51242
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session HTTP/1.1" 200 799
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/timeouts {"implicit": 10000}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/timeouts HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/timeouts {"pageLoad": 10000}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/timeouts HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.google.co.jp/search?q=\u304a\u6b63\u6708"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/source {}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/source HTTP/1.1" 200 489503
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.kibun.co.jp/knowledge/shogatsu/iware/index.html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/524aebcd-282c-490c-aebc-e45eff47cd4a/text {"id": "524aebcd-282c-490c-aebc-e45eff47cd4a"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/524aebcd-282c-490c-aebc-e45eff47cd4a/text HTTP/1.1" 200 3940
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.kurashiru.com/articles/5b978e1e-8e39-444e-ad72-54fffaad4cbb"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/6c6dc83f-5077-4c37-8e4d-b910ce53c209/text {"id": "6c6dc83f-5077-4c37-8e4d-b910ce53c209"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/6c6dc83f-5077-4c37-8e4d-b910ce53c209/text HTTP/1.1" 200 12244
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://happy-card.jp/ne/oshiete/history/2840.html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/af75b49d-5444-44e0-bbe7-38a18127ea2c/text {"id": "af75b49d-5444-44e0-bbe7-38a18127ea2c"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/af75b49d-5444-44e0-bbe7-38a18127ea2c/text HTTP/1.1" 200 76950
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.jalan.net/news/article/502797/"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/055cfe10-e176-4835-a6cb-b21957739aca/text {"id": "055cfe10-e176-4835-a6cb-b21957739aca"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/055cfe10-e176-4835-a6cb-b21957739aca/text HTTP/1.1" 200 17309
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.jalan.net/news/article/502797/#05"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/055cfe10-e176-4835-a6cb-b21957739aca/text {"id": "055cfe10-e176-4835-a6cb-b21957739aca"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/055cfe10-e176-4835-a6cb-b21957739aca/text HTTP/1.1" 200 17309
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.jalan.net/news/article/502797/#08"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/055cfe10-e176-4835-a6cb-b21957739aca/text {"id": "055cfe10-e176-4835-a6cb-b21957739aca"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/055cfe10-e176-4835-a6cb-b21957739aca/text HTTP/1.1" 200 17309
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.jalan.net/news/article/502797/#09"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/055cfe10-e176-4835-a6cb-b21957739aca/text {"id": "055cfe10-e176-4835-a6cb-b21957739aca"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/055cfe10-e176-4835-a6cb-b21957739aca/text HTTP/1.1" 200 17309
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.jalan.net/news/article/502797/#11"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/055cfe10-e176-4835-a6cb-b21957739aca/text {"id": "055cfe10-e176-4835-a6cb-b21957739aca"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/055cfe10-e176-4835-a6cb-b21957739aca/text HTTP/1.1" 200 17309
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.enjoytokyo.jp/feature/newyear/article_knowledge/"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/a8da8402-92d0-411a-b381-fc2a8232e3e7/text {"id": "a8da8402-92d0-411a-b381-fc2a8232e3e7"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/a8da8402-92d0-411a-b381-fc2a8232e3e7/text HTTP/1.1" 200 6786
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.hibiyakadan.com/nenga/"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/5bd0552b-8d9b-426c-81d6-54d667fda3fe/text {"id": "5bd0552b-8d9b-426c-81d6-54d667fda3fe"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/5bd0552b-8d9b-426c-81d6-54d667fda3fe/text HTTP/1.1" 200 12962
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://www.kikkoman.co.jp/homecook/college/10shoga/basic.html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/2ef22abe-df1c-4363-85e2-466f5cf9565d/text {"id": "2ef22abe-df1c-4363-85e2-466f5cf9565d"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/2ef22abe-df1c-4363-85e2-466f5cf9565d/text HTTP/1.1" 200 5594
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/url {"url": "https://loft.omni7.jp/fair/geisyun"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/url HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element {"using": "css selector", "value": "html"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "POST /session/073a6abee7822033f2f83e6419ca0244/element HTTP/1.1" 200 88
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:GET http://localhost:51242/session/073a6abee7822033f2f83e6419ca0244/element/df1924d0-094b-478a-ac0c-cd4d650bb9b1/text {"id": "df1924d0-094b-478a-ac0c-cd4d650bb9b1"}
+DEBUG:urllib3.connectionpool:http://localhost:51242 "GET /session/073a6abee7822033f2f83e6419ca0244/element/df1924d0-094b-478a-ac0c-cd4d650bb9b1/text HTTP/1.1" 200 3751
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+INFO:django.utils.autoreload:/Users/hiroyuki/Python/env1/webapps/poll/crossword/search.py changed, reloading.
+INFO:django.utils.autoreload:Watching for file changes with StatReloader
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:52020/session {"capabilities": {"firstMatch": [{}], "alwaysMatch": {"browserName": "chrome", "pageLoadStrategy": "normal", "goog:chromeOptions": {"extensions": [], "args": ["--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}}, "desiredCapabilities": {"browserName": "chrome", "pageLoadStrategy": "normal", "goog:chromeOptions": {"extensions": [], "args": ["--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}}
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): localhost:52020
+DEBUG:urllib3.connectionpool:http://localhost:52020 "POST /session HTTP/1.1" 200 799
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:52020/session/6a7d47779b39e864d8d832ec292aae0a/timeouts {"implicit": 10000}
+DEBUG:urllib3.connectionpool:http://localhost:52020 "POST /session/6a7d47779b39e864d8d832ec292aae0a/timeouts HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:52020/session/6a7d47779b39e864d8d832ec292aae0a/timeouts {"pageLoad": 10000}
+DEBUG:urllib3.connectionpool:http://localhost:52020 "POST /session/6a7d47779b39e864d8d832ec292aae0a/timeouts HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+INFO:django.utils.autoreload:/Users/hiroyuki/Python/env1/webapps/poll/crossword/views.py changed, reloading.
+INFO:django.utils.autoreload:Watching for file changes with StatReloader
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:52270/session {"capabilities": {"firstMatch": [{}], "alwaysMatch": {"browserName": "chrome", "pageLoadStrategy": "normal", "goog:chromeOptions": {"extensions": [], "args": ["--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}}, "desiredCapabilities": {"browserName": "chrome", "pageLoadStrategy": "normal", "goog:chromeOptions": {"extensions": [], "args": ["--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}}
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): localhost:52270
+DEBUG:urllib3.connectionpool:http://localhost:52270 "POST /session HTTP/1.1" 200 799
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:52270/session/ff53dd0c971c2feada6cab3bfc082c7d/timeouts {"implicit": 10000}
+DEBUG:urllib3.connectionpool:http://localhost:52270 "POST /session/ff53dd0c971c2feada6cab3bfc082c7d/timeouts HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request
+DEBUG:selenium.webdriver.remote.remote_connection:POST http://localhost:52270/session/ff53dd0c971c2feada6cab3bfc082c7d/timeouts {"pageLoad": 10000}
+DEBUG:urllib3.connectionpool:http://localhost:52270 "POST /session/ff53dd0c971c2feada6cab3bfc082c7d/timeouts HTTP/1.1" 200 14
+DEBUG:selenium.webdriver.remote.remote_connection:Finished Request

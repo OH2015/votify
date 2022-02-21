@@ -22,7 +22,6 @@ def search(request):
             mask.append(c)
     
     stop_words=['']
-    print("views.py 17")
     df = s.search_answers(mask, text,stop_words)
     print(f'結果: {type(df)}個\n{df.head(50)}')
     
