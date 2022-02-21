@@ -1,53 +1,50 @@
 import re
-from selenium import webdriver
-import chromedriver_binary
+# from selenium import webdriver
+# import chromedriver_binary
 # from selenium.webdriver.chrome.service import Service
 # from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
 import MeCab
 import pandas as pd
+import requests
 
-# s = Service('../lib/chromedriver')
-options = webdriver.ChromeOptions()
-options.add_argument('--headless')
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage')
-driver = webdriver.Chrome(options=options)
-driver.implicitly_wait(10)
-# 10秒まで待つ
-driver.set_page_load_timeout(10)
-
-# [○,○,○,ケ、○],「あいうえお」ときたら？
+# [○○○ケ○],「あいうえお」ときたら？
 def search_answers(regex,keyword,is_wait=False):
   # 検索URL
-  url = 'https://www.google.co.jp/search?q=' + keyword
+  url = 'https://search.yahoo.co.jp/search?p=' + keyword
   # 目的の文字数
   target_length = len(regex)
 
-  # URLにアクセス
-  driver.get(url)
+  ## Requests
+  response = requests.get(url)
+  soup = BeautifulSoup(response.content,'html.parser')
 
-  html = driver.page_source.encode('utf-8')
-  soup = BeautifulSoup(html, "html.parser")
+  # 開かないURL
+  ng_links = ['yahoo','google','facebook','youtube','en.wik']
+  # 取得できたURL一覧
   links = [i.get('href') for i in soup.find_all('a')]
 
-  word_list = pd.DataFrame({'word' :[], 'count' : [],})
+  df = pd.DataFrame({'word' :[], 'count' : [],})
   startTime = time.time()
   for url in links:
     start = time.time()
+    print(url)
 
-    if not url or 'google' in url or 'facebook' in url or 'youtube' in url or 'en.wik' in url or not url[:4] == 'http' or url[-4:] == '.pdf':
+    is_ng_link = True in [ng in url for ng in ng_links]
+    if not url or is_ng_link or not url[:4] == 'http' or url[-4:] == '.pdf':
       continue
     
-    print(url)
     try:
-      driver.get(url)
-    except:
-      print("読み込みに時間がかかっているのでスキップします")
+        response = requests.get(url)
+    except  requests.exceptions.RequestException as err:
+        # 同じURLに短時間でアクセスした時のエラー
+        print(f"{type(err)}: {err}")
+        continue
 
     # ここからテキスト抽出
-    text = driver.find_element_by_tag_name("html").text
+    soup = BeautifulSoup(response.content,'html.parser')
+    text = soup.text
     # 全角→半角
     text.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))
 
@@ -69,9 +66,9 @@ def search_answers(regex,keyword,is_wait=False):
 
       katakana = node.feature.split(',')[-2]
       # 重複した場合はカウントを増やす
-      if len(word_list[word_list['word'].isin([katakana])]) > 0:
-        print(word_list[word_list['word'].isin([katakana])]['word'] + "が重複")
-        word_list.loc[word_list['word'].isin([katakana]),['count']] += 1
+      if len(df[df['word'].isin([katakana])]) > 0:
+        print(df[df['word'].isin([katakana])]['word'] + "が重複")
+        df.loc[df['word'].isin([katakana]),['count']] += 1
         node = node.next
         continue
 
@@ -83,17 +80,17 @@ def search_answers(regex,keyword,is_wait=False):
       if re.fullmatch(r'' + regex, katakana):
         print(katakana + "を発見")
         tmp_df = pd.DataFrame({'word':[katakana],'count':[1],})
-        word_list = pd.concat([word_list,tmp_df])
+        df = pd.concat([df,tmp_df])
 
       node = node.next
     
-    print(f'{time.time() - start}秒. {node_count}個')
+    print(f'{str(time.time() - start)[:3]}秒. {node_count}個')
     if not is_wait and time.time() - startTime > 60:
       break
 
-  word_list.sort_values(by='count',ascending=False,inplace=True)
-  word_list.reset_index(inplace=True)
-  print(f'処理時間: {time.time() - startTime}   秒')
+  df.sort_values(by='count',ascending=False,inplace=True)
+  df.reset_index(inplace=True)
+  print(f'処理時間: {str(time.time() - startTime)[:5]}秒')
 
-  return word_list
+  return df
 
