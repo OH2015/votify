@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
-import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,10 +29,6 @@ DEBUG = True
 # デプロイ用設定
 ALLOWED_HOSTS = ['merverick.pythonanywhere.com','localhost','100.25.6.198']
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-# ログファイル出力先
-logging.basicConfig(filename=BASE_DIR / 'logfile/logger.log', level=logging.DEBUG)
-
 
 # Application definition
 INSTALLED_APPS = [
