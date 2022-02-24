@@ -11,23 +11,29 @@ import requests
 
 # [○○○ケ○],「あいうえお」ときたら？
 def search_answers(regex,keyword,is_wait=False):
-  # 検索URL
-  url = 'https://search.yahoo.co.jp/search?p=' + keyword
+  startTime = time.time()
+  df = pd.DataFrame({'word' :[], 'count' : [],})
   # 目的の文字数
   target_length = len(regex)
 
+  # 検索URL
+  url = 'https://search.yahoo.co.jp/search?p=' + keyword
+  
   ## Requests
-  response = requests.get(url)
+  try:
+    response = requests.get(url,timeout=(3.0, 7.5))
+  except:
+    return df
+
   soup = BeautifulSoup(response.content,'html.parser')
 
   # 開かないURL
   ng_links = ['yahoo','google','facebook','youtube','en.wik']
   # 取得できたURL一覧
   links = [i.get('href') for i in soup.find_all('a')]
-
-  df = pd.DataFrame({'word' :[], 'count' : [],})
-  startTime = time.time()
+  
   for url in links:
+    if url is None:continue
     start = time.time()
     print(url)
 
@@ -36,10 +42,8 @@ def search_answers(regex,keyword,is_wait=False):
       continue
     
     try:
-        response = requests.get(url)
-    except  requests.exceptions.RequestException as err:
-        # 同じURLに短時間でアクセスした時のエラー
-        print(f"{type(err)}: {err}")
+        response = requests.get(url,timeout=(3.0, 7.5))
+    except:
         continue
 
     # ここからテキスト抽出
@@ -55,7 +59,6 @@ def search_answers(regex,keyword,is_wait=False):
     tagger = MeCab.Tagger()
 
     node = tagger.parseToNode(text)
-
     node_count = 0
     while node:
       if node_count > 2000:
