@@ -52,7 +52,6 @@ $.ajaxSetup({
         }
     }
 });
-
 waiting = false;
 startTime = null;
 $("#btn_search").click(function(){
@@ -70,6 +69,7 @@ $("#btn_search").click(function(){
         type: 'POST',
         cache: false, 
         dataType:'json',
+        headers: {'X-CSRFToken': csrftoken},
         data: {"text":text,"regex":regex},
     })
     .done(function(data){ // 通信が成功したときの処理 

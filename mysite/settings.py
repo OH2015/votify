@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-skhk7tx@d%r3%$%l_hn*po2xa+g1lr8j-%o5$pm)c_q1mt@=d1
 DEBUG = True
 
 # デプロイ用設定
-ALLOWED_HOSTS = ['merverick.pythonanywhere.com','localhost']
+ALLOWED_HOSTS = ['merverick.pythonanywhere.com','localhost','100.25.6.198']
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # ログファイル出力先
