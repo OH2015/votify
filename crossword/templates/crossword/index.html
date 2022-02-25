@@ -13,18 +13,24 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body>
+    <p>全角カタカナ以外の文字はワイルドカードに変換されます</p>
     <input id="input_regex" placeholder="オ○○">
     <input id="input_text" placeholder="お正月に食べるものは？">
     <button id="btn_search">検索</button>
     <p id="msg"></p>
     <table id="tb_result">
-        <tr><th>単語</th><th>出現回数</th></tr>
     </table>
     {% csrf_token %}
 
 <style>
-    table{
+    #tb_result th{
+        font-weight: normal;
+        text-align: center;
+    }
+    #tb_result td{
+        font-weight: bold;
         text-align: right;
+        min-width: 100px;
     }
 </style> 
 <script>
@@ -58,25 +64,28 @@ $("#btn_search").click(function(){
         data: {"text":text,"regex":regex},
     })
     .done(function(data){ // 通信が成功したときの処理 
+        regex = data.regex
         json = JSON.parse(data.data)
         word_list = json.word_kanji;
         word_list_ka = json.word;
         count_list = json.count
+
+        length = Object.keys(count_list).length
         
         $("tr").remove();
         $("#tb_result").append("<tr><th>単語</th><th>出現回数</th></tr>");
-        for(i = 0; i < Object.keys(count_list).length; i++){
+        for(i = 0; i < length; i++){
             console.log("word:" + word_list[i] + "(" + word_list_ka[i] + ")  count: " + count_list[i]);
             $("#tb_result").append("<tr><td>" + word_list[i] + "(" + word_list_ka[i] + ")</td><td>" + count_list[i] + "</td></tr>\n");
         }
+        time = (performance.now() - startTime) / 1000;
+        $("#msg").text("検索結果: " + String(length) + "件\n検索時間: " + String(time).substr(0,4) + "秒\n検索表現: " + regex)
     })
     .fail(function(data){ // 通信が失敗したときの処理
-
+        $("#msg").text("通信に失敗しました"); 
     })
     .always(function(data){ //通信の成否にかかわらず実行する処理 
         waiting = false;
-        time = (performance.now() - startTime) / 1000;
-        $("#msg").text("検索完了 \n検索時間: " + String(time).substr(0,4) + "秒"); 
     });
 })
 

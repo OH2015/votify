@@ -22,7 +22,7 @@ def search_answers(regex,keyword,is_wait=False):
   
   ## Requests
   try:
-    response = requests.get(url,timeout=(3.0, 7.5),params={'q':keyword})
+    response = requests.get(url,timeout=(3.0, 7.5),params={'p':keyword})
   except:
     print("検索に失敗しました")
     return df

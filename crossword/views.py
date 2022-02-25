@@ -17,6 +17,7 @@ def search(request):
     is_wait = False
     print(f'regex: {regex}, \ntext: {text}で検索')
     df = s.search_answers(regex, text,is_wait)
+    
     if len(df) > 0:
         print(f'結果: {len(df)}個見つかりました\n{df.head(50)}')
     else:
@@ -24,6 +25,7 @@ def search(request):
     
     data = {
         "data":df.to_json(),
+        "regex":regex,
     }
 
     return JsonResponse(data)
