@@ -21,6 +21,12 @@
         <tr><th>単語</th><th>出現回数</th></tr>
     </table>
     {% csrf_token %}
+
+<style>
+    table{
+        text-align: right;
+    }
+</style> 
 <script>
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 waiting = false;
@@ -30,6 +36,14 @@ $("#btn_search").click(function(){
 
     regex = $("#input_regex").val();
     text = $("#input_text").val();
+    if(regex.length <= 0){
+        $("#msg").text("文字列を入力してください");
+        return;
+    }
+    if(text.length <= 0){
+        $("#msg").text("検索キーワードを入力してください");
+        return;
+    }
     url = "{% url 'crossword:search' %}";
     waiting = true;
     startTime = performance.now();
@@ -45,14 +59,15 @@ $("#btn_search").click(function(){
     })
     .done(function(data){ // 通信が成功したときの処理 
         json = JSON.parse(data.data)
-        word_list = json.word;
+        word_list = json.word_kanji;
+        word_list_ka = json.word;
         count_list = json.count
         
         $("tr").remove();
         $("#tb_result").append("<tr><th>単語</th><th>出現回数</th></tr>");
         for(i = 0; i < Object.keys(count_list).length; i++){
-            console.log("word:" + word_list[i] + "  count: " + count_list[i]);
-            $("#tb_result").append("<tr><td>" + word_list[i] + "</td><td>" + count_list[i] + "</td></tr>\n");
+            console.log("word:" + word_list[i] + "(" + word_list_ka[i] + ")  count: " + count_list[i]);
+            $("#tb_result").append("<tr><td>" + word_list[i] + "(" + word_list_ka[i] + ")</td><td>" + count_list[i] + "</td></tr>\n");
         }
     })
     .fail(function(data){ // 通信が失敗したときの処理
@@ -61,7 +76,7 @@ $("#btn_search").click(function(){
     .always(function(data){ //通信の成否にかかわらず実行する処理 
         waiting = false;
         time = (performance.now() - startTime) / 1000;
-        $("#msg").text("検索完了 \n検索時間: " + time + "秒"); 
+        $("#msg").text("検索完了 \n検索時間: " + String(time).substr(0,4) + "秒"); 
     });
 })
 

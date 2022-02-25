@@ -1,7 +1,9 @@
-require pip installs
+//pip installs
 django
 django-bootstrap4
-MeCab
+mecab-python3
 pandas
 requests
 bs4
+lxml
+chardet
