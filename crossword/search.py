@@ -30,10 +30,10 @@ def search_answers(regex,keyword,is_wait=False):
   soup = BeautifulSoup(response.content,'lxml')
 
   # 開かないURL
-  ng_links = ['yahoo','google','facebook','youtube','en.wik','.pdf']
+  ng_links = ['yahoo','google','facebook','youtube','rakuten','amazon','en.wik','.pdf']
   # 取得できたURL一覧
   links = [i.get('href') for i in soup.find_all('a')]
-
+  # リンクの存在確認
   if links is None or len(links) <= 0:
     print("リンクが見つかりませんでした")
   
@@ -53,7 +53,7 @@ def search_answers(regex,keyword,is_wait=False):
         response = requests.get(url,timeout=(3.0, 7.5))
     except:
         continue
-      
+    # 文字コード判定、UTF８以外は終了
     print(chardet.detect(response.content))
     if chardet.detect(response.content)['encoding'] != 'utf-8':
       continue
@@ -66,22 +66,27 @@ def search_answers(regex,keyword,is_wait=False):
     tagger = MeCab.Tagger()
     # ノードごとに分割
     node = tagger.parseToNode(text)
+    # ノード数
     node_count = 0
+    # 発見した単語数
+    det_count = 0
+
+    # ノード(単語)ごとに判定
     while node:
+      node_count += 1
+      # 2000ノード過ぎたら終了
       if node_count > 2000:
         break
-
-      node_count += 1
+      
       # そのままの表現
       word_surf = node.surface
-
       # カタカナ
       katakana = node.feature.split(',')[-2]
-
+      # 名詞以外はスキップ
       if word_surf == '' or not '名詞' in node.feature:
         node = node.next
         continue
-
+      # カタカナの表現がなければ終了
       if katakana == '*':
         if re.fullmatch('^[ァ-ヶー]+$', word_surf):
           katakana = word_surf
@@ -91,26 +96,25 @@ def search_answers(regex,keyword,is_wait=False):
 
       # 重複した場合はカウントを増やす
       if len(df[df['word'].isin([katakana])]) > 0 :
-        # print(word_surf + "が重複")
         df.loc[df['word'].isin([katakana]),['count']] += 1
         node = node.next
         continue
 
+      # 正規表現に一致するか判定
       if re.fullmatch(r'' + regex, katakana):
-        # print(word_surf + "を発見")
         tmp_df = pd.DataFrame({'word':[katakana],'word_kanji':[word_surf],'count':[1],})
         df = pd.concat([df,tmp_df])
+        det_count += 1
 
       node = node.next
+      
     
-    print(f'{str(time.time() - start)[:3]}秒. {node_count}ノード')
+    print(f'{str(time.time() - start)[:3]}秒 {node_count}ノード {det_count}単語発見')
     
   # ヒット数と単語でソート
   df.sort_values(by=['count','word'],ascending=[False,True],inplace=True)
   # インデックスのふり直し
   df.reset_index(inplace=True)
-  # 検索処理に使った時間
-  # print(f'処理時間: {str(time.time() - startTime)[:5]}秒')
 
   return df
 
