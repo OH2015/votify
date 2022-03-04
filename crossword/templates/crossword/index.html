@@ -13,16 +13,43 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body>
-    <p>全角カタカナ以外の文字はワイルドカードに変換されます</p>
-    <input id="input_regex" placeholder="オ○○">
-    <input id="input_text" placeholder="お正月に食べるものは？">
-    <button id="btn_search">検索</button>
+    <div class="form_contents">
+        <p>全角カタカナ以外の文字はワイルドカードに変換されます</p>
+        <div class="input regex">
+            <label for="input_regex">検索表現</label>
+            <input id="input_regex" placeholder="(例)オ○○">
+        </div>
+        <div class="input text">
+            <label for="input_text">検索ワード</label>
+            <input id="input_text" placeholder="(例)お正月に食べるものは？">
+        </div>
+        <button id="btn_search">検索</button>
+    </div>
+    
     <p id="msg"></p>
     <table id="tb_result">
     </table>
     {% csrf_token %}
 
 <style>
+    .form_contents{
+        max-width: 600px;
+        padding: 5px;
+    }
+    .input{
+        display: flex;
+        justify-content: space-between;
+        margin: 5px;
+    }
+    button{
+        margin: 10px;
+        width: 100px;
+
+    }
+    input{
+        height: 50px;
+        width: 300px;
+    }
     #tb_result th{
         font-weight: normal;
         text-align: center;
@@ -37,6 +64,7 @@
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 waiting = false;
 startTime = null;
+
 $("#btn_search").click(function(){
     if(waiting)return;
 
@@ -79,7 +107,7 @@ $("#btn_search").click(function(){
             $("#tb_result").append("<tr><td>" + word_list[i] + "(" + word_list_ka[i] + ")</td><td>" + count_list[i] + "</td></tr>\n");
         }
         time = (performance.now() - startTime) / 1000;
-        $("#msg").text("検索結果: " + String(length) + "件\n検索時間: " + String(time).substr(0,4) + "秒\n検索表現: " + regex)
+        $("#msg").text("検索結果: " + String(length) + "件\n検索時間: " + String(time).substr(0,4) + "秒\n検索表現: " + regex.replace(/./g,"○"))
     })
     .fail(function(data){ // 通信が失敗したときの処理
         $("#msg").text("通信に失敗しました"); 
@@ -88,6 +116,16 @@ $("#btn_search").click(function(){
         waiting = false;
     });
 })
+$("#input_text").keydown(function() {
+  if( event.keyCode == 13 ) {
+    $("#btn_search").click();
+  }
+});
+$("#input_regex").keydown(function() {
+  if( event.keyCode == 13 ) {
+    $("#btn_search").click();
+  }
+});
 
 </script>
 </body>
