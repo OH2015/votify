@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_PASSWORD=postgres'
+
+  web:
+    build: .
+    entrypoint: ./wait-for-it.sh db:5432 -- /bin/sh -c "python manage.py migrate && gunicorn mysite.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    expose:
+      - 8000
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:1.19.0-alpine
+
+    volumes:
+      - ./nginx/:/etc/nginx/conf.d
+      - ./static/:/usr/share/nginx/html/static
+    ports:
+      - 80:80
+    depends_on:
+      - web

@@ -4,10 +4,8 @@ from django.urls import path,include
 from . import views
 
 urlpatterns = [
+    path('',include('polls.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('accounts.urls')),
-    path('crossword/', include('crossword.urls')),
-    path('polls/',include('polls.urls')),
-    path('',views.index,name='index'),
 ]
