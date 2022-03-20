@@ -6,13 +6,19 @@ import datetime
 from django.contrib.auth.models import User
 from ..models import Question
 
+import random, string
+
+def randomname(n):
+   return ''.join(random.choices(string.ascii_letters + string.digits, k=n))
 
 def create_question(question_text, days):
     """
     与えられた引数でQuestionのインスタンスを生成する(引数の日付は現在時刻との日付差、正が未来、負が過去)
     """
     time = timezone.now() + datetime.timedelta(days=days)
-    user = User.objects.create_user('test_user', 'test@sample.com', 'test_password')
+    username = randomname(10)
+    password = randomname(20)
+    user = User.objects.create_user(username, username + '@sample.com', password)
     return Question.objects.create(question_text=question_text, pub_date=time,author=user)
 
 class QuestionIndexViewTests(TestCase):

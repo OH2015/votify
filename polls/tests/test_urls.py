@@ -11,5 +11,5 @@ class TestUrls(TestCase):
 
   """更新履歴ページへのリダイレクトをテスト"""
   def test_post_list_url(self):
-    view = resolve('update_history')
+    view = resolve('update_history/')
     self.assertEqual(view.func, UpdateHistory)
