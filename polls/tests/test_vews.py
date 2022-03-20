@@ -11,7 +11,8 @@ def create_question(question_text, days):
     与えられた引数でQuestionのインスタンスを生成する(引数の日付は現在時刻との日付差、正が未来、負が過去)
     """
     time = timezone.now() + datetime.timedelta(days=days)
-    return Question.objects.create(question_text=question_text, pub_date=time)
+    user = User.objects.create_user('test_user', 'test@sample.com', 'test_password')
+    return Question.objects.create(question_text=question_text, pub_date=time,author=user)
 
 class QuestionIndexViewTests(TestCase):
     # １件も質問が存在しない場合

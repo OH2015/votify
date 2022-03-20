@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
 
+
 class IndexView(generic.ListView):
     # これを書かなかったらデフォルトで「polls/Question_list.html」が探される
     template_name = 'polls/index.html'
