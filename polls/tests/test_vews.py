@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 import datetime
 
+from django.contrib.auth.models import User
 from ..models import Question
 
 
