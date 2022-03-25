@@ -11,7 +11,7 @@ services:
     build: .
     volumes:
       - .:/app
-    entrypoint: ./wait-for-it.sh db:5432 -- /bin/sh -c "python manage.py collectstatic --noinput && python manage.py migrate && python manage.py test && gunicorn mysite.wsgi:application --bind 0.0.0.0:8000"
+    entrypoint: ./wait-for-it.sh db:5432 -- /bin/sh -c "python manage.py collectstatic && python manage.py migrate --settings=mysite.settings.production && python manage.py test --settings=mysite.settings.production && gunicorn mysite.wsgi:application --bind 0.0.0.0:8000"
     expose:
       - 8000
     depends_on:
