@@ -1,4 +1,5 @@
 Django
 django-bootstrap4
+djangorestframework
 gunicorn
 psycopg2>=2.8,<2.9
