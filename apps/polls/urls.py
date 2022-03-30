@@ -1,10 +1,19 @@
-from django.urls import path
-
+from django.urls import path,include
 from . import views
+
+from rest_framework import routers
+from .views import QuestionViewSet
+
+#Router（URLの自動登録機能を備えたインスタンス）を作成し、/posts系のAPIを一気に作成
+router = routers.DefaultRouter()
+router.register('questions', QuestionViewSet)
 
 app_name = 'polls'
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
+    # API
+    path('', include(router.urls)),
+
     path('<int:pk>/edit_question/', views.edit_question, name='edit_question'),
     path('<int:pk>/edit_choice/', views.edit_choice, name='edit_choice'),
     path('<int:pk>/', views.DetailView.as_view(), name='detail'),

@@ -16,7 +16,7 @@ jobs:
             - checkout
             # CircleCI に登録した秘密鍵を呼び出す
             - add_ssh_keys:
-            - run: ssh ${USER_NAME}@${HOST_NAME} 'cd poll && sudo git pull && sudo /usr/local/bin/docker-compose up -d --build web'
+            - run: ssh ${USER_NAME}@${HOST_NAME} 'cd poll && sudo git stash && sudo git pull && sudo /usr/local/bin/docker-compose up -d --build'
  
 workflows:
     version: 2

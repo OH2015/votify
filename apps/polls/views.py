@@ -194,3 +194,49 @@ def edit_choice(request,pk):
     return render(request, 'polls/edit.html', {'form': form})
 
 
+# 
+# API
+# 
+from rest_framework import viewsets,generics
+from .models import Question
+from .serializers import QuestionSerializer
+
+# Questionオブジェクトに関する全てのCRUDページ定義
+# ・/questions × get…対象モデルオブジェクトの全件読み取り
+# ・/questions × post…対象モデルオブジェクトの1件作成
+# ・/questions/<int:pk> × get…該当するIDのモデルオブジェクトの読み取り
+# ・/questions/<int:pk> × put…該当するIDのモデルオブジェクトの更新
+# ・/questions/<int:pk> × patch…該当するIDのモデルオブジェクトの一部更新
+# ・/questions/<int:pk> × delete…該当するIDのモデルオブジェクトの削除
+class QuestionViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+
+
+# Questionオブジェクトのリストを返すビュー
+class QuestionListAPIView(generics.ListAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+
+
+# Questionオブジェクトの作成ビュー
+class QuestionCreateAPIView(generics.CreateAPIView):
+    serializer_class = QuestionSerializer
+
+
+# 特定のQuestionオブジェクトの参照
+class QuestionRetrieveAPIView(generics.RetrieveAPIView):
+   queryset = Question.objects.all()
+   serializer_class = QuestionSerializer
+
+
+# Questionオブジェクトの更新処理
+class QuestionUpdateAPIView(generics.UpdateAPIView):
+   queryset = Question.objects.all()
+   serializer_class = QuestionSerializer
+
+
+# Questionオブジェクトの削除
+class QuestionDestroyAPIView(generics.DestroyAPIView):
+   queryset = Question.objects.all()
+
