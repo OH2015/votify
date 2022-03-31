@@ -15,6 +15,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <!-- 共通CSS -->
     <link href="{% static 'polls/css/common/style.css' %}" rel="stylesheet" type="text/css">
+    {% block extra-static %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
 
@@ -39,9 +40,9 @@
                     <div class="update_history_cell"><a href="{% url 'polls:update_history' %}">更新履歴</a></div>
                     <div class="login_cell">
                         {% if user.is_authenticated %}
-                            <a href="{% url 'logout' %}">ログアウト</a>
+                            <a href="{% url 'accounts:Logout' %}">ログアウト</a>
                         {% else %}
-                            <a href="{% url 'login' %}">ログイン</a>
+                            <a href="{% url 'accounts:Login' %}">ログイン</a>
                         {% endif %}
                     </div>
                     <div class="signup_cell"><a href="{% url 'accounts:signup' %}">新規登録</a></div>
@@ -69,12 +70,6 @@
     </div>
     <!-- メイン -->
     <div id="main_content">
-        <!-- 左メニュー -->
-        <div class="content_left">
-            <div class="body_left">
-
-            </div>
-        </div>
 
         <!-- メインコンテンツ -->
         <div class="content_center">

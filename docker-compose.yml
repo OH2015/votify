@@ -11,7 +11,7 @@ services:
     build: .
     volumes:
       - .:/app
-    entrypoint: ./wait-for-it.sh db:5432 -- /bin/sh -c "python manage.py migrate --settings=config.settings.production && python manage.py test --settings=config.settings.production && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    entrypoint: scripts/wait-for-it.sh db:5432 -- /bin/sh scripts/init.sh
     expose:
       - 8000
     depends_on:
