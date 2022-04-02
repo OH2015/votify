@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd django
 python manage.py test --settings=config.settings.production
 python manage.py migrate --settings=config.settings.production
 python manage.py guest --settings=config.settings.production

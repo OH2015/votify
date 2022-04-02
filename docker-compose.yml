@@ -8,7 +8,7 @@ services:
       - 'POSTGRES_PASSWORD=postgres'
 
   web:
-    build: .
+    build: ./django
     volumes:
       - .:/app
     entrypoint: scripts/wait-for-it.sh db:5432 -- /bin/sh scripts/init.sh
@@ -22,7 +22,7 @@ services:
 
     volumes:
       - ./nginx/:/etc/nginx/conf.d
-      - ./static/:/usr/share/nginx/html/static
+      - ./django/static/:/usr/share/nginx/html/static
     ports:
       - 80:80
     depends_on:
