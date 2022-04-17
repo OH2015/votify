@@ -6,6 +6,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% load static %}
+    <!-- favicon -->
+    <link rel="icon" type="image/png" href="{% static 'polls/icon/favicon.ico' %}">
     <!-- fontawesome -->
     <link href="https://use.fontawesome.com/releases/v6.0.0/css/all.css" rel="stylesheet">
     <!-- bootstrap -->
@@ -21,53 +23,34 @@
 
 <body>
     <!-- ヘッダー -->
-    <div id="header_outline">
-        <div id="header">
-            <div class="logo_cell" >
-                <a href="{% url 'polls:index' %}">
-                    <img src="{% static 'polls/images/logo.png' %}" class="main_logo">
-                    <div class="main_text"></div>
-                </a>
-            </div>
+    <div id="header">
+        <div class="logo_cell" >
+            <a href="{% url 'polls:index' %}">
+                <img src="{% static 'polls/images/facebook_cover_photo_1.png' %}" class="main_logo">
+            </a>
+        </div>
 
-            <div class="last_cell">
-                <div class="header_user_name">
+        <div class="last_cell">
+            <div class="header_user_name">
+                {% if user.is_authenticated %}
+                    <p>{{ user.username }}でログイン中</p>
+                {% endif %}
+            </div>
+            <div id="header-menus">
+                <div class="login_cell">
                     {% if user.is_authenticated %}
-                        <p>{{ user.username }}でログイン中</p>
+                        <a href="{% url 'accounts:Logout' %}">ログアウト</a>
+                    {% else %}
+                        <a href="{% url 'accounts:Login' %}">ログイン</a>
                     {% endif %}
                 </div>
-                <div class="menus">
-                    <div class="update_history_cell"><a href="{% url 'polls:update_history' %}">更新履歴</a></div>
-                    <div class="login_cell">
-                        {% if user.is_authenticated %}
-                            <a href="{% url 'accounts:Logout' %}">ログアウト</a>
-                        {% else %}
-                            <a href="{% url 'accounts:Login' %}">ログイン</a>
-                        {% endif %}
-                    </div>
-                    <div class="signup_cell"><a href="{% url 'accounts:signup' %}">新規登録</a></div>
-                    <div class="create_cell"><a href="{% url 'polls:create_question' %}">投稿</a></div>
-                    <div class="header-dropmenu-cell">
-                        <ul id="header-dropmenu">
-                            <li>
-                                <i class="fa-solid fa-ellipsis fa-lg"></i>
-                                <ul>
-                                    <li><a href="{% url 'polls:create_question' %}">投稿</a></li>
-                                    <li><a href="{% url 'polls:update_history' %}">更新履歴</a></li>
-                                    {% if user.is_authenticated %}
-                                    <li><a href="{% url 'logout' %}">ログアウト</a></li>
-                                    {% else %}
-                                    <li><a href="{% url 'login' %}">ログイン</a></li>
-                                    {% endif %}
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                
+                <div class="signup_cell"><a href="{% url 'accounts:signup' %}">新規登録</a></div>
+                <div class="create_cell"><a href="{% url 'polls:create_question' %}">投稿</a></div>
             </div>
+            
         </div>
     </div>
+
     <!-- メイン -->
     <div id="main_content">
 
@@ -83,11 +66,11 @@
     <footer id="footer" class="footer outer-block">
         <div class="logo">
         <a href="{% url 'polls:index' %}">
-            <img src="{% static 'polls/images/logo.png' %}" alt="">
+            <img src="{% static 'polls/images/logo_transparent.png' %}" alt="">
         </a>
         </div>
         <ul class="nav">
-        <li><a href="#">WORKS</a></li>
+        <li><a href="{% url 'polls:update_history' %}">更新履歴</a></li>
         <li><a href="#">BLOG</a></li>
         <li><a href="#">RECRUIT</a></li>
         <li><a href="#">COMPANY</a></li>

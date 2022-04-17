@@ -17,6 +17,7 @@ class Question(models.Model):
     # 作成/更新日時
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
     @admin.display(
         boolean=True,
         ordering='pub_date',

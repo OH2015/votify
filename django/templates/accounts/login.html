@@ -6,26 +6,41 @@
 {% block title %}ログイン{% endblock %}
 
 {% block content %}
-<h1>ログイン画面</h1>
-
-<div class="reg">
   <form method="post" action="{% url 'accounts:Login' %}">
     {% csrf_token %}
+    <div id="container" class="container container-fluid">
+       <div class="row">
+         <div class="col-sm-4">
+            <label for="userid">ユーザーID:</label>
+         </div>
+         <div class="col-sm-8">
+            <input type="text" name="userid"> 
+        </div>
+      </div>
+      <div class="row">
+         <div class="col-sm-4">
+            <label for="password">パスワード：</label>
+         </div>
+         <div class="col-sm-8">
+            <input type="password" name="password">
+         </div>
+      </div>
+       <div class="row">
+         <div class="col-sm-4">
+         </div>
+         <div class="col-sm-8">
+            <input type="submit" class="btn" value="ログイン">
+         </div>
+       </div>
+       <div class="row">
+          <div class="col-sm-12"><a href="{% url 'accounts:signup' %}">アカウントを作成</a></div>
+         </div>
+         <div class="row">
+          <div class="col-sm-12"><a href="{% url 'accounts:guest_login' %}">ゲストログイン</a></div>
+       </div>
+    </div>
 
-    <table class="reg_form">
-    <tr>
-    <td><label for="userid">ユーザーID:</label></td>
-    <td><input type="text" name="userid"></td>
-    <td><label for="password">パスワード：</label></td>
-    <td><input type="password" name="password"></td>
-    </tr>
-    </table>
-
-    <input type="submit" class="btn" value="Login">
+    
  </form>
-</div>
-   <p class="message">アカウントをお持ちですか？：
-   <a href="{% url 'accounts:signup' %}">アカウントを作成</a>
-   <a href="{% url 'accounts:guest_login' %}">ゲストログイン</a>
-   </p>
+   
 {% endblock %}

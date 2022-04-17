@@ -1,21 +1,77 @@
-<!-- templates/home.html -->
+<!-- templates/index.html -->
 {% extends 'base.html' %}
-{% block title %}Home{% endblock %}
+<!-- タイトル -->
+{% block title %}トップ画面{% endblock %}
+<!-- 追加リソース -->
+{% block extra-static %}
+<!-- Vue3 -->
+<script src="https://unpkg.com/vue@3"></script>
+<!-- axios(API非同期通信) -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+{% endblock %}
 <!-- 子・メインコンテンツ -->
 {% block content %}
-{% load static %}
-<div style="background: white url("{% static 'polls/images/sample.gif' %} ") no-repeat">
-{{ error_message }}
-
-{% if latest_question_list %}
+<div class="heading">
+    
+</div>
+<div id="app">
     <ul>
-    {% for question in latest_question_list %}
-        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
-    {% endfor %}
+        <li v-for="question in questions">
+            [[ question.question_text ]]
+            <!-- <ul>
+                <li v-for="choice in question.choices">
+                    [[ choice ]]
+                </li>
+            </ul> -->
+        </li>
     </ul>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}
+    <question-item></question-item>
+    <button v-on:click="onclick"></button>
+    <!-- [[ questions ]] -->
 </div>
 
+
+<script>
+    Vue.component('question-item', {
+        data() {
+            return {
+            
+                count: 0
+            }
+        },
+        template: `<li>[[count]]</li>`,
+    })
+
+
+    Vue.createApp({
+        data() {
+            return {
+                message: 'Hello Vue!',
+                questions: [],
+                param:"{}", 
+                result:"....",
+            }
+        },
+        methods:{
+            onclick = () => {
+                console.log("hoge")
+            }
+        }
+        ,mounted() {
+            axios.get("http://localhost:8000/questions/?format=json")
+            .then(res => {
+                this.questions = res.data
+                console.log(this.questions)
+            })
+            .catch(res => {
+                this.questions = res.data
+                console.log(this.questions)
+            })
+        }
+        // djangoのテンプレートエンジンと競合するので{}から[]に変更
+        ,delimiters: ['[[', ']]']
+    }).mount('#app')
+
+
+</script>
 {% endblock %}

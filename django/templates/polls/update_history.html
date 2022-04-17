@@ -6,12 +6,6 @@
 {% if error_message != '' %}
     <p>{{error_message}}</p>
 {%endif%}
-<!-- <form method="post" action="{% url 'polls:update_history' %}">
-    {% csrf_token %}
-    <label>追加予定</label>
-    <input name="content_text">
-    <input type="submit">
-</form> -->
 <input id="create_text" name="content_text">
 <button id="create_button">追加</button>
 

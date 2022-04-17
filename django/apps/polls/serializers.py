@@ -4,13 +4,18 @@ from .models import Question,Choice
 
 class QuestionSerializer(serializers.ModelSerializer):
    class Meta:
-        model = Question
-        #新規フィールドをメソッドの戻り値で作るフィールド追加
-        is_staff = serializers.SerializerMethodField()
-        fields = ('question_text', 'pub_date', 'author', 'created_at', 'updated_at')
-        #フィールド値を決定するメソッド    
-        def is_staff(self):
+         model = Question
+         #新規フィールドをメソッドの戻り値で作るフィールド追加
+         is_staff = serializers.SerializerMethodField()
+         # 選択肢
+         choices = serializers.SerializerMethodField()
+         fields = ('question_text', 'pub_date', 'author', 'created_at', 'updated_at')
+         #フィールド値を決定するメソッド    
+         def is_staff(self):
             return True if self.author=='administrator' else False
+         
+         def choices(self):
+            return self.question_text
 
 
 #複数オブジェクト扱う場合でも、その単体オブジェクト用シリアライザーは必要

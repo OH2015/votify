@@ -14,50 +14,30 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, 
 	user-select: none;
 }
 
-#header_outline {
+#header {
+    display: flex;
+    justify-content:space-between;
+	
 	z-index:100000;
     top:0px;
     left: 0px;
 	width: 100% ;
 	height: 60px;
-	/* padding: 12px 25px; */
-	background: linear-gradient(to bottom, #ffffff, #f8f8f6);
+	background-color: rgba(163,245,211, 1);
 	border-color: #bcbcbc;
 	border-style: solid;
 	border-width: 0 0 1px 0;
 	box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
 }
 
-#header {
-    display: flex;
-    justify-content:space-between;
-	
-	width: 100%;
-	height: 100%;
-}
-
 #header > .logo_cell {
     height: 100%;
-	min-width: 200px;
-	padding: 5px;
 	cursor: pointer;
-	
 }
 
-#header > .logo_cell > a > .main_text {
-	float: left;
-	font-size: 11px;
-	line-height: 13px;
-	color: #484848;
-	padding: 8px 8px 7px 0;
-}
 #header > .logo_cell > a > .main_logo {
-	float: left;
-	background-size: 168px 39px;
-	width: 100px;
 	height: 100%;
 	background-size: cover;
-	/* background-position: 70% 70%; */
 	background: url('/static/polls/images/logo.png')
 }
 
@@ -70,81 +50,31 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, 
 	padding: 1px;
 	text-align: right;
 }
-#header .last_cell .menus{
+#header .last_cell .create_cell{
+	padding: 1px;
+	text-align: right;
+}
+#header-menus{
 	display: flex;
     justify-content: flex-end;
 	align-items: center;
     width: 100%;
 }
-#header .last_cell .menus *{
+#header-menus *{
 	padding: 3px;
 }
-
-/* ドロップダウン */
-#header-dropmenu {
-list-style: none;
-width: 50px;
-height: 40px;
-margin: 0 auto;
-padding: 0;
-display: table;
-table-layout: fixed;
-}
-#header-dropmenu > li {
-position: relative;
-display: table-cell;
-vertical-align: middle;
-border: 1px solid #f8f8f8;
-background: #f8f8f8; /* 背景色*/
-}
-#header-dropmenu li a {
-display: block;
-text-align: center;
-line-height: 40px;
-font-weight: bold;
-text-decoration: none;
-font-size: 14px;
-}
-#header-dropmenu li ul {
-visibility: hidden;
-width: 100px;
-list-style: none;
-position: absolute;
-top: 100%;
-/* left: -1px; */
-right: 0px;
-margin: 0;
-padding: 0;
-border: 1px solid #222; /* マウスオーバー時の枠線 */
-border-top: none;
-}
-#header-dropmenu li:hover ul {
-visibility: visible;
-}
-#header-dropmenu li ul li {
-background: #fff;
-transition: all .2s ease;
-}
-#header-dropmenu > li:hover {
-background: #fff;
-border: 1px solid #222; /* マウスオーバー時の枠線 */
-border-bottom: none;
-}
-#header-dropmenu li:hover ul li:hover {
-background: #f8f8f8;
-}
-.header-dropmenu-cell{
-	display: none;
+#header-menus a{
+	text-decoration: none;
+	color: black;
 }
 
-.update_history_cell,.login_cell,.signup_cell,.create_cell{
+/* .update_history_cell,.login_cell,.signup_cell,.create_cell{
 	display: block;
-}
+} */
 
 #main_content {
 	display: table;
 	width: 100%;
-	min-width: 1280px;
 }
 
 #main_content .content_left {
@@ -155,7 +85,6 @@ background: #f8f8f8;
 }
 
 #main_content .content_left .body_left{
-    /* background-color: cadetblue; */
     position: fixed;
     width: 210px;
     top: 72px;
@@ -165,7 +94,6 @@ background: #f8f8f8;
 
 #main_content .content_center {
 	min-height: 100vh;
-	padding: 30px 50px 30px 50px;
 }
 
 /* 
@@ -224,21 +152,9 @@ color: #ccc;
 	body {
 		-webkit-text-size-adjust: 100%;
 	}
-	.header_user_name{
-		display: none;
-	}
-	.header-dropmenu-cell{
-		display: block;
-	}
-	.update_history_cell,.login_cell,.signup_cell,.create_cell{
-		display: none;
-	}
-	
-	#main_content .content_left {
-		display: none;
-	}
 	
 	#main_content .content_center {
+		width:100%;
 		min-height: 500px;
 		padding: 15px 20px 15px 20px;
 	}
