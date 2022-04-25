@@ -15,7 +15,7 @@ DATABASES = {
         'NAME': 'database-1',
         'USER': 'admin',
         'PASSWORD': 'Fp5LAgMBbaFH9D7',
-        'HOST': 'database-1.c1ch7jqm7tvt.us-east-1.rds.amazonaws.com',
+        'HOST': 'c1ch7jqm7tvt.us-east-1.rds.amazonaws.com',
         'PORT': 3306,
     }
 }
