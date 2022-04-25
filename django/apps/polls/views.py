@@ -1,14 +1,17 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .models import Question,Choice,UpdateContent
+from .models import Account, Question,Choice,UpdateContent
 from django.shortcuts import render
 from django.views import generic
 from django.utils import timezone
 from .forms import ChoiceForm, QuestionForm
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import JsonResponse
-
+from django.views.generic import TemplateView # テンプレートタグ
+from .forms import AccountForm, AddAccountForm # ユーザーアカウントフォーム
 
 
 class IndexView(generic.ListView):
@@ -240,3 +243,46 @@ class QuestionUpdateAPIView(generics.UpdateAPIView):
 class QuestionDestroyAPIView(generics.DestroyAPIView):
    queryset = Question.objects.all()
 
+
+
+# アカウント登録
+class  AccountRegistration(TemplateView):
+    def __init__(self):
+        self.params = {
+            "message":"",
+        }
+
+    # Get処理
+    def get(self,request):
+        return render(request,"polls/register.html",context=self.params)
+
+    # Post処理
+    def post(self,request):
+        id = request.POST.get('id')
+        email = request.POST.get('email')
+        pw = request.POST.get('pw')
+        ln = request.POST.get('last_name')
+        fn = request.POST.get('first_name')
+        img = request.FILES['image']
+        print(type(img))
+        user = User.objects.create_user(id,email,pw)
+
+        if user == None:
+            self.params["message"] = "ユーザの作成に失敗しました"
+            
+        acc = Account.objects.create(user=user,last_name=ln,first_name=fn,account_image=img)
+        
+        if acc == None:
+            user.delete()
+            self.params["message"] = "ユーザの作成に失敗しました"
+
+        self.params["message"] = "アカウントを作成しました"
+        login(user)
+
+        return render(request,"polls/register.html",context=self.params)
+
+
+# マイページ
+def mypage(request):
+    acc = Account.objects.get(user=request.user)
+    return render(request, 'polls/mypage.html',context={"account":acc})

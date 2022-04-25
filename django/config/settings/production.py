@@ -13,3 +13,6 @@ DATABASES = {
          'PORT': 5432,
     }
 }
+
+# 画像などのアップロードファイルを保存するパス(デバッグ用)
+MEDIA_ROOT = BASE_DIR / 'media'

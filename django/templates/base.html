@@ -30,39 +30,37 @@
             </a>
         </div>
 
-        <div class="last_cell">
-            <div class="header_user_name">
-                {% if user.is_authenticated %}
-                    <p>{{ user.username }}でログイン中</p>
-                {% endif %}
-            </div>
-            <div id="header-menus">
-                <div class="login_cell">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'accounts:Logout' %}">ログアウト</a>
-                    {% else %}
-                        <a href="{% url 'accounts:Login' %}">ログイン</a>
-                    {% endif %}
+            
+        <div id="header-menus">
+            {% if user.is_authenticated %}
+                <div class="user-cell">
+                    <i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i>
+                    <div class="header-user-menu">
+                        <ul>
+                            <li><a href="{% url 'polls:mypage' %}">{{ user.username }}</a></li>
+                            <li><a href="{% url 'accounts:Logout' %}">ログアウト</a></li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="signup_cell"><a href="{% url 'accounts:signup' %}">新規登録</a></div>
-                <div class="create_cell"><a href="{% url 'polls:create_question' %}">投稿</a></div>
-            </div>
+            {% else %}
+                <a href="{% url 'accounts:Login' %}">ログイン</a>
+                <div class="signup_cell"><a href="{% url 'polls:register' %}">新規登録</a></div>
+            {% endif %}
             
         </div>
+
     </div>
 
     <!-- メイン -->
     <div id="main_content">
-
         <!-- メインコンテンツ -->
         <div class="content_center">
 			{% block content %}
 
             {% endblock %}
 		</div>
-        
-
     </div>
+    
     <footer id="footer" class="footer outer-block">
         <div class="logo">
         <a href="{% url 'polls:index' %}">

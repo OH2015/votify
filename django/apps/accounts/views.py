@@ -16,7 +16,6 @@ class SignUpView(generic.CreateView):
     success_url = reverse_lazy('accounts:Login')
     template_name = 'accounts/signup.html'
 
-
 #ログイン
 def Login(request):
     # POST

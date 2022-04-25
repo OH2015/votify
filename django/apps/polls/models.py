@@ -5,6 +5,7 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.contrib import admin
+from django.contrib.auth.models import User
 
 
 class Question(models.Model):
@@ -17,7 +18,7 @@ class Question(models.Model):
     # 作成/更新日時
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     @admin.display(
         boolean=True,
         ordering='pub_date',
@@ -55,3 +56,21 @@ class UpdateContent(models.Model):
 
     def __str__(self):
         return self.content_text
+
+
+# ユーザーアカウントのモデルクラス
+class Account(models.Model):
+    # Djangoのデフォルトユーザモデルと1v1で紐づく
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    # 追加フィールド
+    # 姓
+    last_name = models.CharField(max_length=100)
+    # 名
+    first_name = models.CharField(max_length=100)
+    # プロフィール画像
+    account_image = models.ImageField(upload_to="uploads/profile_images/",default='uploads/profile_images/no_image.png')
+
+
+    def __str__(self):
+        return self.user.username

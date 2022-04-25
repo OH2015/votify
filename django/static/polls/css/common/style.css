@@ -38,26 +38,25 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, 
 #header > .logo_cell > a > .main_logo {
 	height: 100%;
 	background-size: cover;
-	background: url('/static/polls/images/logo.png')
 }
 
 #header .last_cell{
     right: 0px;
     width: 320px;
 	height: 100%;
+	padding-right: 20px;
 }
 #header .last_cell .header_user_name{
 	padding: 1px;
 	text-align: right;
-}
-#header .last_cell .create_cell{
-	padding: 1px;
-	text-align: right;
+	width:80px;
+	height:100%;
 }
 #header-menus{
 	display: flex;
     justify-content: flex-end;
 	align-items: center;
+	height: 100%;
     width: 100%;
 }
 #header-menus *{
@@ -67,33 +66,33 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, 
 	text-decoration: none;
 	color: black;
 }
-
-/* .update_history_cell,.login_cell,.signup_cell,.create_cell{
+.header-user-menu {
+	display: none;
+	position:absolute;
+	top:58px;
+	right: 2px;
+	width:150px;
+	background-color: white;
+	border:solid gray;
+}ul{list-style: none;}
+.header-user-menu:hover{
 	display: block;
-} */
+}
+.header-user-menu ul li:hover{text-decoration: underline;}
+.user-cell{height: 100%;width:60px;}
+.user-cell:hover{cursor: pointer;}
+.user-cell:hover .header-user-menu {
+	display: block;
+}
 
 #main_content {
 	display: table;
 	width: 100%;
 }
 
-#main_content .content_left {
-	display: table-cell;
-	vertical-align: top;
-	width: 210px;
-	height: 500px;
-}
-
-#main_content .content_left .body_left{
-    position: fixed;
-    width: 210px;
-    top: 72px;
-    left: 0px;
-    bottom: 0px;
-}
-
 #main_content .content_center {
 	min-height: 100vh;
+	padding: 30px;
 }
 
 /* 

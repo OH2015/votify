@@ -1,5 +1,7 @@
 from django.urls import path,include
 from . import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 from rest_framework import routers
 from .views import QuestionViewSet
@@ -26,4 +28,8 @@ urlpatterns = [
     
     path('create_question/', views.create_question, name='create_question'),
     path('<int:pk>/create_choice/', views.create_choice, name='create_choice'),
+    path('register', views.AccountRegistration.as_view(), name='register'),
+    path('mypage', views.mypage, name='mypage'),
 ]
+
+urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
