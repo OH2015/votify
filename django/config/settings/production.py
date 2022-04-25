@@ -5,12 +5,18 @@ ALLOWED_HOSTS = ['votify.jp','localhost']
 
 DATABASES = {
     'default': {
-         'ENGINE': 'django.db.backends.postgresql',
-         'NAME': 'postgres',
-         'USER': 'postgres',
-         'PASSWORD': 'postgres',
-         'HOST': 'db',
-         'PORT': 5432,
+        #  'ENGINE': 'django.db.backends.postgresql',
+        #  'NAME': 'postgres',
+        #  'USER': 'postgres',
+        #  'PASSWORD': 'postgres',
+        #  'HOST': 'db',
+        #  'PORT': 5432,
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'database-1',
+        'USER': 'admin',
+        'PASSWORD': 'Fp5LAgMBbaFH9D7',
+        'HOST': 'database-1.c1ch7jqm7tvt.us-east-1.rds.amazonaws.com',
+        'PORT': 3306,
     }
 }
 
