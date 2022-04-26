@@ -12,10 +12,10 @@ DATABASES = {
         #  'HOST': 'db',
         #  'PORT': 5432,
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'database-1',
+        'NAME': 'poll_db',
         'USER': 'admin',
         'PASSWORD': 'Fp5LAgMBbaFH9D7',
-        'HOST': 'c1ch7jqm7tvt.us-east-1.rds.amazonaws.com',
+        'HOST': 'database-1.c1ch7jqm7tvt.us-east-1.rds.amazonaws.com',
         'PORT': 3306,
     }
 }
