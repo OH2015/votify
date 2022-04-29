@@ -69,7 +69,7 @@ class Account(models.Model):
     # 名
     first_name = models.CharField(max_length=100)
     # プロフィール画像
-    account_image = models.ImageField(upload_to="uploads/profile_images/",default='uploads/profile_images/no_image.png')
+    account_image = models.ImageField(upload_to="uploads/profile_images/",default='uploads/profile_images/no_image.png',null=True)
 
 
     def __str__(self):
