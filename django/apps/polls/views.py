@@ -269,15 +269,17 @@ class  AccountRegistration(TemplateView):
 
         if user == None:
             self.params["message"] = "ユーザの作成に失敗しました"
+            return render(request,"polls/register.html",context=self.params)
             
         acc = Account.objects.create(user=user,last_name=ln,first_name=fn,account_image=img)
         
         if acc == None:
             user.delete()
             self.params["message"] = "ユーザの作成に失敗しました"
+            return render(request,"polls/register.html",context=self.params)
 
         self.params["message"] = "アカウントを作成しました"
-        login(user)
+        login(request,user)
 
         return render(request,"polls/register.html",context=self.params)
 

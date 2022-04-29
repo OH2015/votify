@@ -2,7 +2,7 @@ from .base import *
 import environ
 
 env = environ.Env()
-env.read_env('.env')
+env.read_env(BASE_DIR / '.env')
 
 DEBUG = False
 ALLOWED_HOSTS = ['votify.jp','localhost']
@@ -22,5 +22,5 @@ DATABASES = {
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = 'plbucket'
 AWS_S3_REGION_NAME = 'up-east-1'
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_ACCESS_KEY_ID = env.get_value('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env.get_value('AWS_SECRET_ACCESS_KEY')
