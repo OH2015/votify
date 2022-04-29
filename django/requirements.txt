@@ -4,3 +4,6 @@ djangorestframework
 gunicorn
 Pillow
 mysqlclient
+django-storages
+boto3
+django-environ

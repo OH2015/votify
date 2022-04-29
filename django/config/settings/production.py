@@ -1,16 +1,14 @@
 from .base import *
+import environ
+
+env = environ.Env()
+env.read_env('.env')
 
 DEBUG = False
 ALLOWED_HOSTS = ['votify.jp','localhost']
 
 DATABASES = {
     'default': {
-        #  'ENGINE': 'django.db.backends.postgresql',
-        #  'NAME': 'postgres',
-        #  'USER': 'postgres',
-        #  'PASSWORD': 'postgres',
-        #  'HOST': 'db',
-        #  'PORT': 5432,
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'poll_db',
         'USER': 'admin',
@@ -20,5 +18,9 @@ DATABASES = {
     }
 }
 
-# 画像などのアップロードファイルを保存するパス(デバッグ用)
-MEDIA_ROOT = BASE_DIR / 'media'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_STORAGE_BUCKET_NAME = 'plbucket'
+AWS_S3_REGION_NAME = 'up-east-1'
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
