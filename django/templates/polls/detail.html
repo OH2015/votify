@@ -1,32 +1,101 @@
 {% extends 'base.html' %}
 {% block title %}詳細画面{% endblock %}
 
+<!-- 追加リソース -->
+{% block extra-static %}
+<!-- Vue3 -->
+<script src="https://unpkg.com/vue@3"></script>
+<!-- axios(API非同期通信) -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+{% endblock %}
+
 {% block content %}
-<a class="btn btn-default" href="{% url 'polls:edit_question' question.id %}">編集</a>
-<a class="btn btn-default" href="{% url 'polls:create_choice' question.id %}">選択肢追加</a>
-<form action="{% url 'polls:vote' question.id %}" method="post">
-    {% csrf_token %}
-    <fieldset>
-        
-        <legend><h1>{{ question.question_text }}</h1></legend>
-        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-        {% for choice in question.choice_set.all %}
-            <div class="choice_inline">
-                <div>
-                    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-                </div>
-                <a class="btn btn-default" href="{% url 'polls:edit_choice' choice.id %}">編集</a>
+
+<div id="app">
+    [[ voteStsMsg ]]
+    [[ message ]]{{error_message}}
+
+    <input hidden id="question_id" value="{{ question.id }}">
+    <input hidden id="has_voted" value="{{ has_voted }}">
+
+    <h1>{{ question.question_text }}</h1>
+    <div id="content" class="containner-fluid">
+        <div class="row" v-for="(choice,index) in choices">
+            <div class="col-sm-3">[[ choice.choice_text ]]</div>
+            <div class="col-sm-6">
+                
+                <div class="box-voted" v-bind:style="{ width: width(choice.votes) }"><span>[[ choice.votes ]]</span></div>
+
             </div>
-        {% endfor %}
-    </fieldset>
-    
-    <input type="submit" value="投票">
-</form>
+
+            <div v-if="!has_voted" class="col-sm-2"><button v-bind:id="choice.id" v-on:click="update">投票</button></div>
+        </div>
+    </div>
+
+</div>
+
 <style>
-.choice_inline{
-    display: flex;
-    justify-content: space-between;
-}
+    #content{
+        width:500px;
+    }
+    .box-voted{
+        height: 100%;
+        background-color: deepskyblue;
+    }
+    .box-margin{
+        height: 100%;
+    }
 </style>
+
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                message: "",
+                question_id: 0,
+                has_voted: false,
+                choices: [],
+
+            }
+        }
+        ,methods: {
+            // 更新処理
+            update(event){
+                choice_id = event.target.getAttribute('id')
+                axios.put("http://localhost:8000/api/choices_update/" + choice_id + '/')
+                .then(res => {
+                    this.choices.find(choice => choice.id == choice_id).votes += 1
+                    this.has_voted = true
+                })
+                .catch(error => {
+                    this.message = "投票に失敗しました" + error.response
+                    console.log(error.response)
+                })
+            },
+            // 幅計算
+            width(votes){ return votes * 100 / this.voteSum + '%' }
+        }
+        ,mounted() {
+            // question_id取得
+            this.question_id = document.getElementById('question_id').value;
+            // has_voted取得
+            this.has_voted = document.getElementById('has_voted').value == 'True';
+
+            // 選択肢取得
+            axios.get("http://localhost:8000/api/choices/" + this.question_id)
+            .then(res => {
+                this.choices = res.data
+            })
+            .catch(res => {
+                this.message = "選択肢情報の取得に失敗しました" + res.data
+            })
+        }
+        ,computed: {
+            voteStsMsg(){return this.has_voted ? "投票済です" : ""},
+            voteSum(){ return this.choices.reduce((sum,el) => sum + el.votes,0)}
+        }
+        // djangoのテンプレートエンジンと競合するので{}から[]に変更
+        ,delimiters: ['[[', ']]']
+    }).mount('#app')
+</script>
 {% endblock %}

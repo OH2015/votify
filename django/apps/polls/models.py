@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
+    watched = models.IntegerField(default=0)
     author = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,

@@ -14,51 +14,49 @@
 <div class="heading">
     <button class="btn btn-primary btn-lg" onclick="location.href='{% url "polls:create_question" %}'">投稿</button>
 </div>
+
 <div id="app">
+    <input v-on:keydown.enter="search" v-model="keyword" >
+    <button v-on:click="search" class="btn">検索</button>
     <ul>
         <li v-for="question in questions">
-            [[ question.question_text ]]
-            <!-- <ul>
-                <li v-for="choice in question.choices">
-                    [[ choice ]]
-                </li>
-            </ul> -->
+            <div>
+                <a v-bind:href="'vote/' + question.id + '/'">[[ question.question_text ]]</a>
+                <p>[[ question.watched ]]view</p>
+            </div>
         </li>
     </ul>
-    <question-item></question-item>
-    <button v-on:click="onclick"></button>
-    <!-- [[ questions ]] -->
 </div>
 
 
 <script>
-    Vue.component('question-item', {
-        data() {
-            return {
-            
-                count: 0
-            }
-        },
-        template: `<li>[[count]]</li>`,
-    })
-
-
     Vue.createApp({
         data() {
             return {
+                keyword: "",
                 message: 'Hello Vue!',
                 questions: [],
                 param:"{}", 
                 result:"....",
             }
-        },
-        methods:{
-            onclick = () => {
-                console.log("hoge")
+        }
+        ,methods: {
+            search(){
+                axios.get("http://localhost:8000/api/questions/",{
+                    params:{
+                        keyword: this.keyword
+                    }
+                })
+                .then(res => {
+                    this.questions = res.data
+                })
+                .catch(res => {
+                    this.questions = res.data
+                })
             }
         }
         ,mounted() {
-            axios.get("http://localhost:8000/questions/?format=json")
+            axios.get("http://localhost:8000/api/questions/")
             .then(res => {
                 this.questions = res.data
                 console.log(this.questions)
@@ -71,7 +69,5 @@
         // djangoのテンプレートエンジンと競合するので{}から[]に変更
         ,delimiters: ['[[', ']]']
     }).mount('#app')
-
-
 </script>
 {% endblock %}

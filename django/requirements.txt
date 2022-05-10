@@ -7,3 +7,4 @@ mysqlclient
 django-storages
 boto3
 django-environ
+psycopg2

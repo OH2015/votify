@@ -1,6 +1,5 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from posixpath import split
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 from .models import Account, Question,Choice,UpdateContent
 from django.shortcuts import render
 from django.views import generic
@@ -11,7 +10,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.generic import TemplateView # テンプレートタグ
-from .forms import AccountForm, AddAccountForm # ユーザーアカウントフォーム
+from rest_framework import generics
+from .models import Question
+from .serializers import ChoiceSerializer, QuestionSerializer
+from rest_framework.response import Response
 
 
 class IndexView(generic.ListView):
@@ -40,22 +42,24 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
 
+
+
 # 投票画面
-def vote(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'polls/detail.html', {
+class Vote(TemplateView):
+    # GET(pk:question_id)
+    def get(self, request,pk):
+        question = get_object_or_404(Question, pk=pk)
+        # 閲覧回数をカウント
+        question.watched += 1
+        question.save()
+        
+        has_voted = str(pk) in request.session
+
+        # テンプレートとパラメータを返却
+        return render(request,"polls/detail.html",{
             'question': question,
-            'error_message': "You didn't select a choice.",
+            'has_voted': has_voted,
         })
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
- 
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 
 # 更新履歴
@@ -197,54 +201,6 @@ def edit_choice(request,pk):
     return render(request, 'polls/edit.html', {'form': form})
 
 
-# 
-# API
-# 
-from rest_framework import viewsets,generics
-from .models import Question
-from .serializers import QuestionSerializer
-
-# Questionオブジェクトに関する全てのCRUDページ定義
-# ・/questions × get…対象モデルオブジェクトの全件読み取り
-# ・/questions × post…対象モデルオブジェクトの1件作成
-# ・/questions/<int:pk> × get…該当するIDのモデルオブジェクトの読み取り
-# ・/questions/<int:pk> × put…該当するIDのモデルオブジェクトの更新
-# ・/questions/<int:pk> × patch…該当するIDのモデルオブジェクトの一部更新
-# ・/questions/<int:pk> × delete…該当するIDのモデルオブジェクトの削除
-class QuestionViewSet(viewsets.ModelViewSet):
-    queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
-
-
-# Questionオブジェクトのリストを返すビュー
-class QuestionListAPIView(generics.ListAPIView):
-    queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
-
-
-# Questionオブジェクトの作成ビュー
-class QuestionCreateAPIView(generics.CreateAPIView):
-    serializer_class = QuestionSerializer
-
-
-# 特定のQuestionオブジェクトの参照
-class QuestionRetrieveAPIView(generics.RetrieveAPIView):
-   queryset = Question.objects.all()
-   serializer_class = QuestionSerializer
-
-
-# Questionオブジェクトの更新処理
-class QuestionUpdateAPIView(generics.UpdateAPIView):
-   queryset = Question.objects.all()
-   serializer_class = QuestionSerializer
-
-
-# Questionオブジェクトの削除
-class QuestionDestroyAPIView(generics.DestroyAPIView):
-   queryset = Question.objects.all()
-
-
-
 # アカウント登録
 class  AccountRegistration(TemplateView):
     def __init__(self):
@@ -264,7 +220,7 @@ class  AccountRegistration(TemplateView):
         ln = request.POST.get('last_name')
         fn = request.POST.get('first_name')
         img = request.FILES['image']
-        print(type(img))
+        
         user = User.objects.create_user(id,email,pw)
 
         if user == None:
@@ -288,3 +244,70 @@ class  AccountRegistration(TemplateView):
 def mypage(request):
     acc = Account.objects.get(user=request.user)
     return render(request, 'polls/mypage.html',context={"account":acc})
+
+
+
+# 
+# API
+# 
+
+
+# Questionオブジェクトのリストを返すAPIビュー
+class QuestionListAPIView(generics.ListAPIView):
+    queryset = Question.objects.all()
+
+    # 独自に拡張
+    def list(self,request):
+        keyword = request.query_params.get('keyword')
+
+        if keyword:
+            # キーワードがあれば絞り込み
+            self.queryset = Question.objects.filter(question_text__contains=keyword).all()
+
+        queryset = self.get_queryset()
+        serializer = QuestionSerializer(queryset,many=True)
+        return Response(serializer.data)
+
+
+
+# 特定のQuestionオブジェクトの参照APIビュー
+class QuestionRetrieveAPIView(generics.RetrieveAPIView):
+    # 操作カスタマイズ
+    def get(self,request,pk):
+        # クエリー
+        queryset = Question.objects.get(id=pk)
+        serializer = QuestionSerializer(queryset)
+
+        return Response(serializer.data)
+
+
+
+# Choiceオブジェクトのリストを返すAPIビュー
+class ChoiceListAPIView(generics.ListAPIView):
+
+    # 独自に拡張
+    def list(self,request,pk):
+
+        self.queryset = Choice.objects.filter(question_id=pk).all()
+        queryset = self.get_queryset()
+        serializer = ChoiceSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+
+# 投票用APIビュー
+class ChoiceUpdateAPIView(generics.UpdateAPIView):
+
+    def update(self,request, pk):
+        # 選択肢の投票数カウント
+        choice = Choice.objects.get(id=pk)
+        choice.votes += 1
+        choice.save()
+
+        # セッションに投票済み登録
+        request.session[str(choice.question.id)] = "voted"
+
+
+        return Response(None)
+
+
