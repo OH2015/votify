@@ -3,7 +3,6 @@ django-bootstrap4
 djangorestframework
 gunicorn
 Pillow
-mysqlclient
 django-storages
 boto3
 django-environ
