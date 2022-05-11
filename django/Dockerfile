@@ -4,5 +4,5 @@ WORKDIR /app
 RUN mkdir WORKDIR
 ADD requirements.txt .
 ADD . .
-RUN pip install -r requirements.txt
+RUN /usr/local/bin/python -m pip install --upgrade pip && pip install -r requirements.txt
 
