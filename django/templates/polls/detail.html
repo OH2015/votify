@@ -62,7 +62,9 @@
             // 更新処理
             update(event){
                 choice_id = event.target.getAttribute('id')
-                axios.put("http://localhost:8000/api/choices_update/" + choice_id + '/')
+                axios.put("http://localhost:8000/api/choices_update/" + choice_id + '/', { 
+                    withCredentials: true
+                })
                 .then(res => {
                     this.choices.find(choice => choice.id == choice_id).votes += 1
                     this.has_voted = true
@@ -82,7 +84,9 @@
             this.has_voted = document.getElementById('has_voted').value == 'True';
 
             // 選択肢取得
-            axios.get("http://localhost:8000/api/choices/" + this.question_id)
+            axios.get("http://localhost:8000/api/choices/" + this.question_id, { 
+                withCredentials: true
+            })
             .then(res => {
                 this.choices = res.data
             })
