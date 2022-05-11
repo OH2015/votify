@@ -42,8 +42,7 @@
         }
         ,methods: {
             search(){
-                axios.get("http://localhost:8000/api/questions/",{
-                    withCredentials: true,
+                axios.get("/api/questions/",{
                     params:{
                         keyword: this.keyword
                     }
@@ -57,9 +56,7 @@
             }
         }
         ,mounted() {
-            axios.get("http://localhost:8000/api/questions/", { 
-                withCredentials: true
-            })
+            axios.get("/api/questions/")
             .then(res => {
                 this.questions = res.data
                 console.log(this.questions)
