@@ -62,7 +62,7 @@
             // 更新処理
             update(event){
                 choice_id = event.target.getAttribute('id')
-                axios.put("/api/choices_update/" + choice_id + '/')
+                axios.put('/api/choices_update/' + choice_id + '/')
                 .then(res => {
                     this.choices.find(choice => choice.id == choice_id).votes += 1
                     this.has_voted = true

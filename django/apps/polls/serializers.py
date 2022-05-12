@@ -4,7 +4,6 @@ from .models import Question,Choice
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-
    class Meta:
       model = Question
 

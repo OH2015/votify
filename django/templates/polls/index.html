@@ -16,6 +16,7 @@
 </div>
 
 <div id="app">
+    [[ message ]]
     <input v-on:keydown.enter="search" v-model="keyword" >
     <button v-on:click="search" class="btn">検索</button>
     <ul>
@@ -34,7 +35,7 @@
         data() {
             return {
                 keyword: "",
-                message: 'Hello Vue!',
+                message: '',
                 questions: [],
                 param:"{}", 
                 result:"....",
@@ -51,7 +52,7 @@
                     this.questions = res.data
                 })
                 .catch(res => {
-                    this.questions = res.data
+                    this.message = "検索に失敗しました"
                 })
             }
         }

@@ -69,8 +69,8 @@ class Account(models.Model):
     last_name = models.CharField(max_length=100)
     # 名
     first_name = models.CharField(max_length=100)
-    # プロフィール画像
-    account_image = models.ImageField(upload_to="uploads/profile_images/",default='uploads/profile_images/no_image.png',null=True)
+    # プロフィール画像(S3のコスト節約のため廃止)
+    # account_image = models.ImageField(upload_to="uploads/profile_images/",default='uploads/profile_images/no_image.png',null=True)
 
 
     def __str__(self):

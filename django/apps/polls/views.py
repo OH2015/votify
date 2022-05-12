@@ -14,6 +14,7 @@ from rest_framework import generics
 from .models import Question
 from .serializers import ChoiceSerializer, QuestionSerializer
 from rest_framework.response import Response
+from braces.views import CsrfExemptMixin
 
 
 class IndexView(generic.ListView):
@@ -219,7 +220,6 @@ class  AccountRegistration(TemplateView):
         pw = request.POST.get('pw')
         ln = request.POST.get('last_name')
         fn = request.POST.get('first_name')
-        img = request.FILES['image']
         
         user = User.objects.create_user(id,email,pw)
 
@@ -227,7 +227,7 @@ class  AccountRegistration(TemplateView):
             self.params["message"] = "ユーザの作成に失敗しました"
             return render(request,"polls/register.html",context=self.params)
             
-        acc = Account.objects.create(user=user,last_name=ln,first_name=fn,account_image=img)
+        acc = Account.objects.create(user=user,last_name=ln,first_name=fn)
         
         if acc == None:
             user.delete()
@@ -296,8 +296,8 @@ class ChoiceListAPIView(generics.ListAPIView):
 
 
 # 投票用APIビュー
-class ChoiceUpdateAPIView(generics.UpdateAPIView):
-
+class ChoiceUpdateAPIView(CsrfExemptMixin,generics.UpdateAPIView):
+    authentication_classes = []
     def update(self,request, pk):
         # 選択肢の投票数カウント
         choice = Choice.objects.get(id=pk)

@@ -21,27 +21,3 @@ class ChoiceForm(forms.ModelForm):
         model =  Choice
         
         fields = ('question','choice_text', )
-
-
-
-
-# Djangoユーザ
-class AccountForm(forms.ModelForm):
-    # パスワード入力：非表示対応
-    password = forms.CharField(widget=forms.PasswordInput(),label="パスワード")
-
-    class Meta():
-        # ユーザー認証
-        model = User
-        # フィールド指定
-        fields = ('username','email','password')
-        # フィールド名指定
-        labels = {'username':"ユーザーID",'email':"メール"}
-
-# カスタムユーザ
-class AddAccountForm(forms.ModelForm):
-    class Meta():
-        # モデルクラスを指定
-        model = Account
-        fields = ('last_name','first_name','account_image',)
-        labels = {'last_name':" 姓",'first_name':"名",'account_image':"プロフィール画像",}

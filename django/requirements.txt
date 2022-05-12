@@ -1,9 +1,10 @@
 Django
 django-bootstrap4
 djangorestframework
+django-braces
+django-environ
 gunicorn
 Pillow
 django-storages
 boto3
-django-environ
 psycopg2
