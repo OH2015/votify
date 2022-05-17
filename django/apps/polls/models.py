@@ -9,8 +9,7 @@ from django.contrib.auth.models import User
 
 
 class Question(models.Model):
-    question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
+    title = models.CharField(max_length=200)
     watched = models.IntegerField(default=0)
     author = models.ForeignKey(
         get_user_model(),
@@ -22,15 +21,15 @@ class Question(models.Model):
 
     @admin.display(
         boolean=True,
-        ordering='pub_date',
+        ordering='updated_at',
         description='Published recently?',
     )
     def __str__(self):
-        return self.question_text
+        return self.title
 
     def was_published_recently(self):
         now = timezone.now()
-        return now - datetime.timedelta(days=1) <= self.pub_date <= now
+        return now - datetime.timedelta(days=1) <= self.created_at <= now
 
 
 class Choice(models.Model):

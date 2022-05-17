@@ -9,12 +9,12 @@ class ChoiceInline(admin.TabularInline):
 
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['question_text']}),
-        ('Date information', {'fields': ['pub_date','author'], 'classes': ['collapse']}),
+        (None,               {'fields': ['title']}),
+        ('Date information', {'fields': ['author'], 'classes': ['collapse']}),
     ]
-    list_display = ('question_text', 'pub_date', 'was_published_recently')
-    list_filter = ['pub_date']
-    search_fields = ['question_text']
+    list_display = ('title', 'was_published_recently')
+    
+    search_fields = ['title']
     inlines = [ChoiceInline]
 
 # Register your models here.

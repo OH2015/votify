@@ -11,15 +11,14 @@ import random, string
 def randomname(n):
    return ''.join(random.choices(string.ascii_letters + string.digits, k=n))
 
-def create_question(question_text, days):
+def create_question(title, days):
     """
     与えられた引数でQuestionのインスタンスを生成する(引数の日付は現在時刻との日付差、正が未来、負が過去)
     """
-    time = timezone.now() + datetime.timedelta(days=days)
     username = randomname(10)
     password = randomname(20)
     user = User.objects.create_user(username, username + '@sample.com', password)
-    return Question.objects.create(question_text=question_text, pub_date=time,author=user)
+    return Question.objects.create(title=title,author=user)
 
 class QuestionIndexViewTests(TestCase):
     # １件も質問が存在しない場合
@@ -42,7 +41,7 @@ class QuestionIndexViewTests(TestCase):
         過去の質問が表示されていること
         """
         # 30日前で作成
-        question = create_question(question_text="Past question.", days=-30)
+        question = create_question(title="Past question.", days=-30)
         # http://polls/index/
         response = self.client.get(reverse('polls:index'))
         # 作成した質問がレスポンスオブジェクトに帰ってきていること
@@ -57,7 +56,7 @@ class QuestionIndexViewTests(TestCase):
         未来の質問が表示されていないこと
         """
         # 30日後で作成
-        create_question(question_text="Future question.", days=30)
+        create_question(title="Future question.", days=30)
         # https://polls/index/
         response = self.client.get(reverse('polls:index'))
         # No polls are available.の文字が表示されること
@@ -71,9 +70,9 @@ class QuestionIndexViewTests(TestCase):
         未来の質問が非表示で過去の質問が表示されること
         """
         # 30日前で作成
-        question = create_question(question_text="Past question.", days=-30)
+        question = create_question(title="Past question.", days=-30)
         # 30日後で作成
-        create_question(question_text="Future question.", days=30)
+        create_question(title="Future question.", days=30)
         # https://polls/index
         response = self.client.get(reverse('polls:index'))
         # コンテキストが過去の方だけになっていること
@@ -88,9 +87,9 @@ class QuestionIndexViewTests(TestCase):
         過去の質問が二つとも表示されること
         """
         # 30日前
-        question1 = create_question(question_text="Past question 1.", days=-30)
+        question1 = create_question(title="Past question 1.", days=-30)
         # 5日前
-        question2 = create_question(question_text="Past question 2.", days=-5)
+        question2 = create_question(title="Past question 2.", days=-5)
         # https://polls/index/
         response = self.client.get(reverse('polls:index'))
         # 両方がコンテキストに含まれていること
@@ -107,7 +106,7 @@ class QuestionDetailViewTests(TestCase):
         未来の質問の詳細画面が４０４エラーになること
         """
         # 5日後
-        future_question = create_question(question_text='Future question.', days=5)
+        future_question = create_question(title='Future question.', days=5)
         # https://polls/index
         url = reverse('polls:detail', args=(future_question.id,))
         # レスポンス取得
@@ -121,10 +120,10 @@ class QuestionDetailViewTests(TestCase):
         過去の質問の詳細ページに質問のテキストが含まれていること
         """
         # ５日前の質問
-        past_question = create_question(question_text='Past Question.', days=-5)
+        past_question = create_question(title='Past Question.', days=-5)
         # https://polls/index
         url = reverse('polls:detail', args=(past_question.id,))
         # レスポンス取得
         response = self.client.get(url)
         # レスポンスに作成した質問のテキストが含まれていること
-        self.assertContains(response, past_question.question_text)
+        self.assertContains(response, past_question.title)

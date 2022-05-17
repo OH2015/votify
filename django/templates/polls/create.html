@@ -1,11 +1,86 @@
-<!-- templates/polls/create.html -->
 {% extends 'base.html' %}
-{% block title %}Home{% endblock %}
-<!-- 子・メインコンテンツ -->
+{% block title %}投稿/編集画面{% endblock %}
+<!-- 追加リソース -->
+{% block extra-static %}
+<!-- Vue3 -->
+<script src="https://unpkg.com/vue@3"></script>
+<!-- axios(API非同期通信) -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+{% endblock %}
 {% block content %}
-<form method="POST" class="create_form">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="save btn btn-default">保存</button>
-</form>
+<div id="app">
+    [[ message ]]
+    <form method="post" action="/create_question/">
+        {% csrf_token %}
+        <div class="container-fluid">
+            <div class="row">
+                <h1>タイトル</h1>
+            </div>
+            <div class="row row-question-title">
+                <input type="text" v-model="title" id="question-title" name="question_title" required>
+            </div>
+            
+            
+            <h2 id="choice-header">選択肢</h2>
+            <div id="content" class="containner-fluid">
+                <div class="row" v-for="(choice,index) in choices" :key="index">
+                    <div class="col-sm-12">
+                        <span>[[index+1]]. </span>
+                        <input v-model="choices[index].choice_text" v-bind:name="'choice_title' + index" class="choice-title" required>
+                        <span>　</span>
+                        <input type="button" v-on:click="remove_question(index)" value="削除">
+                        <span>　</span>
+                        <input type="button" v-on:click="add_question(index)" value=" + ">
+                    </div>
+                </div>
+                <input hidden name="choice_num" v-bind:value="choices.length">
+            </div>
+            
+            <input type="submit" class="btn btn-primary" value="投稿" id="btn-submit">
+        </div>
+    </form>
+</div>
+    
+    
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                message: "",
+                title: "",
+                choices: [
+                    {choice_text:""},
+                    {choice_text:""},
+                ],
+                voted:false,
+            }
+        }
+        ,methods: {
+            add_question(index){
+                this.choices.splice(index+1,0,{
+                    choice_text: "",
+                })
+            },
+            remove_question(index){
+                if(this.choices.length <= 1){
+                    return;
+                }
+                this.choices.splice(index,1)
+            },
+        }
+        ,mounted() {
+
+        }
+        // djangoのテンプレートエンジンと競合するので{}から[]に変更
+        ,delimiters: ['[[', ']]']
+    }).mount('#app')
+</script>
+
+<style>
+.row-question-title{margin-bottom: 50px;}
+#question-title{width:300px;}
+#choice-header{margin-bottom: 20px;}
+.choice-title{margin-bottom: 10px;}
+#btn-submit{margin-top: 50px;}
+</style>
 {% endblock %}

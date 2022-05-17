@@ -7,7 +7,7 @@ from .models import Account
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ('question_text', )
+        fields = ('title', )
 
 class ChoiceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

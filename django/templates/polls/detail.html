@@ -18,7 +18,7 @@
     <input hidden id="question_id" value="{{ question.id }}">
     <input hidden id="has_voted" value="{{ has_voted }}">
 
-    <h1>{{ question.question_text }}</h1>
+    <h1>{{ question.title }}</h1>
     <div id="content" class="containner-fluid">
         <div class="row" v-for="(choice,index) in choices">
             <div class="col-sm-3">[[ choice.choice_text ]]</div>

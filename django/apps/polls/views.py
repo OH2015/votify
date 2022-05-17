@@ -4,39 +4,36 @@ from .models import Account, Question,Choice,UpdateContent
 from django.shortcuts import render
 from django.views import generic
 from django.utils import timezone
-from .forms import ChoiceForm, QuestionForm
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.views.generic import TemplateView # テンプレートタグ
 from rest_framework import generics
+from rest_framework.views import APIView
 from .models import Question
 from .serializers import ChoiceSerializer, QuestionSerializer
 from rest_framework.response import Response
 from braces.views import CsrfExemptMixin
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+import json
 
 
-class IndexView(generic.ListView):
+# トップ画面
+class IndexView(TemplateView):
     # これを書かなかったらデフォルトで「polls/Question_list.html」が探される
     template_name = 'polls/index.html'
-    # これも書かなかったらデフォルトでquestion_listという変数名でビューに渡される
-    context_object_name = 'latest_question_list'
-
-    def get_queryset(self):
-        """Return the last five published questions."""
-        return Question.objects.filter(
-            pub_date__lte = timezone.now()
-        ).order_by('-pub_date')[:5]
 
 
+# 詳細画面
 class DetailView(generic.DetailView):
     model = Question
     # これを書かなかったらデフォルトで「polls/Question_detail.html」が探される
     template_name = 'polls/detail.html'
 
     def get_queryset(self):
-        return Question.objects.filter(pub_date__lte=timezone.now())
+        return Question.objects.filter(created_at__lte=timezone.now())
 
 
 class ResultsView(generic.DetailView):
@@ -131,75 +128,20 @@ def CreateUpdateContent(request):
 
         return JsonResponse(data)
 
-# 質問作成
-@login_required
-def create_question(request):
-    if request.method == "POST":
-        form = QuestionForm(request.POST)
-        if form.is_valid():
-            question = form.save(commit=False)
-            question.author = request.user
-            question.pub_date = timezone.now()
-            question.save()
-            return redirect('polls:detail', pk=question.pk)
-    else:
-        form = QuestionForm()
-    return render(request, 'polls/create.html', {'form': form})
 
+# 投稿
+@method_decorator(login_required, name='dispatch')
+class CreateQuestion(TemplateView):
+    def get(self,request):
+        return render(request, 'polls/create.html')
 
-# 選択肢作成
-@login_required
-def create_choice(request,pk):
-    question = get_object_or_404(Question, pk=pk)
-    if request.method == "POST":
-        form = ChoiceForm(request.POST)
-        if form.is_valid():
-            choice = form.save(commit=False)
-            choice.author = request.user
-            choice.save()
-            question = choice.question
-            return redirect('polls:detail', pk=question.pk)
-    else:
-        form = ChoiceForm(initial=dict(question=question))
-    return render(request, 'polls/create.html', {'form': form})
+    def post(self,request):
+        choice_num = request.POST['choice_num']
+        question = Question.objects.create(title=request.POST['question_title'],author=request.user)
+        for i in range(int(choice_num)):
+            Choice.objects.create(choice_text=request.POST[f'choice_title{i}'],question=question)
 
-
-# 質問編集
-@login_required
-def edit_question(request,pk):
-    question = get_object_or_404(Question, pk=pk)
-    
-    if request.method == "POST":
-        form = QuestionForm(request.POST, instance=question)
-        if form.is_valid():
-            question = form.save(commit=False)
-            question.author = request.user
-            question.pub_date = timezone.now()
-            question.save()
-            return redirect('polls:detail', pk=question.id)
-    else:
-        form = QuestionForm(instance=question)
-
-    return render(request, 'polls/edit.html', {'form': form,'question':question})
-
-# 選択肢編集
-@login_required
-def edit_choice(request,pk):
-    choice = get_object_or_404(Choice, pk=pk)
-    
-    if request.method == "POST":
-        form = ChoiceForm(request.POST, instance=choice)
-        if form.is_valid():
-            choice = form.save(commit=False)
-            choice.author = request.user
-            choice.save()
-            question = choice.question
-            print("choiceの更新が完了しました")
-            return redirect('polls:detail', pk=question.id)
-    else:
-        form = ChoiceForm(instance=choice)
-
-    return render(request, 'polls/edit.html', {'form': form})
+        return redirect('polls:index')
 
 
 # アカウント登録
@@ -245,8 +187,6 @@ def mypage(request):
     acc = Account.objects.get(user=request.user)
     return render(request, 'polls/mypage.html',context={"account":acc})
 
-
-
 # 
 # API
 # 
@@ -260,9 +200,9 @@ class QuestionListAPIView(generics.ListAPIView):
     def list(self,request):
         keyword = request.query_params.get('keyword')
 
+        # キーワードがあれば絞り込み
         if keyword:
-            # キーワードがあれば絞り込み
-            self.queryset = Question.objects.filter(question_text__contains=keyword).all()
+            self.queryset = Question.objects.filter(title__contains=keyword).all()
 
         queryset = self.get_queryset()
         serializer = QuestionSerializer(queryset,many=True)
@@ -287,7 +227,6 @@ class ChoiceListAPIView(generics.ListAPIView):
 
     # 独自に拡張
     def list(self,request,pk):
-
         self.queryset = Choice.objects.filter(question_id=pk).all()
         queryset = self.get_queryset()
         serializer = ChoiceSerializer(queryset, many=True)
@@ -309,5 +248,4 @@ class ChoiceUpdateAPIView(CsrfExemptMixin,generics.UpdateAPIView):
 
 
         return Response(None)
-
 
