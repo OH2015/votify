@@ -12,7 +12,6 @@
 {% block content %}
 
 <div id="app">
-    [[ voteStsMsg ]]
     [[ message ]]{{error_message}}
     <form method="post" action="{% url 'polls:vote' question.id %}">
         {% csrf_token %}

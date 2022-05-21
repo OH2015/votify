@@ -10,18 +10,17 @@
 {% endblock %}
 
 {% block content %}
-
 <div id="app">
-    [[ voteStsMsg ]]
     [[ message ]]{{error_message}}
-
+    [[comment_draft]]
+    
     <input hidden id="question_id" value="{{ question.id }}">
-    <input hidden id="has_voted" value="{{ has_voted }}">
+    {% csrf_token %}
 
     <h1>{{ question.title }}</h1>
     <p>投稿者: {{ question.author.username }}</p>
 
-    <div id="content" class="containner-fluid">
+    <div id="content-choices" class="containner-fluid">
         <div class="row" v-for="(choice,index) in choices">
             <div class="col-sm-3">[[ choice.choice_text ]]</div>
             <div class="col-sm-6">
@@ -29,10 +28,22 @@
             </div>
         </div>
     </div>
+
+    <div id="content-comments" class="containner-fluid">
+        <input type="text" v-model="comment_draft">
+        <input type="button" v-on:click="postComment()" value="投稿">
+
+        <div class="row" v-for="( comment,index) in comments">
+            <div class="col-sm-12">
+                [[ comment.user ]]
+                [[ comment.text ]]
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
-    #content{
+    .container-fluid{
         width:500px;
         margin-top: 30px;
     }
@@ -51,22 +62,23 @@
             return {
                 message: "",
                 question_id: 0,
-                has_voted: false,
+                comment_draft: "",
                 choices: [],
+                comments: [],
             }
         }
         ,methods: {
-            // 更新処理
-            update(event){
-                choice_id = event.target.getAttribute('id')
-                axios.put('/api/choices_update/' + choice_id + '/')
+            // コメント投稿
+            postComment(event){
+                axios.defaults.xsrfCookieName = 'csrftoken'
+                axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+                // axios.defaults.headers.common = "application/json"
+                axios.post('/post_comment/' + this.question_id + '/',{text: 'aaaaa'})
                 .then(res => {
-                    this.choices.find(choice => choice.id == choice_id).votes += 1
-                    this.has_voted = true
+                    this.comment_draft = ""
                 })
                 .catch(error => {
-                    this.message = "投票に失敗しました" + error.response
-                    console.log(error.response)
+                    this.message = "コメントの投稿に失敗しました" + error.response
                 })
             },
             // 幅計算
@@ -75,8 +87,6 @@
         ,mounted() {
             // question_id取得
             this.question_id = document.getElementById('question_id').value;
-            // has_voted取得
-            this.has_voted = document.getElementById('has_voted').value == 'True';
 
             // 選択肢取得
             axios.get("/api/choices/" + this.question_id)
@@ -86,9 +96,16 @@
             .catch(res => {
                 this.message = "選択肢情報の取得に失敗しました" + res.data
             })
+            // コメント取得
+            axios.get("/api/comments/" + this.question_id)
+            .then(res => {
+                this.comments = res.data
+            })
+            .catch(res => {
+                this.message = "コメントの取得に失敗しました" + res.data
+            })
         }
         ,computed: {
-            voteStsMsg(){return this.has_voted ? "投票済です" : ""},
             voteSum(){ return this.choices.reduce((sum,el) => sum + el.votes,0)}
         }
         // djangoのテンプレートエンジンと競合するので{}から[]に変更

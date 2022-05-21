@@ -1,6 +1,6 @@
 from posixpath import split
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Account, Question,Choice,UpdateContent
+from .models import Account, Question,Choice,UpdateContent,Comment
 from django.shortcuts import render
 from django.views import generic
 from django.utils import timezone
@@ -12,7 +12,7 @@ from django.views.generic import TemplateView # テンプレートタグ
 from rest_framework import generics
 from rest_framework.views import APIView
 from .models import Question
-from .serializers import ChoiceSerializer, QuestionSerializer
+from .serializers import ChoiceSerializer, QuestionSerializer, CommentSerializer
 from rest_framework.response import Response
 from braces.views import CsrfExemptMixin
 from django.contrib.auth.decorators import login_required
@@ -25,28 +25,6 @@ class IndexView(TemplateView):
     # これを書かなかったらデフォルトで「polls/Question_list.html」が探される
     template_name = 'polls/index.html'
 
-
-# 詳細画面
-class DetailView(generic.DetailView):
-    model = Question
-    # これを書かなかったらデフォルトで「polls/Question_detail.html」が探される
-    template_name = 'polls/detail.html'
-
-    def get_queryset(self):
-        return Question.objects.filter(created_at__lte=timezone.now())
-
-
-# 投票結果画面
-class ResultView(TemplateView):
-    def get(self,request,pk):
-        return render(request,"polls/detail.html",{'question': Question.objects.get(pk=pk)})
-
-    def post(self,request,pk):
-        choice = Choice.objects.get(id=request.POST['choice'])
-        choice.votes += 1
-        return render(request,"polls/detail.html",{'question': Question.objects.get(pk=pk)})
-
-        
 
 # 投票画面
 class Vote(TemplateView):
@@ -74,6 +52,15 @@ class Vote(TemplateView):
         request.session[str(choice.question.id)] = "voted"
         return render(request,"polls/detail.html",{'question': get_object_or_404(Question, pk=pk)})
 
+# コメント投稿API
+# @method_decorator(csrf_exempt, name='dispatch')
+class PostComment(TemplateView):
+
+    def post(self,request,pk):
+        text = request.POST.get('text')
+        print(request.POST)
+        Comment.objects.create(question_id=pk,user=request.user,text=text)
+        return Response(None)
 
 # 更新履歴
 def UpdateHistory(request):
@@ -189,6 +176,17 @@ class ChoiceListAPIView(generics.ListAPIView):
         self.queryset = Choice.objects.filter(question_id=pk).all()
         queryset = self.get_queryset()
         serializer = ChoiceSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+
+# Commentオブジェクトのリストを返すAPIビュー
+class CommentListAPIView(generics.ListAPIView):
+    # 独自に拡張
+    def list(self,request,pk):
+        self.queryset = Comment.objects.filter(question_id=pk).all()
+        queryset = self.get_queryset()
+        serializer = CommentSerializer(queryset, many=True)
 
         return Response(serializer.data)
 
