@@ -1,0 +1,17 @@
+<!-- templates/my_questions.html -->
+{% extends 'base.html' %}
+<!-- タイトル -->
+{% block title %}My質問一覧{% endblock %}
+<!-- 追加リソース -->
+{% block extra-static %}
+{% endblock %}
+<!-- 子・メインコンテンツ -->
+{% block content %}
+{% for question in questions %}
+    <div>
+        {{question.title}}
+    </div>
+{% endfor %}
+
+
+{% endblock %}

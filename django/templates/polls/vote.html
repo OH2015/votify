@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}詳細画面{% endblock %}
+
+<!-- 追加リソース -->
+{% block extra-static %}
+<!-- Vue3 -->
+<script src="https://unpkg.com/vue@3"></script>
+<!-- axios(API非同期通信) -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div id="app">
+    [[ voteStsMsg ]]
+    [[ message ]]{{error_message}}
+    <form method="post" action="{% url 'polls:vote' question.id %}">
+        {% csrf_token %}
+        <input hidden id="question_id" value="{{ question.id }}">
+        
+        <h1>{{ question.title }}</h1>
+        <p>投稿者: {{ question.author.username }}</p>
+        
+        <div id="choices-container">
+            <ol>
+                <li v-for="(choice,index) in choices">
+                    <div>
+                        <input type="radio" name="choice" :value="choice.id" :id="choice.id">
+                        <label :for="choice.id">[[ choice.choice_text ]]</label>
+                    </div>
+                </li>
+            </ol>
+        </div>
+        <button>投票</button>
+    </form>
+</div>
+
+<style>
+    #choices-container{
+        margin-left:30px;
+        width:500px;
+        margin-top: 30px;
+    }
+</style>
+
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                message: "",
+                question_id: 0,
+                choices: [],
+            }
+        }
+        ,methods: {
+        }
+        ,mounted() {
+            // question_id取得
+            this.question_id = document.getElementById('question_id').value;
+
+            // 選択肢取得
+            axios.get("/api/choices/" + this.question_id)
+            .then(res => {
+                this.choices = res.data
+            })
+            .catch(res => {
+                this.message = "選択肢情報の取得に失敗しました" + res.data
+            })
+        }
+        ,computed: {
+            voteSum(){ return this.choices.reduce((sum,el) => sum + el.votes,0)}
+        }
+        // djangoのテンプレートエンジンと競合するので{}から[]に変更
+        ,delimiters: ['[[', ']]']
+    }).mount('#app')
+</script>
+{% endblock %}

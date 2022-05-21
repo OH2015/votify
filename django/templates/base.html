@@ -38,6 +38,8 @@
                     <div class="header-user-menu">
                         <ul>
                             <li><a href="{% url 'polls:mypage' %}">{{ user.username }}</a></li>
+                            <li><a href='{% url "polls:create_question" %}'>投稿</a></li>
+                            <li><a href='{% url "polls:my_questions" %}'>My質問一覧</a></li>
                             <li><a href="{% url 'accounts:Logout' %}">ログアウト</a></li>
                         </ul>
                     </div>

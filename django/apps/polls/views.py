@@ -36,11 +36,17 @@ class DetailView(generic.DetailView):
         return Question.objects.filter(created_at__lte=timezone.now())
 
 
-class ResultsView(generic.DetailView):
-    model = Question
-    template_name = 'polls/results.html'
+# 投票結果画面
+class ResultView(TemplateView):
+    def get(self,request,pk):
+        return render(request,"polls/detail.html",{'question': Question.objects.get(pk=pk)})
 
+    def post(self,request,pk):
+        choice = Choice.objects.get(id=request.POST['choice'])
+        choice.votes += 1
+        return render(request,"polls/detail.html",{'question': Question.objects.get(pk=pk)})
 
+        
 
 # 投票画面
 class Vote(TemplateView):
@@ -54,79 +60,24 @@ class Vote(TemplateView):
         has_voted = str(pk) in request.session
 
         # テンプレートとパラメータを返却
-        return render(request,"polls/detail.html",{
-            'question': question,
-            'has_voted': has_voted,
-        })
+        if has_voted:
+            return render(request,"polls/detail.html",{'question': question})
+        else:
+            return render(request,"polls/vote.html",{'question': question,})
+
+    def post(self,request,pk):
+        choice = Choice.objects.get(id=request.POST['choice'])
+        choice.votes += 1
+        choice.save()
+
+        # セッションに投票済み登録
+        request.session[str(choice.question.id)] = "voted"
+        return render(request,"polls/detail.html",{'question': get_object_or_404(Question, pk=pk)})
 
 
 # 更新履歴
 def UpdateHistory(request):
-    contents = UpdateContent.objects.all
-    return render(request,"polls/update_history.html",{"contents":contents})
-
-
-# 更新履歴削除 JSON返却
-def DeleteUpdateContent(request):
-    # POST
-    if request.method == "POST" and request.POST.get('id',None):
-        id = request.POST.get('id',None)
-        try:
-            content = UpdateContent.objects.get(pk=id)
-        except UpdateContent.DoesNotExist:
-            content = None
-        else:
-            content.delete()
-        
-        data = {
-            "category":"delete",
-            "id": id,
-        }
-
-        return JsonResponse(data)
-
-# 更新履歴編集 JSON返却
-def EditUpdateContent(request):
-    # POST
-    if request.method == "POST" and request.POST.get('id',None):
-        id = request.POST.get('id',None)
-        # content_text = request.POST.get('content_text',None)
-        is_completed = request.POST.get('is_completed',None)
-        try:
-            content = UpdateContent.objects.get(pk=id)
-        except UpdateContent.DoesNotExist:
-            content = None
-        else:
-            # content.content_text = content_text
-            content.is_completed = True
-            content.save()
-        
-        data = {
-            "category":"edit",
-            "id": id,
-            "content_text": content.content_text,
-            "is_completed":content.is_completed,
-            "updated_at":content.updated_at,
-        }
-
-        return JsonResponse(data)
-
-# 更新履歴作成 JSON返却
-def CreateUpdateContent(request):
-    # POST
-    if request.method == "POST" and request.POST.get('content_text',None):
-        # 登録
-        content = UpdateContent.objects.create(content_text=request.POST.get('content_text',None))
-        
-        data = {
-            "category":"create",
-            "id": content.id,
-            "content_text": content.content_text,
-            "is_completed":content.is_completed,
-            "updated_at":content.updated_at,
-        }
-
-        return JsonResponse(data)
+    return render(request,"polls/update_history.html",{"contents":UpdateContent.objects.all})
 
 
 # 投稿
@@ -187,6 +138,15 @@ def mypage(request):
     acc = Account.objects.get(user=request.user)
     return render(request, 'polls/mypage.html',context={"account":acc})
 
+
+# My投稿一覧
+@method_decorator(login_required, name='dispatch')
+class  MyQuestions(TemplateView):
+    def get(self,request):
+        user = request.user
+        questions = Question.objects.filter(author=user).all()
+        return render(request,"polls/my_questions.html",{"questions":questions})
+
 # 
 # API
 # 
@@ -224,7 +184,6 @@ class QuestionRetrieveAPIView(generics.RetrieveAPIView):
 
 # Choiceオブジェクトのリストを返すAPIビュー
 class ChoiceListAPIView(generics.ListAPIView):
-
     # 独自に拡張
     def list(self,request,pk):
         self.queryset = Choice.objects.filter(question_id=pk).all()
@@ -233,19 +192,4 @@ class ChoiceListAPIView(generics.ListAPIView):
 
         return Response(serializer.data)
 
-
-# 投票用APIビュー
-class ChoiceUpdateAPIView(CsrfExemptMixin,generics.UpdateAPIView):
-    authentication_classes = []
-    def update(self,request, pk):
-        # 選択肢の投票数カウント
-        choice = Choice.objects.get(id=pk)
-        choice.votes += 1
-        choice.save()
-
-        # セッションに投票済み登録
-        request.session[str(choice.question.id)] = "voted"
-
-
-        return Response(None)
 

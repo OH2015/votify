@@ -3,12 +3,6 @@
 
 {% block content %}
 
-{% if error_message != '' %}
-    <p>{{error_message}}</p>
-{%endif%}
-<input id="create_text" name="content_text">
-<button id="create_button">追加</button>
-
 <div class="not_completed">
     <p>更新予定</p>
     <table id="tb_plan">
@@ -18,8 +12,6 @@
                 <tr id="tr{{cont.id}}">
                     <td id="td_content_text{{cont.id}}">{{cont.content_text}}</td>
                     <td id="td_updated_at{{cont.id}}">{{cont.updated_at}}</td>
-                    <td id="td_complete{{cont.id}}"><button onclick="ajax('edit',{{cont.id}});">完了</button></td>
-                    <td id="td_delete{{cont.id}}"><button onclick="ajax('delete',{{cont.id}});">削除</button></td>
                 </tr>
             {%endif%}
         {% endfor %}
@@ -34,7 +26,6 @@
                 <tr id="tr{{cont.id}}">
                     <td id="td_content_text{{cont.id}}">{{cont.content_text}}</td>
                     <td id="td_updated_at{{cont.id}}">{{cont.updated_at}}</td>
-                    <td id="td_delete{{cont.id}}"><button onclick="ajax('delete',{{cont.id}});">削除</button></td>
                 </tr>
             {%endif%}
         {% endfor %}
@@ -58,110 +49,5 @@ th{
 }
 </style>
 
-<!-- JavaScript -->
-<script>
-// ajaxでPOSTする際にCSRFで必要な処理
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
 
-var csrftoken = getCookie('csrftoken');
-
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-
-$.ajaxSetup({
-    beforeSend: function (xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});
-
-function ajax(category,id,content_text=''){
-    url = ''
-    if (category == 'create'){
-        url = "{% url 'polls:update_content_create' %}"
-    }else if(category == 'delete'){
-        url = "{% url 'polls:update_content_delete' %}"
-    }else{
-        url = "{% url 'polls:update_content_edit' %}"
-    }
-    $.ajax({
-        url: url,
-        type: 'POST',
-        cache: false, 
-        dataType:'json',
-        data: {"id":id,"content_text":content_text},
-    })
-    .done(function(data){ // 通信が成功したときの処理 
-        category = data.category
-        id = data.id
-        visible = data.visible
-        content_text = data.content_text
-        is_completed = data.is_completed
-        updated_at = new Date(data.updated_at);
-        updated_at = formatDate(updated_at,'YYYY年MM月DD日HH:mm')
-        
-        if (category == 'create'){
-            // 新規作成
-            $("#tb_plan").append("" +
-            "<tr id=\"tr" + id +  "\">\n" +
-            "   <td id=\"td_content_text" + id +  "\">" + content_text +  "</td>\n" +
-            "   <td id=\"td_updated_at" + id +  "\"></td>\n" +
-            "   <td id=\"td_complete" + id +  "\"><button onclick=\"ajax('edit'," + id +  ");\">完了</button></td>\n" +
-            "   <td id=\"td_delete" + id +  "\"><button onclick=\"ajax('delete'," + id +  ");\">削除</button></td>\n" +
-            "</tr>" );
-            $("#td_updated_at" + id).text(updated_at);
-        }else if (category == 'delete'){
-            // 削除
-            $("#tr" + id).remove();
-        }else{
-            // 移動
-            $("#tr" + id).appendTo("#tb_history");
-            $("#td_updated_at" + id).text(updated_at);
-            $("#td_complete" + id).remove();
-        }
-        
-        console.log("category:" + category + "\nid:" + id + "\ncontent_text:" + content_text + "\nupdated_at:" + updated_at);
-    })
-    .fail(function(data){ // 通信が失敗したときの処理
-
-    })
-    .always(function(data){ //通信の成否にかかわらず実行する処理 
-    });
-}
-
-// 追加ボタン押下時
-$("#create_button").click(function(){
-    content_text=$('#create_text').val();
-    if (content_text != ""){
-        ajax('create',0,content_text);
-    }
-});
-
-function formatDate(date, format) {
-    format = format.replace(/YYYY/, date.getFullYear());
-    format = format.replace(/MM/, date.getMonth() + 1);
-    format = format.replace(/DD/, date.getDate());
-    format = format.replace(/HH/, date.getHours());
-    format = format.replace(/mm/, date.getMinutes());
-
-    return format;
-}
-</script>
 {% endblock %}
