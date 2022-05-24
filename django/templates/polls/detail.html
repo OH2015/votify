@@ -19,7 +19,7 @@
     <h1>{{ question.title }}</h1>
     <p>投稿者: {{ question.author.username }}</p>
     <p>{{ question.explanation }}</p>
-    <p>{{ question.genre.title|default_if_none:"ジャンルなし" }}</p>
+    <p>{{ question.genre.title }}</p>
 
     <div id="content-choices" class="containner-fluid">
         <div class="row" v-for="(choice,index) in choices">
@@ -50,7 +50,7 @@
                         [[ comment.text ]]
                     </div>
                     <div class="comment-footer">
-                        いいね: 1 返信
+                        
                     </div>
                 </div>
             </div>
@@ -81,8 +81,6 @@
         height: 100%;
     }
     .box{
-        /* padding: 0px;
-        border:1px solid gray; */
         height:30px;
     }
     .row{

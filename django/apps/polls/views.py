@@ -66,7 +66,13 @@ class CreateQuestion(TemplateView):
 
     def post(self,request):
         choice_num = request.POST['choice_num']
-        genre = Genre.objects.get(title=request.POST['genre'])
+        genre = request.POST['genre']
+        print(genre)
+        if genre:
+            genre = Genre.objects.get(title=genre) 
+        else:
+            genre = None
+            
         question = Question.objects.create(title=request.POST['question_title'],explanation=request.POST['explanation'],genre=genre,author=request.user)
         for i in range(int(choice_num)):
             Choice.objects.create(choice_text=request.POST[f'choice_title{i}'],question=question)
@@ -159,8 +165,6 @@ class QuestionRetrieveAPIView(generics.RetrieveAPIView):
 class ChoiceListAPIView(generics.ListAPIView):
     # 独自に拡張
     def list(self,request,pk):
-        sort = request.query_params.get('sort')
-        print(sort)
         if request.query_params.get('sort'):
             self.queryset = Choice.objects.order_by('-votes').filter(question_id=pk).all()
         else:
