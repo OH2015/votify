@@ -17,29 +17,69 @@
         {% csrf_token %}
         <input hidden id="question_id" value="{{ question.id }}">
         
-        <h1>{{ question.title }}</h1>
-        <p>投稿者: {{ question.author.username }}</p>
+        <h2>{{ question.title }}</h2>
+        <div id="question-info">
+            <p>投稿者: {{ question.author.username }}</p>
+            <p>{{ question.explanation }}</p>
+            <p>{{ question.genre.title|default_if_none:"ジャンルなし" }}</p>
+        </div>
         
         <div id="choices-container">
-            <ol>
+            <ul>
                 <li v-for="(choice,index) in choices">
                     <div>
                         <input type="radio" name="choice" :value="choice.id" :id="choice.id">
                         <label :for="choice.id">[[ choice.choice_text ]]</label>
                     </div>
                 </li>
-            </ol>
+            </ul>
+            <button id="btn-submit" class="btn btn-primary">投票</button>
         </div>
-        <button>投票</button>
     </form>
 </div>
 
 <style>
-    #choices-container{
-        margin-left:30px;
-        width:500px;
-        margin-top: 30px;
+    #question-info{
+        font-size: 10px;
+        margin-bottom: 30px;
     }
+    #choices-container{
+        width:100%;
+        text-align: center;
+    }
+    li{
+        margin-bottom: 10px;
+    }
+    input[type=radio]{
+        display: none;
+    }
+    input[type="radio"]:checked + label {
+        background: #31A9EE;/* マウス選択時の背景色を指定する */
+        color: #ffffff; /* マウス選択時のフォント色を指定する */
+    }
+    label {
+        display: block; /* ブロックレベル要素化する */
+        height: 45px; /* ボックスの高さを指定する */
+        padding-left: 5px; /* ボックス内左側の余白を指定する */
+        padding-right: 15px; /* ボックス内御右側の余白を指定する */
+        color: #b20000; /* フォントの色を指定 */
+        text-align: center; /* テキストのセンタリングを指定する */
+        font-weight: bold;
+        line-height: 30px; /* 行の高さを指定する */
+        cursor: pointer; /* マウスカーソルの形（リンクカーソル）を指定する */
+        border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
+        border-radius: 5px; /* 角丸を指定する */
+    }
+    label:hover{
+        background-color: #31A9EE;
+    }
+    /* #btn-submit{
+        width:100px;
+        height:60px;
+        font-weight: bold;
+        border-radius: 10px;
+        text-align: center;
+    } */
 </style>
 
 <script>

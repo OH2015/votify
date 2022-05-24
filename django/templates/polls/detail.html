@@ -12,40 +12,66 @@
 {% block content %}
 <div id="app">
     [[ message ]]{{error_message}}
-    [[comment_draft]]
     
     <input hidden id="question_id" value="{{ question.id }}">
     {% csrf_token %}
 
     <h1>{{ question.title }}</h1>
     <p>投稿者: {{ question.author.username }}</p>
+    <p>{{ question.explanation }}</p>
+    <p>{{ question.genre.title|default_if_none:"ジャンルなし" }}</p>
 
     <div id="content-choices" class="containner-fluid">
         <div class="row" v-for="(choice,index) in choices">
             <div class="col-sm-3">[[ choice.choice_text ]]</div>
-            <div class="col-sm-6">
-                <div class="box-voted" v-bind:style="{ width: width(choice.votes) }"><span>[[ choice.votes ]]</span></div>
+            <div class="col-sm-6 box">
+                <div class="box-voted" v-bind:style="{ width: width(choice.votes) }"></div>
             </div>
+            <div class="col-sm-3">[[ choice.votes ]]票</div>
         </div>
     </div>
 
     <div id="content-comments" class="containner-fluid">
-        <input type="text" v-model="comment_draft">
-        <input type="button" v-on:click="postComment()" value="投稿">
+        <div class="comment-form">
+            <textarea cols="30" rows="4" id="comment-draft" v-model="comment_draft"></textarea>
+            <br>
+            <button v-on:click="postComment()">コメント</button>
+        </div>
 
         <div class="row" v-for="( comment,index) in comments">
-            <div class="col-sm-12">
-                [[ comment.user ]]
-                [[ comment.text ]]
+            <div class="comment-container">
+                <div class="comment-icon"><i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i></div>
+                <div class="comment-contents">
+                    <div class="comment-header">
+                        <h3>[[ comment.user.username ]]</h3>
+                        <span>1ヶ月前</span>
+                    </div>
+                    <div class="comment-text">
+                        [[ comment.text ]]
+                    </div>
+                    <div class="comment-footer">
+                        いいね: 1 返信
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 </div>
 
 <style>
-    .container-fluid{
-        width:500px;
-        margin-top: 30px;
+    #content-choices{
+        width:100%;
+        margin-top: 50px;
+    }
+    #content-comments{
+        border-top: solid gray 1px;
+        width: 100%;
+        margin-top:50px;
+    }
+    .comment-form{
+        padding-bottom: 30px;
+        border-bottom: solid gray 1px;
     }
     .box-voted{
         height: 100%;
@@ -54,6 +80,21 @@
     .box-margin{
         height: 100%;
     }
+    .box{
+        /* padding: 0px;
+        border:1px solid gray; */
+        height:30px;
+    }
+    .row{
+        margin-top: 20px;
+    }
+
+    .comment-form{margin-top:30px;}
+    #comment-draft{max-width: 500px;width:100%;}
+    .comment-container{
+        display: flex;
+    }
+    .comment-icon{margin-right: 10px;}
 </style>
 
 <script>
@@ -70,15 +111,30 @@
         ,methods: {
             // コメント投稿
             postComment(event){
+                if(!this.comment_draft)return;
+
                 axios.defaults.xsrfCookieName = 'csrftoken'
                 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
-                // axios.defaults.headers.common = "application/json"
-                axios.post('/post_comment/' + this.question_id + '/',{text: 'aaaaa'})
+                
+                let params = new URLSearchParams();
+                params.append('text', this.comment_draft);
+                axios.post('/post_comment/' + this.question_id + '/', params)
                 .then(res => {
                     this.comment_draft = ""
+                    this.getComments()
                 })
                 .catch(error => {
                     this.message = "コメントの投稿に失敗しました" + error.response
+                })
+            },
+            // コメント取得
+            getComments(){
+                axios.get("/api/comments/" + this.question_id)
+                .then(res => {
+                    this.comments = res.data
+                })
+                .catch(res => {
+                    this.message = "コメントの取得に失敗しました" + res.data
                 })
             },
             // 幅計算
@@ -89,7 +145,9 @@
             this.question_id = document.getElementById('question_id').value;
 
             // 選択肢取得
-            axios.get("/api/choices/" + this.question_id)
+            axios.get("/api/choices/" + this.question_id,{
+                    params:{sort: true}
+            })
             .then(res => {
                 this.choices = res.data
             })
@@ -97,13 +155,7 @@
                 this.message = "選択肢情報の取得に失敗しました" + res.data
             })
             // コメント取得
-            axios.get("/api/comments/" + this.question_id)
-            .then(res => {
-                this.comments = res.data
-            })
-            .catch(res => {
-                this.message = "コメントの取得に失敗しました" + res.data
-            })
+            this.getComments()
         }
         ,computed: {
             voteSum(){ return this.choices.reduce((sum,el) => sum + el.votes,0)}

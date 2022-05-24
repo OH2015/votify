@@ -12,16 +12,24 @@
     [[ message ]]
     <form method="post" action="/create_question/">
         {% csrf_token %}
-        <div class="container-fluid">
-            <div class="row">
-                <h1>タイトル</h1>
-            </div>
-            <div class="row row-question-title">
-                <input type="text" v-model="title" id="question-title" name="question_title" required>
-            </div>
+        <div id="container">
+
+            <h3>タイトル</h3>
+            <input type="text" id="question-title" name="question_title" required>
+            
+            <h3>説明(省略可)</h3>
+            <textarea c=20 r=3 name="explanation" placeholder="説明文"></textarea>
+            
+            <h3>ジャンル</h3>
+            <select name="genre">
+                <option></option>
+                {% for genre in genres %}
+                <option>{{ genre.title }}</option>
+                {% endfor %}
+            </select>
             
             
-            <h2 id="choice-header">選択肢</h2>
+            <h3>選択肢</h3>
             <div id="content" class="containner-fluid">
                 <div class="row" v-for="(choice,index) in choices" :key="index">
                     <div class="col-sm-12">
@@ -47,7 +55,6 @@
         data() {
             return {
                 message: "",
-                title: "",
                 choices: [
                     {choice_text:""},
                     {choice_text:""},
@@ -77,10 +84,22 @@
 </script>
 
 <style>
-.row-question-title{margin-bottom: 50px;}
-#question-title{width:300px;}
-#choice-header{margin-bottom: 20px;}
-.choice-title{margin-bottom: 10px;}
-#btn-submit{margin-top: 50px;}
+#container{
+    max-width: 600px;
+    width:100%;
+    padding: 40px;
+    background-color: #CFF6F6;
+    border: solid 1px gray;
+    border-radius: 10px;
+}
+#question-title{
+    width:300px;
+}
+.choice-title{
+    margin-bottom: 10px;
+}
+#btn-submit{
+    margin-top: 50px;
+}
 </style>
 {% endblock %}

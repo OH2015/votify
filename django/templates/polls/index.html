@@ -18,13 +18,27 @@
     <button v-on:click="search" class="btn">検索</button>
     <ul>
         <li v-for="question in questions">
-            <div>
-                <a v-bind:href="'vote/' + question.id + '/'">[[ question.title ]]</a>
-                <p>[[ question.watched ]]view</p>
-            </div>
+            <a v-bind:href="'vote/' + question.id + '/'" class="question">
+                <p>[[ question.title ]]</p>
+                <p class="watched">[[ question.watched ]]view</p>
+            </a>
         </li>
     </ul>
 </div>
+
+<style>
+    .question{
+        display: block;
+        text-decoration: none;
+        border: solid 1px gray;
+        border-radius: 10px;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+    .watched{
+        text-align: right;
+    }
+</style>
 
 
 <script>

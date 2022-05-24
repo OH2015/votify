@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Question,Choice
+from .models import Genre, Question,Choice,Comment
 from .models import Account
 
 class ChoiceInline(admin.TabularInline):
@@ -17,6 +17,11 @@ class QuestionAdmin(admin.ModelAdmin):
     search_fields = ['title']
     inlines = [ChoiceInline]
 
+
 # Register your models here.
 admin.site.register(Question,QuestionAdmin)
 admin.site.register(Account)
+admin.site.register(Genre)
+admin.site.register(Comment)
+
+    

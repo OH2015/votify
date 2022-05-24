@@ -1,23 +1,18 @@
 from posixpath import split
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Account, Question,Choice,UpdateContent,Comment
+from .models import Account, Genre, Question,Choice,UpdateContent,Comment
 from django.shortcuts import render
-from django.views import generic
-from django.utils import timezone
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
 from django.views.generic import TemplateView # テンプレートタグ
 from rest_framework import generics
-from rest_framework.views import APIView
 from .models import Question
 from .serializers import ChoiceSerializer, QuestionSerializer, CommentSerializer
 from rest_framework.response import Response
-from braces.views import CsrfExemptMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-import json
+from django.http import JsonResponse
+from django.core import serializers
 
 
 # トップ画面
@@ -53,14 +48,10 @@ class Vote(TemplateView):
         return render(request,"polls/detail.html",{'question': get_object_or_404(Question, pk=pk)})
 
 # コメント投稿API
-# @method_decorator(csrf_exempt, name='dispatch')
 class PostComment(TemplateView):
-
     def post(self,request,pk):
-        text = request.POST.get('text')
-        print(request.POST)
-        Comment.objects.create(question_id=pk,user=request.user,text=text)
-        return Response(None)
+        Comment.objects.create(question_id=pk,user=request.user,text=request.POST.get('text'))
+        return JsonResponse({})
 
 # 更新履歴
 def UpdateHistory(request):
@@ -71,11 +62,12 @@ def UpdateHistory(request):
 @method_decorator(login_required, name='dispatch')
 class CreateQuestion(TemplateView):
     def get(self,request):
-        return render(request, 'polls/create.html')
+        return render(request, 'polls/create.html', {'genres':Genre.objects.all()})
 
     def post(self,request):
         choice_num = request.POST['choice_num']
-        question = Question.objects.create(title=request.POST['question_title'],author=request.user)
+        genre = Genre.objects.get(title=request.POST['genre'])
+        question = Question.objects.create(title=request.POST['question_title'],explanation=request.POST['explanation'],genre=genre,author=request.user)
         for i in range(int(choice_num)):
             Choice.objects.create(choice_text=request.POST[f'choice_title{i}'],question=question)
 
@@ -85,9 +77,7 @@ class CreateQuestion(TemplateView):
 # アカウント登録
 class  AccountRegistration(TemplateView):
     def __init__(self):
-        self.params = {
-            "message":"",
-        }
+        self.params = {"message":""}
 
     # Get処理
     def get(self,request):
@@ -155,8 +145,6 @@ class QuestionListAPIView(generics.ListAPIView):
         serializer = QuestionSerializer(queryset,many=True)
         return Response(serializer.data)
 
-
-
 # 特定のQuestionオブジェクトの参照APIビュー
 class QuestionRetrieveAPIView(generics.RetrieveAPIView):
     # 操作カスタマイズ
@@ -167,13 +155,18 @@ class QuestionRetrieveAPIView(generics.RetrieveAPIView):
 
         return Response(serializer.data)
 
-
-
 # Choiceオブジェクトのリストを返すAPIビュー
 class ChoiceListAPIView(generics.ListAPIView):
     # 独自に拡張
     def list(self,request,pk):
-        self.queryset = Choice.objects.filter(question_id=pk).all()
+        sort = request.query_params.get('sort')
+        print(sort)
+        if request.query_params.get('sort'):
+            self.queryset = Choice.objects.order_by('-votes').filter(question_id=pk).all()
+        else:
+            self.queryset = Choice.objects.filter(question_id=pk).all()
+
+
         queryset = self.get_queryset()
         serializer = ChoiceSerializer(queryset, many=True)
 
@@ -184,7 +177,7 @@ class ChoiceListAPIView(generics.ListAPIView):
 class CommentListAPIView(generics.ListAPIView):
     # 独自に拡張
     def list(self,request,pk):
-        self.queryset = Comment.objects.filter(question_id=pk).all()
+        self.queryset = Comment.objects.order_by('-created_at').filter(question_id=pk).all()
         queryset = self.get_queryset()
         serializer = CommentSerializer(queryset, many=True)
 

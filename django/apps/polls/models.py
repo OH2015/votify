@@ -7,15 +7,19 @@ from django.utils import timezone
 from django.contrib import admin
 from django.contrib.auth.models import User
 
+# ジャンル
+class Genre(models.Model):
+    title = models.CharField(max_length=20)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+# 質問
 class Question(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=20)
+    explanation = models.CharField(max_length=200)
     watched = models.IntegerField(default=0)
-    author = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.CASCADE,
-    )
-    # 作成/更新日時
+    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE )
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -35,7 +39,7 @@ class Question(models.Model):
 # コメント
 class Comment(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.CharField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
