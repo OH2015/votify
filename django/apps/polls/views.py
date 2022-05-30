@@ -1,5 +1,5 @@
-from posixpath import split
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Q
 from .models import Account, Genre, Question,Choice,UpdateContent,Comment
 from django.shortcuts import render
 from django.contrib.auth import login
@@ -12,13 +12,18 @@ from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
-from django.core import serializers
+
 
 
 # トップ画面
 class IndexView(TemplateView):
     # これを書かなかったらデフォルトで「polls/Question_list.html」が探される
     template_name = 'polls/index.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['genres'] = Genre.objects.all()
+        return ctx
 
 
 # 投票画面
@@ -130,10 +135,10 @@ class  MyQuestions(TemplateView):
         questions = Question.objects.filter(author=user).all()
         return render(request,"polls/my_questions.html",{"questions":questions})
 
+
 # 
 # API
 # 
-
 
 # Questionオブジェクトのリストを返すAPIビュー
 class QuestionListAPIView(generics.ListAPIView):
@@ -141,14 +146,21 @@ class QuestionListAPIView(generics.ListAPIView):
 
     # 独自に拡張
     def list(self,request):
+        condition1 = Q()
+        condition2 = Q()
         keyword = request.query_params.get('keyword')
+        genre = request.query_params.get('genre')
 
         # キーワードがあれば絞り込み
         if keyword:
-            self.queryset = Question.objects.filter(title__contains=keyword).all()
+            condition1 = Q(title__contains=keyword)
 
-        queryset = self.get_queryset()
-        serializer = QuestionSerializer(queryset,many=True)
+        # ジャンルがあれば絞り込み
+        if genre:
+            condition2 = Q(genre=genre)
+
+        self.queryset = Question.objects.filter(condition1 & condition2).all()
+        serializer = QuestionSerializer(self.get_queryset(),many=True)
         return Response(serializer.data)
 
 # 特定のQuestionオブジェクトの参照APIビュー

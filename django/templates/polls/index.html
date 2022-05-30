@@ -14,8 +14,22 @@
 
 <div id="app">
     [[ message ]]
+    <p>ジャンル</p>
+    <select v-model="genre" v-on:change="search">
+        <option></option>
+        {% for genre in genres %}
+        <option value="{{ genre.id }}">{{ genre.title }}</option>
+        {% endfor %}
+    </select><br>
+    <p>キーワード</p>
     <input v-on:keydown.enter="search" v-model="keyword" >
-    <button v-on:click="search" class="btn">検索</button>
+    <input type="button" v-on:click="search" class="search-btn" value="🔍">
+
+    <div class="questions-header">
+        <select id="select_sort" v-on:change="sort">
+            <option value="0" selected>閲覧回数の多い順</option>
+        </select>↑↓
+    </div>
     <ul>
         <li v-for="question in questions">
             <a v-bind:href="'vote/' + question.id + '/'" class="question">
@@ -27,6 +41,13 @@
 </div>
 
 <style>
+    /* .search-btn{
+        vertical-align: center;
+        height: 30px;
+    } */
+    .questions-header{
+        text-align: right;
+    }
     .question{
         display: block;
         text-decoration: none;
@@ -45,38 +66,45 @@
     Vue.createApp({
         data() {
             return {
-                keyword: "",
                 message: '',
+                keyword: "",
+                genre: "",
                 questions: [],
-                param:"{}", 
-                result:"....",
             }
         }
         ,methods: {
             search(){
                 axios.get("/api/questions/",{
                     params:{
-                        keyword: this.keyword
+                        keyword: this.keyword,
+                        genre: this.genre,
                     }
                 })
                 .then(res => {
                     this.questions = res.data
+                    this.sort()
                 })
                 .catch(res => {
                     this.message = "検索に失敗しました"
                 })
+            },
+            sort(){
+                sort_idx = document.getElementById("select_sort").value;
+                if(sort_idx == 0){
+                    this.questions.sort((a,b) => {
+                        if (a.watched > b.watched){
+                            return -1;
+                        }else if (a.watched < b.watched){
+                            return 1;
+                        }else{
+                            return 0;
+                        }
+                    })
+                }
             }
         }
         ,mounted() {
-            axios.get("/api/questions/")
-            .then(res => {
-                this.questions = res.data
-                console.log(this.questions)
-            })
-            .catch(res => {
-                this.questions = res.data
-                console.log(this.questions)
-            })
+            this.search();
         }
         // djangoのテンプレートエンジンと競合するので{}から[]に変更
         ,delimiters: ['[[', ']]']
