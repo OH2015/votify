@@ -14,15 +14,13 @@
 
 <div id="app">
     [[ message ]]
-    <p>ジャンル</p>
-    <select v-model="genre" v-on:change="search">
-        <option></option>
+    <select v-model="genre" v-on:change="search" class="select-genre">
+        <option value="">全て</option>
         {% for genre in genres %}
         <option value="{{ genre.id }}">{{ genre.title }}</option>
         {% endfor %}
-    </select><br>
-    <p>キーワード</p>
-    <input v-on:keydown.enter="search" v-model="keyword" >
+    </select>
+    <input v-on:keydown.enter="search" v-model="keyword" placeholder="検索ワードを入力">
     <input type="button" v-on:click="search" class="search-btn" value="🔍">
 
     <div class="questions-header">
@@ -34,18 +32,19 @@
         <li v-for="question in questions">
             <a v-bind:href="'vote/' + question.id + '/'" class="question">
                 <p>[[ question.title ]]</p>
-                <p class="watched">[[ question.watched ]]view</p>
+                <p class="watched">[[ ( question.genre || {} ).title ]]   [[ question.watched ]]view</p>
             </a>
         </li>
     </ul>
 </div>
 
 <style>
-    /* .search-btn{
-        vertical-align: center;
-        height: 30px;
-    } */
+    .select-genre{
+        margin-right: 50px;
+    }
     .questions-header{
+        margin-top: 20px;
+        margin-bottom: 10px;
         text-align: right;
     }
     .question{
@@ -57,8 +56,10 @@
         margin-bottom: 10px;
     }
     .watched{
+        font-size: 15px;
         text-align: right;
     }
+
 </style>
 
 

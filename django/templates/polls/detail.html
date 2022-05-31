@@ -16,14 +16,15 @@
     <input hidden id="question_id" value="{{ question.id }}">
     {% csrf_token %}
 
-    <h1>{{ question.title }}</h1>
+    <h2>{{ question.title }}</h2>
     <p>投稿者: {{ question.author.username }}</p>
-    <p>{{ question.explanation }}</p>
-    <p>{{ question.genre.title }}</p>
+    <p>作成日: {{ question.created_at }}</p>
+    <p>ジャンル:{{ question.genre.title }}</p>
+    <p class="explanation">{{ question.explanation }}</p>
 
     <div id="content-choices" class="containner-fluid">
         <div class="row" v-for="(choice,index) in choices">
-            <div class="col-sm-3">[[ choice.choice_text ]]</div>
+            <div class="col-sm-3 choice-text">[[ choice.choice_text ]]</div>
             <div class="col-sm-6 box">
                 <div class="box-voted" v-bind:style="{ width: width(choice.votes) }"></div>
             </div>
@@ -60,9 +61,15 @@
 </div>
 
 <style>
+    .explanation{
+        padding-left: 50px;
+    }
     #content-choices{
         width:100%;
         margin-top: 50px;
+    }
+    .choice-text{
+        font-size: 20px;
     }
     #content-comments{
         border-top: solid gray 1px;
@@ -75,6 +82,7 @@
     }
     .box-voted{
         height: 100%;
+        border-radius: 10px;
         background-color: deepskyblue;
     }
     .box-margin{
@@ -136,7 +144,7 @@
                 })
             },
             // 幅計算
-            width(votes){ return votes * 100 / this.voteSum + '%' }
+            width(votes){ return (this.voteSum != 0 ? (votes * 100 / this.voteSum) : 0) + '%' }
         }
         ,mounted() {
             // question_id取得

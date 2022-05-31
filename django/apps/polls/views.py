@@ -36,9 +36,10 @@ class Vote(TemplateView):
         question.save()
         
         has_voted = str(pk) in request.session
+        is_owner = request.user == question.author
 
         # テンプレートとパラメータを返却
-        if has_voted:
+        if has_voted or is_owner:
             return render(request,"polls/detail.html",{'question': question})
         else:
             return render(request,"polls/vote.html",{'question': question,})
@@ -132,7 +133,7 @@ def mypage(request):
 class  MyQuestions(TemplateView):
     def get(self,request):
         user = request.user
-        questions = Question.objects.filter(author=user).all()
+        questions = Question.objects.order_by('updated_at').filter(author=user).all()
         return render(request,"polls/my_questions.html",{"questions":questions})
 
 

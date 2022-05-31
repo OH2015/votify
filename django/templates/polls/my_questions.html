@@ -7,11 +7,29 @@
 {% endblock %}
 <!-- 子・メインコンテンツ -->
 {% block content %}
+<ul>
 {% for question in questions %}
-    <div>
-        {{question.title}}
-    </div>
+    <li>
+        <a href="{% url 'polls:vote' question.pk %}" class="question">
+            <p>{{question.title}}</p>
+            <p class="watched">{{question.genre.title}}   {{question.watched}}view</p>
+        </a>
+    </li>
 {% endfor %}
-
+</ul>
+<style>
+    .question{
+        display: block;
+        text-decoration: none;
+        border: solid 1px gray;
+        border-radius: 10px;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+    .watched{
+        font-size: 15px;
+        text-align: right;
+    }
+</style>
 
 {% endblock %}
