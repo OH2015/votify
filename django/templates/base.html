@@ -37,9 +37,9 @@
                     <i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i>
                     <div class="header-user-menu">
                         <ul>
-                            <li><a href="{% url 'polls:mypage' %}">{{ user.username }}</a></li>
+                            <li><a href='{% url "polls:account_top" user.username %}'>{{ user.username }}</a></li>
+                            <li><a href="{% url 'polls:account_info' user.username %}">個人情報</a></li>
                             <li><a href='{% url "polls:create_question" %}'>投稿</a></li>
-                            <li><a href='{% url "polls:my_questions" %}'>My質問一覧</a></li>
                             <li><a href="{% url 'accounts:Logout' %}">ログアウト</a></li>
                         </ul>
                     </div>

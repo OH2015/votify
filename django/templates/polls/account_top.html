@@ -1,12 +1,22 @@
 <!-- templates/my_questions.html -->
 {% extends 'base.html' %}
 <!-- タイトル -->
-{% block title %}My質問一覧{% endblock %}
+{% block title %}プロフィール{% endblock %}
 <!-- 追加リソース -->
 {% block extra-static %}
 {% endblock %}
 <!-- 子・メインコンテンツ -->
 {% block content %}
+<div class="account-outer">
+    <div class="account">
+        <i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i>
+        <p>{{account.user.username}}</p>
+        <p>投稿数：{{account.user.question_set.all|length }} </p>
+        <p>{{ account.profile }}</p>
+
+    </div>
+</div>
+
 <ul>
 {% for question in questions %}
     <li>
@@ -18,6 +28,15 @@
 {% endfor %}
 </ul>
 <style>
+    .account-outer{
+        min-height: 100px;
+        width: 100%;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    .account{
+        max-width: 1000px;
+    }
     .question{
         display: block;
         text-decoration: none;

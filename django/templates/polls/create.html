@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}投稿/編集画面{% endblock %}
+{% load static %}
 <!-- 追加リソース -->
 {% block extra-static %}
 <!-- Vue3 -->
@@ -10,41 +11,35 @@
 {% block content %}
 <div id="app">
     [[ message ]]
-    <form method="post" action="/create_question/">
+    <form method="post" action="/create_question/" onkeydown="return event.key != 'Enter';">
         {% csrf_token %}
         <div id="container">
-
-            <h3>タイトル</h3>
-            <input type="text" id="question-title" name="question_title" required>
             
-            <h3>説明(省略可)</h3>
-            <textarea c=20 r=3 name="explanation" placeholder="説明文"></textarea>
-            
-            <h3>ジャンル</h3>
-            <select name="genre">
-                <option></option>
+            <select name="genre" id="genre">
+                <option value="">ジャンルなし</option>
                 {% for genre in genres %}
                 <option>{{ genre.title }}</option>
                 {% endfor %}
             </select>
+            <br>
+            <input type="text" id="title" name="question_title" placeholder="タイトル" required>            
+            <br>
+            <textarea c=100 r=3 id="explanation" name="explanation" placeholder="説明文（省略可）"></textarea>
             
-            
-            <h3>選択肢</h3>
             <div id="content" class="containner-fluid">
+                <input class="button btn-add" type="button" v-on:click="add_choice(-1)" value="追加">
                 <div class="row" v-for="(choice,index) in choices" :key="index">
                     <div class="col-sm-12">
-                        <span>[[index+1]]. </span>
-                        <input v-model="choices[index].choice_text" v-bind:name="'choice_title' + index" class="choice-title" required>
+                        <input type="search" @keydown.enter="add_choice(index)" v-model="choices[index].choice_text" :name="'choice_title' + index" :id="'choice' + index" class="choice-title" required>
                         <span>　</span>
-                        <input type="button" v-on:click="remove_question(index)" value="削除">
-                        <span>　</span>
-                        <input type="button" v-on:click="add_question(index)" value=" + ">
+                        <img class="trash" src="{% static 'polls/images/trash-alt-solid.svg' %}" v-on:click="remove_choice(index)">
                     </div>
                 </div>
                 <input hidden name="choice_num" v-bind:value="choices.length">
             </div>
-            
-            <input type="submit" class="btn btn-primary" value="投稿" id="btn-submit">
+            <div class="submit-row">
+                <input type="submit" class="button btn-submit" value="投稿">
+            </div>
         </div>
     </form>
 </div>
@@ -63,12 +58,19 @@
             }
         }
         ,methods: {
-            add_question(index){
-                this.choices.splice(index+1,0,{
-                    choice_text: "",
-                })
+            add_choice(index){
+                // 一番下,新規の時は行を追加
+                if(index == this.choices.length - 1 || index == -1){
+                    this.choices.splice(index+1,0,{
+                        choice_text: "",
+                    })
+                }
+                // １つ下を選択
+                this.$nextTick(function() {
+                    document.getElementById('choice' + (index+1)).select();
+                });
             },
-            remove_question(index){
+            remove_choice(index){
                 if(this.choices.length <= 2){
                     return;
                 }
@@ -84,6 +86,15 @@
 </script>
 
 <style>
+input[type="search"] {
+    -webkit-appearance: searchfield;
+}
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: searchfield-cancel-button;
+}
+textarea{
+    width:100%;
+}
 #container{
     max-width: 600px;
     width:100%;
@@ -92,14 +103,42 @@
     border: solid 1px gray;
     border-radius: 10px;
 }
-#question-title{
-    width:300px;
+#title{
+    width:100%;
+    margin-bottom: 20px;
+}
+#explanation{
+    margin-bottom: 20px;
+}
+#genre{
+    margin-bottom: 20px;
 }
 .choice-title{
+    width: 80%;
     margin-bottom: 10px;
 }
-#btn-submit{
+.trash{
+    width: 25px;
+    height: 25px;
+}
+.trash:hover{
+    cursor: pointer;
+}
+.btn-add{
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 10px;
+}
+.btn-submit{
+    border-radius: 10px;
+    background-color: #FF8C00;
+    font-weight: bold;
+    width: 200px;
+    padding: 10px;
     margin-top: 50px;
+}
+.submit-row{
+    text-align: center;
 }
 </style>
 {% endblock %}

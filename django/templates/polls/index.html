@@ -26,13 +26,15 @@
     <div class="questions-header">
         <select id="select_sort" v-on:change="sort">
             <option value="0" selected>閲覧回数の多い順</option>
-        </select>↑↓
+        </select>
+        <span class="reverse" v-on:click="reverse">↑↓</span>
     </div>
     <ul>
         <li v-for="question in questions">
             <a v-bind:href="'vote/' + question.id + '/'" class="question">
                 <p>[[ question.title ]]</p>
-                <p class="watched">[[ ( question.genre || {} ).title ]]   [[ question.watched ]]view</p>
+                
+                <p class="watched">[[ question.author.username ]] [[ ( question.genre || {} ).title ]]   [[ question.watched ]]view</p>
             </a>
         </li>
     </ul>
@@ -47,6 +49,9 @@
         margin-bottom: 10px;
         text-align: right;
     }
+    .reverse:hover{
+        cursor: pointer;
+    }
     .question{
         display: block;
         text-decoration: none;
@@ -54,6 +59,9 @@
         border-radius: 10px;
         padding: 5px;
         margin-bottom: 10px;
+    }
+    .question:hover{
+        background-color: #CCFFFF;
     }
     .watched{
         font-size: 15px;
@@ -102,6 +110,9 @@
                         }
                     })
                 }
+            },
+            reverse(){
+                this.questions.reverse();
             }
         }
         ,mounted() {

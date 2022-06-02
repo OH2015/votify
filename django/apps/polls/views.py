@@ -121,20 +121,24 @@ class  AccountRegistration(TemplateView):
 
         return render(request,"polls/register.html",context=self.params)
 
-
-# マイページ
-def mypage(request):
-    acc = Account.objects.get(user=request.user)
-    return render(request, 'polls/mypage.html',context={"account":acc})
-
-
-# My投稿一覧
-@method_decorator(login_required, name='dispatch')
-class  MyQuestions(TemplateView):
-    def get(self,request):
-        user = request.user
+# アカウントトップ画面
+class  AccountTop(TemplateView):
+    # Get処理
+    def get(self,request,username):
+        user = get_object_or_404(User, username=username)
+        account = get_object_or_404(Account, user=user)
         questions = Question.objects.order_by('updated_at').filter(author=user).all()
-        return render(request,"polls/my_questions.html",{"questions":questions})
+        return render(request,"polls/account_top.html",{'account':account,"questions":questions})
+
+# 個人情報参照画面
+class  AccountInfo(TemplateView):
+    # Get処理
+    def get(self,request,username):
+        user = get_object_or_404(User, username=username)
+        account = get_object_or_404(Account, user=user)
+        return render(request, 'polls/account_info.html',context={"account":account})
+
+    
 
 
 # 

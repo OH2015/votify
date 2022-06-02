@@ -1,7 +1,7 @@
 from dataclasses import field
 from email.policy import default
 from rest_framework import serializers
-from .models import Question,Choice,Comment,Genre
+from .models import Account, Question,Choice,Comment,Genre
 from django.contrib.auth.models import User
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -16,7 +16,14 @@ class UserSerializer(serializers.ModelSerializer):
 
       fields = '__all__'
 
+class AccountSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = Account
+
+      fields = '__all__'
+
 class QuestionSerializer(serializers.ModelSerializer):
+   author = UserSerializer()
    genre = GenreSerializer()
 
    class Meta:
@@ -25,6 +32,7 @@ class QuestionSerializer(serializers.ModelSerializer):
       fields = '__all__'
 
 class ChoiceSerializer(serializers.ModelSerializer):
+
    class Meta:
        model = Choice
        fields = '__all__'

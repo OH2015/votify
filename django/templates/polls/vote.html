@@ -19,35 +19,35 @@
         
         <h2>{{ question.title }}</h2>
         <div id="question-info">
-            <p>投稿者: {{ question.author.username }}</p>
+            <a href="{% url 'polls:account_top' question.author.username %}">{{ question.author.username }}</a>
             <p>{{ question.explanation }}</p>
             <p>{{ question.genre.title|default_if_none:"ジャンルなし" }}</p>
         </div>
         
-        <div id="choices-container">
-            <ul>
-                <li v-for="(choice,index) in choices">
-                    <div>
-                        <input type="radio" name="choice" :value="choice.id" :id="choice.id">
-                        <label :for="choice.id">[[ choice.choice_text ]]</label>
-                    </div>
-                </li>
-            </ul>
-            <button id="btn-submit" class="btn btn-primary">投票</button>
+        <div id="choices-container" class="container container-fluid">
+            <div v-for="(choice,index) in choices" class="choice row">
+                <input type="radio" name="choice" :value="choice.id" :id="choice.id">
+                <label :for="choice.id">[[ choice.choice_text ]]</label>
+            </div>
+            <button class="btn-submit">投票</button>
         </div>
     </form>
 </div>
 
 <style>
+    #app{
+        text-align: center;
+    }
     #question-info{
-        font-size: 10px;
+        font-size: 14px;
         margin-bottom: 30px;
     }
     #choices-container{
         width:100%;
+        max-width: 500px;
         text-align: center;
     }
-    li{
+    .choice{
         margin-bottom: 10px;
     }
     input[type=radio]{
@@ -60,9 +60,10 @@
     label {
         display: block; /* ブロックレベル要素化する */
         height: 45px; /* ボックスの高さを指定する */
+        
         padding-left: 5px; /* ボックス内左側の余白を指定する */
         padding-right: 15px; /* ボックス内御右側の余白を指定する */
-        color: #b20000; /* フォントの色を指定 */
+        /* color: #b20000; フォントの色を指定 */
         text-align: center; /* テキストのセンタリングを指定する */
         font-weight: bold;
         line-height: 30px; /* 行の高さを指定する */
@@ -73,13 +74,14 @@
     label:hover{
         background-color: #31A9EE;
     }
-    /* #btn-submit{
-        width:100px;
-        height:60px;
-        font-weight: bold;
+    .btn-submit{
         border-radius: 10px;
-        text-align: center;
-    } */
+        background-color: #FFFF99;
+        font-weight: bold;
+        width: 200px;
+        padding: 10px;
+        margin-top: 50px;
+    }
 </style>
 
 <script>
