@@ -11,7 +11,7 @@ jobs:
                 command: echo "CircleCI Test"
     deploy:
         machine:
-            image: circleci/classic:edge
+            image: ubuntu-2204:2022.04.1
         steps:
             - checkout
             # CircleCI に登録した秘密鍵を呼び出す
