@@ -1,7 +1,7 @@
 from dataclasses import field
 from email.policy import default
 from rest_framework import serializers
-from .models import Account, Question,Choice,Comment,Genre
+from .models import Account, Question,Choice,Comment,Genre, Vote
 from django.contrib.auth.models import User
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -32,10 +32,14 @@ class QuestionSerializer(serializers.ModelSerializer):
       fields = '__all__'
 
 class ChoiceSerializer(serializers.ModelSerializer):
+   votes = serializers.SerializerMethodField()
 
    class Meta:
        model = Choice
-       fields = '__all__'
+       fields = ('id','question', 'choice_text', 'votes', 'created_at', 'updated_at')
+
+   def get_votes(self, instance):
+        return Vote.objects.filter(choice=instance).all().count()
 
 
 class CommentSerializer(serializers.ModelSerializer):

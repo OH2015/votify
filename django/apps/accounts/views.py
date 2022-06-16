@@ -61,3 +61,4 @@ def guest_login(request):
     else:
         login(request, guest_user)
     return redirect('polls:index')
+    

@@ -1,12 +1,11 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
-from .models import Account, Genre, Question,Choice,UpdateContent,Comment
+from .models import Account, Genre, Question,Choice,Vote,UpdateContent,Comment
 from django.shortcuts import render
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView # テンプレートタグ
 from rest_framework import generics
-from .models import Question
 from .serializers import ChoiceSerializer, QuestionSerializer, CommentSerializer
 from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
@@ -27,7 +26,7 @@ class IndexView(TemplateView):
 
 
 # 投票画面
-class Vote(TemplateView):
+class VoteView(TemplateView):
     # GET(pk:question_id)
     def get(self, request,pk):
         question = get_object_or_404(Question, pk=pk)
@@ -35,23 +34,44 @@ class Vote(TemplateView):
         question.watched += 1
         question.save()
         
-        has_voted = str(pk) in request.session
+        # ログイン中は投票データを確認
+        if request.user.is_authenticated:
+            has_voted = Vote.objects.filter(user=request.user,question=question).exists()
+        # ログインしていないときはセッションデータを確認
+        else:
+            has_voted = str(pk) in request.session
+
         is_owner = request.user == question.author
 
-        # テンプレートとパラメータを返却
+        # 投票済みなら結果画面を表示
         if has_voted or is_owner:
             return render(request,"polls/detail.html",{'question': question})
+        # 未投票なら投票画面を表示
         else:
-            return render(request,"polls/vote.html",{'question': question,})
+            return render(request,"polls/vote.html",{'question': question})
 
     def post(self,request,pk):
         choice = Choice.objects.get(id=request.POST['choice'])
-        choice.votes += 1
-        choice.save()
+        # ログイン中ならVoteレコード追加
+        if request.user.is_authenticated:
+            Vote.objects.create(question=choice.question,choice=choice,user=request.user)
+        # ログインしていない場合は、匿名で投票
+        else:
+            Vote.objects.create(question=choice.question,choice=choice,user=None)
 
         # セッションに投票済み登録
         request.session[str(choice.question.id)] = "voted"
         return render(request,"polls/detail.html",{'question': get_object_or_404(Question, pk=pk)})
+
+# 再投票画面
+class RevoteView(TemplateView):
+    # GET(pk:question_id)
+    def get(self, request,pk):
+        vote = Vote.objects.get(user=request.user,question=pk)
+        vote.delete()
+
+        return redirect('polls:vote',pk)
+
 
 # コメント投稿API
 class PostComment(TemplateView):
@@ -130,19 +150,57 @@ class  AccountTop(TemplateView):
         questions = Question.objects.order_by('updated_at').filter(author=user).all()
         return render(request,"polls/account_top.html",{'account':account,"questions":questions})
 
+    # Post処理
+    def post(self,request,username):
+        user = get_object_or_404(User, username=username)        
+        id = request.POST.get('id')
+        question = Question.objects.get(id=id)
+        question.delete()
+        return redirect('polls:account_top',user.username)
+
+
+
 # 個人情報参照画面
 class  AccountInfo(TemplateView):
     # Get処理
     def get(self,request,username):
         user = get_object_or_404(User, username=username)
         account = get_object_or_404(Account, user=user)
+        if request.user == user:
+            return render(request, 'polls/account_info.html',context={"account":account})
+        else:
+            return render(request, 'accounts/login.html')
+
+    # Post処理
+    def post(self,request,username):
+        user = get_object_or_404(User, username=username)
+        account = get_object_or_404(Account, user=user)
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        last_name = request.POST.get('last_name')
+        first_name = request.POST.get('first_name')
+        profile = request.POST.get('profile')
+        if username:
+            user.username = username
+        if email:
+            user.email = email
+        if last_name:
+            account.last_name = last_name
+        if first_name:
+            account.first_name = first_name
+        if profile:
+            account.profile = profile
+
+        user.save()
+        account.save()
+
         return render(request, 'polls/account_info.html',context={"account":account})
 
     
 
 
 # 
-# API
+# DRF
 # 
 
 # Questionオブジェクトのリストを返すAPIビュー
@@ -182,11 +240,7 @@ class QuestionRetrieveAPIView(generics.RetrieveAPIView):
 class ChoiceListAPIView(generics.ListAPIView):
     # 独自に拡張
     def list(self,request,pk):
-        if request.query_params.get('sort'):
-            self.queryset = Choice.objects.order_by('-votes').filter(question_id=pk).all()
-        else:
-            self.queryset = Choice.objects.filter(question_id=pk).all()
-
+        self.queryset = Choice.objects.filter(question_id=pk).all()
 
         queryset = self.get_queryset()
         serializer = ChoiceSerializer(queryset, many=True)

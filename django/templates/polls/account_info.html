@@ -4,56 +4,80 @@
 {% block title %}新規登録{% endblock %}
 <!-- 追加リソース -->
 {% block extra-static %}
+<!-- Vue3 -->
+<script src="https://unpkg.com/vue@3"></script>
+<!-- axios(API非同期通信) -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 {% load static %}
 <link href="{% static 'polls/css/register.css' %}" rel="stylesheet" type="text/css">
 {% endblock %}
 <!-- 子・メインコンテンツ -->
 {% block content %}
-<form enctype="multipart/form-data" method="post" action="{% url 'polls:register' %}">
-    {% csrf_token %}
-    <div class="container container-fluid">
-        <div class="row account">
-            <div class="col-sm-10">アカウント名:<br>
-                {{ account.user.username }}
-            </div>
-            <div class="col-sm-2">
-                <button>編集</button>
-            </div>
+<div id="app" class="container container-fluid">
+    <div class="row account">
+        <div class="col-sm-10">
+            <p id="username-title">ユーザ名:</p>
+            <p id="username">{{ account.user.username }}</p>
         </div>
-        <div class="row e-mail">
-            <div class="col-sm-10">メール:<br>
-                {{ account.user.email }}
-            </div>
-            <div class="col-sm-2">
-                <button>編集</button>
-            </div>
-        </div>
-        <div class="row last_name">
-            <div class="col-sm-10">姓:<br>
-                {{ account.last_name }}
-            </div>
-            <div class="col-sm-2">
-                <button>編集</button>
-            </div>
-        </div>
-        <div class="row first_name">
-            <div class="col-sm-10">名:<br>
-                {{ account.first_name }}
-            </div>
-            <div class="col-sm-2">
-                <button>編集</button>
-            </div>
-        </div>
-        <div class="row profile">
-            <div class="col-sm-10">プロフィール:<br>
-                {{ account.profile }}
-            </div>
-            <div class="col-sm-2">
-                <button>編集</button>
-            </div>
+        <div class="col-sm-2">
+            <label class="open" for="pop-up" @click="open('username')">編集</label>
         </div>
     </div>
-</form>
+    <div class="row e-mail">
+        <div class="col-sm-10">
+            <p id="email-title">メール:</p>
+            <p id="email">{{ account.user.email }}</p>
+        </div>
+        <div class="col-sm-2">
+            <label class="open" for="pop-up"  @click="open('email')">編集</label>
+        </div>
+    </div>
+    <div class="row last_name">
+        <div class="col-sm-10">
+            <p id="last_name-title">姓:</p>
+            <p id="last_name">{{ account.last_name }}</p>
+        </div>
+        <div class="col-sm-2">
+            <label class="open" for="pop-up" @click="open('last_name')">編集</label>
+        </div>
+    </div>
+    <div class="row first_name">
+        <div class="col-sm-10">
+            <p id="first_name-title">名:</p>
+            <p id="first_name">{{ account.first_name }}</p>
+        </div>
+        <div class="col-sm-2">
+            <label class="open" for="pop-up" @click="open('first_name')">編集</label>
+        </div>
+    </div>
+    <div class="row profile">
+        <div class="col-sm-10">
+            <p id="profile-title">プロフィール:</p>
+            <p id="profile">{{ account.profile }}</p>
+        </div>
+        <div class="col-sm-2">
+            <label class="open" for="pop-up" @click="open('profile')">編集</label>
+        </div>
+    </div>
+    <input type="checkbox" id="pop-up">
+    <div class="overlay">
+        <div class="window">
+            <label class="close" for="pop-up">×</label>
+            <form method="post" action="{% url 'polls:account_info' account.user.username %}">
+                {% csrf_token %}
+                <p>[[ title ]]</p>
+                <input name="username" v-if="edit == 'username'" :value="value">
+                <input name="email" v-else-if="edit == 'email'" :value="value">
+                <input name="last_name" v-else-if="edit == 'last_name'" :value="value">
+                <input name="first_name" v-else-if="edit == 'first_name'" :value="value">
+                <textarea name="profile" v-else-if="edit == 'profile'" :value="value"></textarea>
+
+                <button>更新</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <style>
     button{
         min-width: 50px;
@@ -63,7 +87,85 @@
         margin-bottom: 20px;
         border-bottom: solid 1px gray;
     }
+
+    .open {
+        cursor:pointer; /* マウスオーバーでカーソルの形状を変えることで、クリックできる要素だとわかりやすいように */
+    }
+    #pop-up {
+        display: none; /* label でコントロールするので input は非表示に */
+    }
+    .overlay {
+        display: none; /* input にチェックが入るまでは非表示に */
+    }
+    #pop-up:checked + .overlay {
+        display: block;
+        z-index: 9999;
+        background-color: #00000070;
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        top: 0;
+        left: 0;
+    }
+    .window {
+        width: 90vw;
+        max-width: 380px;
+        height: 240px;
+        background-color: #ffffff;
+        border-radius: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .text {
+        font-size: 18px;
+        margin: 0;
+    }
+    .close {
+        cursor:pointer;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        font-size: 20px;
+    }
 </style>
+
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                edit: "",
+                title: "",
+                value: "",
+            }
+        }
+        ,methods: {
+            open(val){
+                if(document.getElementById('username').textContent == 'guest'){
+                    this.edit = '編集不可'
+                }else{
+
+                    this.edit = val
+                    this.title = document.getElementById(val + '-title').textContent
+                    this.value = document.getElementById(val).textContent
+                }
+                
+            },
+        }
+        ,mounted() {
+
+        }
+        ,computed: {
+            
+        }
+        // djangoのテンプレートエンジンと競合するので{}から[]に変更
+        ,delimiters: ['[[', ']]']
+    }).mount('#app')
+</script>
 
 {% endblock %}
 

@@ -11,7 +11,9 @@ urlpatterns = [
     # トップ画面
     path('', views.IndexView.as_view(), name='index'),
     # 投票画面
-    path('vote/<int:pk>/', views.Vote.as_view(), name='vote'),
+    path('vote/<int:pk>/', views.VoteView.as_view(), name='vote'),
+    # 再投票
+    path('revote/<int:pk>/', views.RevoteView.as_view(), name='revote'),
     # 更新履歴
     path('update_history/', views.UpdateHistory, name='update_history'),
     # 質問作成

@@ -23,24 +23,29 @@
     <input v-on:keydown.enter="search" v-model="keyword" placeholder="検索ワードを入力">
     <input type="button" v-on:click="search" class="search-btn" value="🔍">
 
+    
     <div class="questions-header">
         <select id="select_sort" v-on:change="sort">
             <option value="0" selected>閲覧回数の多い順</option>
         </select>
         <span class="reverse" v-on:click="reverse">↑↓</span>
     </div>
-    <ul>
-        <li v-for="question in questions">
-            <a v-bind:href="'vote/' + question.id + '/'" class="question">
-                <p>[[ question.title ]]</p>
-                
-                <p class="watched">[[ question.author.username ]] [[ ( question.genre || {} ).title ]]   [[ question.watched ]]view</p>
-            </a>
-        </li>
-    </ul>
+    
+    <div v-for="question in questions">
+        <a v-bind:href="'vote/' + question.id + '/'" class="question">
+            <p>[[ question.title ]]</p>
+            
+            <p class="watched">[[ question.author.username ]] [[ ( question.genre || {} ).title ]]   [[ question.watched ]]view</p>
+        </a>
+    </div>
+    
 </div>
 
 <style>
+    #app{
+        max-width: 800px;
+        margin: auto;
+    }
     .select-genre{
         margin-right: 50px;
     }
@@ -59,6 +64,7 @@
         border-radius: 10px;
         padding: 5px;
         margin-bottom: 10px;
+        
     }
     .question:hover{
         background-color: #CCFFFF;

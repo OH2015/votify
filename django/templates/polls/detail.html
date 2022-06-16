@@ -22,6 +22,7 @@
     <p>ジャンル:{{ question.genre.title }}</p>
     <p class="explanation">{{ question.explanation }}</p>
 
+    <!-- 選択肢 -->
     <div id="content-choices" class="containner-fluid">
         <div class="row" v-for="(choice,index) in choices">
             <div class="col-sm-3 choice-text">[[ choice.choice_text ]]</div>
@@ -30,8 +31,12 @@
             </div>
             <div class="col-sm-3">[[ choice.votes ]]票</div>
         </div>
+        {% if request.user.is_authenticated and not request.user == question.author %}
+        <a href='{% url "polls:revote" question.id %}' class="btn btn-primary">再投票</a>
+        {% endif %}
     </div>
 
+    <!-- コメント -->
     <div id="content-comments" class="containner-fluid">
         <div class="comment-form">
             <textarea cols="30" rows="4" id="comment-draft" v-model="comment_draft"></textarea>
@@ -48,19 +53,22 @@
                         <span>1ヶ月前</span>
                     </div>
                     <div class="comment-text">
-                        [[ comment.text ]]
+                        <p>[[ comment.text ]]</p>
                     </div>
                     <div class="comment-footer">
                         
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
 <style>
+    #app{
+        margin: auto;
+        max-width: 700px;
+    }
     .explanation{
         padding-left: 50px;
     }
@@ -101,6 +109,9 @@
         display: flex;
     }
     .comment-icon{margin-right: 10px;}
+    .comment-text p {
+        white-space: pre-wrap;
+    }
 </style>
 
 <script>
@@ -152,10 +163,11 @@
 
             // 選択肢取得
             axios.get("/api/choices/" + this.question_id,{
-                    params:{sort: true}
+                params:{sort: true}
             })
             .then(res => {
                 this.choices = res.data
+                console.log(res.data)
             })
             .catch(res => {
                 this.message = "選択肢情報の取得に失敗しました" + res.data

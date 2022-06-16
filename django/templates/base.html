@@ -34,7 +34,7 @@
         <div id="header-menus">
             {% if user.is_authenticated %}
                 <div class="user-cell">
-                    <i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i>
+                    <a href='{% url "polls:account_top" user.username %}'><i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i></a>
                     <div class="header-user-menu">
                         <ul>
                             <li><a href='{% url "polls:account_top" user.username %}'>{{ user.username }}</a></li>

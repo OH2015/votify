@@ -30,7 +30,7 @@
                 <input class="button btn-add" type="button" v-on:click="add_choice(-1)" value="追加">
                 <div class="row" v-for="(choice,index) in choices" :key="index">
                     <div class="col-sm-12">
-                        <input type="search" @keydown.enter="add_choice(index)" v-model="choices[index].choice_text" :name="'choice_title' + index" :id="'choice' + index" class="choice-title" required>
+                        <input type="search" @keydown.enter="add_choice(index)" @keydown.delete="on_delete(index)" v-model="choices[index].choice_text" :name="'choice_title' + index" :id="'choice' + index" class="choice-title" required>
                         <span>　</span>
                         <img class="trash" src="{% static 'polls/images/trash-alt-solid.svg' %}" v-on:click="remove_choice(index)">
                     </div>
@@ -75,6 +75,15 @@
                     return;
                 }
                 this.choices.splice(index,1)
+            },
+            on_delete(index){
+                if(this.choices[index].choice_text == '' && this.choices.length >= 2 && index > 0){
+                    this.remove_choice(index)
+                    // １つ上を選択
+                    this.$nextTick(function() {
+                        document.getElementById('choice' + (index-1)).select();
+                    });
+                }
             },
         }
         ,mounted() {
