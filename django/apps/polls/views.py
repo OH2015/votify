@@ -33,37 +33,63 @@ class VoteView(TemplateView):
         # 閲覧回数をカウント
         question.watched += 1
         question.save()
+        self.params = {'question': question,'voted_choice_id':-1}
         
-        # ログイン中は投票データを確認
+        # ログイン中
         if request.user.is_authenticated:
-            has_voted = Vote.objects.filter(user=request.user,question=question).exists()
-        # ログインしていないときはセッションデータを確認
+            # 自分の投稿
+            if request.user == question.author:
+                return render(request,"polls/detail.html",self.params)
+            # 投票済み
+            elif Vote.objects.filter(user=request.user,question=question).exists():
+                self.params['voted_choice_id'] = Vote.objects.get(question=question,user=request.user).choice.id
+                return render(request,"polls/detail.html",self.params)
+            # 未投票
+            else:
+                return render(request,"polls/vote.html",self.params)
+        # 匿名
         else:
-            has_voted = str(pk) in request.session
+            # 投票済み
+            if str(pk) in request.session:
+                self.params['voted_choice_id'] = request.session[str(pk)]
+                print(request.session[str(pk)])
+                return render(request,"polls/detail.html",self.params)
+            # 未投票
+            else:
+                return render(request,"polls/vote.html",self.params)
 
-        is_owner = request.user == question.author
-
-        # 投票済みなら結果画面を表示
-        if has_voted or is_owner:
-            return render(request,"polls/detail.html",{'question': question})
-        # 未投票なら投票画面を表示
-        else:
-            return render(request,"polls/vote.html",{'question': question})
-
+    # 投票処理
     def post(self,request,pk):
+        question = get_object_or_404(Question, pk=pk)
         choice = Choice.objects.get(id=request.POST['choice'])
-        # ログイン中ならVoteレコード追加
+
+        # ログイン中
+        if request.user.is_authenticated:
+            # 自分の投稿
+            if request.user == question.author:
+                return redirect('polls:vote',pk)
+            # 投票済み
+            elif Vote.objects.filter(user=request.user,question=question).exists():
+                return redirect('polls:vote',pk)
+        # 匿名
+        else:
+            # 投票済み
+            if str(pk) in request.session:
+                return redirect('polls:vote',pk)
+
+        # ログイン中
         if request.user.is_authenticated:
             Vote.objects.create(question=choice.question,choice=choice,user=request.user)
-        # ログインしていない場合は、匿名で投票
+        # 匿名
         else:
             Vote.objects.create(question=choice.question,choice=choice,user=None)
 
         # セッションに投票済み登録
-        request.session[str(choice.question.id)] = "voted"
-        return render(request,"polls/detail.html",{'question': get_object_or_404(Question, pk=pk)})
+        request.session[str(choice.question.id)] = choice.id
+        return redirect('polls:vote',pk)
 
-# 再投票画面
+
+# 再投票
 class RevoteView(TemplateView):
     # GET(pk:question_id)
     def get(self, request,pk):

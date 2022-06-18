@@ -14,6 +14,7 @@
     [[ message ]]{{error_message}}
     
     <input hidden id="question_id" value="{{ question.id }}">
+    <input hidden id="voted_choice_id" value="{{ voted_choice_id }}">
     {% csrf_token %}
 
     <h2>{{ question.title }}</h2>
@@ -27,7 +28,7 @@
         <div class="row" v-for="(choice,index) in choices">
             <div class="col-sm-3 choice-text">[[ choice.choice_text ]]</div>
             <div class="col-sm-6 box">
-                <div class="box-voted" v-bind:style="{ width: width(choice.votes) }"></div>
+                <div class="box-voted" :style="{ width: width(choice.votes)}" :class="voteClass(choice.id)"></div>
             </div>
             <div class="col-sm-3">[[ choice.votes ]]票</div>
         </div>
@@ -88,10 +89,15 @@
         padding-bottom: 30px;
         border-bottom: solid gray 1px;
     }
+    .yet{
+        background-color: deepskyblue;
+    }
+    .voted{
+        background-color: yellow;
+    }
     .box-voted{
         height: 100%;
         border-radius: 10px;
-        background-color: deepskyblue;
     }
     .box-margin{
         height: 100%;
@@ -120,6 +126,7 @@
             return {
                 message: "",
                 question_id: 0,
+                voted_choice_id:0,
                 comment_draft: "",
                 choices: [],
                 comments: [],
@@ -155,11 +162,15 @@
                 })
             },
             // 幅計算
-            width(votes){ return (this.voteSum != 0 ? (votes * 100 / this.voteSum) : 0) + '%' }
+            width(votes){ return (this.voteSum != 0 ? (votes * 100 / this.voteSum) : 0) + '%' },
+            // 背景色
+            voteClass(id){ return (id == this.voted_choice_id) ? 'voted' : 'yet' }
         }
         ,mounted() {
             // question_id取得
             this.question_id = document.getElementById('question_id').value;
+            // 投票済みchoice_id取得
+            this.voted_choice_id = document.getElementById('voted_choice_id').value;
 
             // 選択肢取得
             axios.get("/api/choices/" + this.question_id,{

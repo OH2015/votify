@@ -57,7 +57,10 @@ class Vote(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.choice.choice_text + ' : ' + self.user.username
+        if self.user:
+            return self.choice.choice_text + ' : ' + self.user.username
+        else:
+            return self.choice.choice_text + ' : Anonymous'
 
 # コメント
 class Comment(models.Model):
