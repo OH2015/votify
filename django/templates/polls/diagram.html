@@ -1,0 +1,22 @@
+<!-- templates/index.html -->
+{% extends 'base.html' %}
+<!-- タイトル -->
+{% block title %}構成図{% endblock %}
+{% load static %}
+
+<!-- 子・メインコンテンツ -->
+{% block content %}
+<div>
+<img id="img1" src="{% static 'polls/images/votify.drawio.png' %}">
+</div>
+
+<style>
+#img1{
+    width: 100%;
+    max-width: 700px;
+}
+</style>
+{% endblock %}
+
+
+

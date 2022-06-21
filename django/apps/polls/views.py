@@ -109,6 +109,9 @@ class PostComment(TemplateView):
 def UpdateHistory(request):
     return render(request,"polls/update_history.html",{"contents":UpdateContent.objects.all})
 
+# 構成図
+def Diagram(request):
+    return render(request,"polls/diagram.html")
 
 # 投稿
 @method_decorator(login_required, name='dispatch')

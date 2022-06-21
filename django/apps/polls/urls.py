@@ -16,6 +16,8 @@ urlpatterns = [
     path('revote/<int:pk>/', views.RevoteView.as_view(), name='revote'),
     # 更新履歴
     path('update_history/', views.UpdateHistory, name='update_history'),
+    # 構成図
+    path('diagram/', views.Diagram, name='diagram'),
     # 質問作成
     path('create_question/', views.CreateQuestion.as_view() , name='create_question'),
     # コメント投稿
