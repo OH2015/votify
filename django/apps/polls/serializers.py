@@ -1,8 +1,7 @@
-from dataclasses import field
-from email.policy import default
 from rest_framework import serializers
 from .models import Account, Question,Choice,Comment,Genre, Vote
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class GenreSerializer(serializers.ModelSerializer):
    class Meta:
@@ -35,16 +34,17 @@ class ChoiceSerializer(serializers.ModelSerializer):
    votes = serializers.SerializerMethodField()
 
    class Meta:
-       model = Choice
-       fields = ('id','question', 'choice_text', 'votes', 'created_at', 'updated_at')
+      model = Choice
+      fields = ('id','question', 'choice_text', 'votes', 'created_at', 'updated_at')
 
    def get_votes(self, instance):
-        return Vote.objects.filter(choice=instance).all().count()
+      return Vote.objects.filter(choice=instance).all().count()
 
 
 class CommentSerializer(serializers.ModelSerializer):
    user = UserSerializer()
 
    class Meta:
-       model = Comment
-       fields = ('id','question', 'user', 'text', 'created_at', 'updated_at')
+      model = Comment
+      fields = ('id','question', 'user', 'text', 'created_at', 'updated_at','get_date')
+

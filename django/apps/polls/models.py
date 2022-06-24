@@ -1,7 +1,8 @@
+import math
 from django.contrib.auth import get_user_model
 from django.db import models
 import datetime
-
+from datetime import timedelta
 from django.utils import timezone
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -72,6 +73,20 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+
+    # 日付文字列取得
+    def get_date(self):
+      delta = timezone.now() - self.created_at
+      if delta.seconds < 3600:
+         return str(math.floor(delta / timedelta(minutes=1))) + "分前"
+      elif delta.days < 1:
+         return str(math.floor(delta / timedelta(hours=1))) + "時間前"
+      elif delta.days < 30:
+         return str(delta.days) + "日前"
+      elif delta.days < 365:
+         return str(math.floor(delta.days / 30)) + "ヶ月前"
+      else:
+         return str(math.floor(delta / timedelta(years=1))) + "年前"
 
 
 # 更新内容

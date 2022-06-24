@@ -282,8 +282,7 @@ class CommentListAPIView(generics.ListAPIView):
     # 独自に拡張
     def list(self,request,pk):
         self.queryset = Comment.objects.order_by('-created_at').filter(question_id=pk).all()
-        queryset = self.get_queryset()
-        serializer = CommentSerializer(queryset, many=True)
+        serializer = CommentSerializer(self.queryset, many=True)
 
         return Response(serializer.data)
 

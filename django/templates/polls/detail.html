@@ -3,6 +3,10 @@
 
 <!-- 追加リソース -->
 {% block extra-static %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- jquery.inview.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/protonet-jquery.inview/1.1.2/jquery.inview.min.js"></script>
 <!-- Vue3 -->
 <script src="https://unpkg.com/vue@3"></script>
 <!-- axios(API非同期通信) -->
@@ -25,17 +29,13 @@
 
     <!-- 選択肢 -->
     <div id="content-choices" class="containner-fluid">
-        <div class="row" v-for="(choice,index) in choices">
-            <div class="col-sm-3 choice-text">[[ choice.choice_text ]]</div>
-            <div class="col-sm-6 box">
-                <div class="box-voted" :style="{ width: width(choice.votes)}" :class="voteClass(choice.id)"></div>
-            </div>
-            <div class="col-sm-3">[[ choice.votes ]]票</div>
-        </div>
+        <canvas id="chart"></canvas>
+        
         {% if request.user.is_authenticated and not request.user == question.author %}
         <a href='{% url "polls:revote" question.id %}' class="btn btn-primary">再投票</a>
         {% endif %}
     </div>
+
 
     <!-- コメント -->
     <div id="content-comments" class="containner-fluid">
@@ -47,17 +47,18 @@
 
         <div class="row" v-for="( comment,index) in comments">
             <div class="comment-container">
-                <div class="comment-icon"><i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i></div>
+                <div class="comment-icon">
+                    <a :href="'/' + comment.user.username + '/account_top/'"><i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i></a>
+                </div>
                 <div class="comment-contents">
                     <div class="comment-header">
                         <h3>[[ comment.user.username ]]</h3>
-                        <span>1ヶ月前</span>
+                        <span>[[ comment.get_date ]]</span>
                     </div>
                     <div class="comment-text">
                         <p>[[ comment.text ]]</p>
                     </div>
                     <div class="comment-footer">
-                        
                     </div>
                 </div>
             </div>
@@ -70,6 +71,9 @@
         margin: auto;
         max-width: 700px;
     }
+    canvas{
+        width: 100%;
+    }
     .explanation{
         padding-left: 50px;
     }
@@ -77,9 +81,7 @@
         width:100%;
         margin-top: 50px;
     }
-    .choice-text{
-        font-size: 20px;
-    }
+
     #content-comments{
         border-top: solid gray 1px;
         width: 100%;
@@ -88,22 +90,6 @@
     .comment-form{
         padding-bottom: 30px;
         border-bottom: solid gray 1px;
-    }
-    .yet{
-        background-color: deepskyblue;
-    }
-    .voted{
-        background-color: yellow;
-    }
-    .box-voted{
-        height: 100%;
-        border-radius: 10px;
-    }
-    .box-margin{
-        height: 100%;
-    }
-    .box{
-        height:30px;
     }
     .row{
         margin-top: 20px;
@@ -115,6 +101,9 @@
         display: flex;
     }
     .comment-icon{margin-right: 10px;}
+    .comment-icon a{
+        color: black;
+    }
     .comment-text p {
         white-space: pre-wrap;
     }
@@ -161,6 +150,55 @@
                     this.message = "コメントの取得に失敗しました" + res.data
                 })
             },
+            // グラフ描画
+            renderGraph(){
+                Chart.defaults.font.size = 20;
+                let labels = []
+                let votes = []
+                this.choices.forEach(element => {
+                    labels.push(element.choice_text)
+                    votes.push(element.votes)
+                });
+                
+
+                // データ
+                const data = {
+                    labels: labels,
+                    datasets: [{
+                        label: '投票結果',
+                        backgroundColor: '#66CCFF',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: votes,
+                    }]
+                };
+
+                // チャート情報
+                const config = {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        indexAxis: 'y',
+                        scales:{
+                            x:{
+                                display:false,
+                                ticks: {
+                                    // Include a dollar sign in the ticks
+                                    callback: function(value, index, ticks) {
+                                        return '$' + value;
+                                    }
+                                }
+                            },
+       
+                        }
+                    }
+                };
+
+                // チャート生成
+                const chart = new Chart(
+                    document.getElementById('chart'),
+                    config
+                );
+            },
             // 幅計算
             width(votes){ return (this.voteSum != 0 ? (votes * 100 / this.voteSum) : 0) + '%' },
             // 背景色
@@ -178,13 +216,16 @@
             })
             .then(res => {
                 this.choices = res.data
-                console.log(res.data)
+                // グラフ描画
+                this.renderGraph();
             })
             .catch(res => {
                 this.message = "選択肢情報の取得に失敗しました" + res.data
             })
             // コメント取得
             this.getComments()
+
+
         }
         ,computed: {
             voteSum(){ return this.choices.reduce((sum,el) => sum + el.votes,0)}
