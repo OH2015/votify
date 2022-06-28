@@ -20,13 +20,14 @@
     <input hidden id="question_id" value="{{ question.id }}">
     <input hidden id="voted_choice_id" value="{{ voted_choice_id }}">
     {% csrf_token %}
-
+    <p id="created_at">公開日 {{ question.created_at|date:"Y/n/j" }}</p>
+    {% if question.genre %}
+    <p>#{{ question.genre.title }}</p>
+    {% endif %}
     <h2>{{ question.title }}</h2>
-    <p>投稿者: {{ question.author.username }}</p>
-    <p>作成日: {{ question.created_at }}</p>
-    <p>ジャンル:{{ question.genre.title }}</p>
-    <p class="explanation">{{ question.explanation }}</p>
-
+    <p>[[ voteSum ]]票</p>
+    
+    
     <!-- 選択肢 -->
     <div id="content-choices" class="containner-fluid">
         <canvas id="chart"></canvas>
@@ -35,7 +36,15 @@
         <a href='{% url "polls:revote" question.id %}' class="btn btn-primary">再投票</a>
         {% endif %}
     </div>
-
+    
+    <!-- 詳細 -->
+    <div id="content-info">
+        <a id="user-icon" href='{% url "polls:account_top" question.author.username %}'>
+            <i class="fa-solid fa-circle-user fa-3x"></i>
+            {{ question.author.username }}
+        </a>
+        <p class="explanation">{{ question.explanation }}</p>
+    </div>
 
     <!-- コメント -->
     <div id="content-comments" class="containner-fluid">
@@ -48,7 +57,7 @@
         <div class="row" v-for="( comment,index) in comments">
             <div class="comment-container">
                 <div class="comment-icon">
-                    <a :href="'/' + comment.user.username + '/account_top/'"><i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i></a>
+                    <a :href="'/' + comment.user.username + '/account_top/'"><i id="user-icon" class="fa-solid fa-circle-user fa-2x"></i></a>
                 </div>
                 <div class="comment-contents">
                     <div class="comment-header">
@@ -74,14 +83,26 @@
     canvas{
         width: 100%;
     }
-    .explanation{
-        padding-left: 50px;
-    }
-    #content-choices{
-        width:100%;
-        margin-top: 50px;
+    #created_at{
+        text-align: right;
+        right: 0px;
     }
 
+    #content-choices{
+        width:100%;
+        margin-top: 30px;
+    }
+    #content-info{
+        padding-top: 30px;
+        border-top: solid gray 1px;
+    }
+    #user-icon{
+        text-decoration: none;
+        color: black;
+    }
+    .explanation{
+        padding-top: 10px;
+    }
     #content-comments{
         border-top: solid gray 1px;
         width: 100%;
@@ -199,10 +220,7 @@
                     config
                 );
             },
-            // 幅計算
-            width(votes){ return (this.voteSum != 0 ? (votes * 100 / this.voteSum) : 0) + '%' },
-            // 背景色
-            voteClass(id){ return (id == this.voted_choice_id) ? 'voted' : 'yet' }
+
         }
         ,mounted() {
             // question_id取得
