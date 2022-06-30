@@ -32,24 +32,7 @@
             <label class="open" for="pop-up"  @click="open('email')">編集</label>
         </div>
     </div>
-    <div class="row last_name">
-        <div class="col-sm-10">
-            <p id="last_name-title">姓:</p>
-            <p id="last_name">{{ account.last_name }}</p>
-        </div>
-        <div class="col-sm-2">
-            <label class="open" for="pop-up" @click="open('last_name')">編集</label>
-        </div>
-    </div>
-    <div class="row first_name">
-        <div class="col-sm-10">
-            <p id="first_name-title">名:</p>
-            <p id="first_name">{{ account.first_name }}</p>
-        </div>
-        <div class="col-sm-2">
-            <label class="open" for="pop-up" @click="open('first_name')">編集</label>
-        </div>
-    </div>
+
     <div class="row profile">
         <div class="col-sm-10">
             <p id="profile-title">プロフィール:</p>
@@ -68,8 +51,6 @@
                 <p>[[ title ]]</p>
                 <input name="username" v-if="edit == 'username'" :value="value">
                 <input name="email" v-else-if="edit == 'email'" :value="value">
-                <input name="last_name" v-else-if="edit == 'last_name'" :value="value">
-                <input name="first_name" v-else-if="edit == 'first_name'" :value="value">
                 <textarea name="profile" v-else-if="edit == 'profile'" :value="value"></textarea>
 
                 <button>更新</button>
@@ -148,7 +129,6 @@
                 if(document.getElementById('username').textContent == 'guest'){
                     this.edit = '編集不可'
                 }else{
-
                     this.edit = val
                     this.title = document.getElementById(val + '-title').textContent
                     this.value = document.getElementById(val).textContent

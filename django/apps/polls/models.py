@@ -109,10 +109,6 @@ class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     # 追加フィールド
-    # 姓
-    last_name = models.CharField(max_length=100)
-    # 名
-    first_name = models.CharField(max_length=100)
     # プロフィール文章
     profile = models.CharField(max_length=1000,default='')
     # プロフィール画像(S3のコスト節約のため廃止)

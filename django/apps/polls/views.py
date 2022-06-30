@@ -149,19 +149,17 @@ class  AccountRegistration(TemplateView):
         id = request.POST.get('id')
         email = request.POST.get('email')
         pw = request.POST.get('pw')
-        ln = request.POST.get('last_name')
-        fn = request.POST.get('first_name')
-        
-        user = User.objects.create_user(id,email,pw)
 
-        if user == None:
-            self.params["message"] = "ユーザの作成に失敗しました"
+        if User.objects.filter(username=id).exists():
+            self.params["message"] = "そのユーザIDは既に登録されています。"
             return render(request,"polls/register.html",context=self.params)
-            
-        acc = Account.objects.create(user=user,last_name=ln,first_name=fn)
         
-        if acc == None:
-            user.delete()
+        try:
+            user = User.objects.create_user(id,email,pw)
+            Account.objects.create(user=user)
+        except:
+            if User.objects.filter(username=id).exists():
+                User.objects.get(username=id).delete()
             self.params["message"] = "ユーザの作成に失敗しました"
             return render(request,"polls/register.html",context=self.params)
 
@@ -206,17 +204,11 @@ class  AccountInfo(TemplateView):
         account = get_object_or_404(Account, user=user)
         username = request.POST.get('username')
         email = request.POST.get('email')
-        last_name = request.POST.get('last_name')
-        first_name = request.POST.get('first_name')
         profile = request.POST.get('profile')
         if username:
             user.username = username
         if email:
             user.email = email
-        if last_name:
-            account.last_name = last_name
-        if first_name:
-            account.first_name = first_name
         if profile:
             account.profile = profile
 
