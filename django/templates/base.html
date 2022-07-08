@@ -40,12 +40,12 @@
                             <li><a href='{% url "polls:account_top" user.username %}'>{{ user.username }}</a></li>
                             <li><a href="{% url 'polls:account_info' user.username %}">個人情報</a></li>
                             <li><a href='{% url "polls:create_question" %}'>投稿</a></li>
-                            <li><a href="{% url 'accounts:Logout' %}">ログアウト</a></li>
+                            <li><a href="{% url 'polls:logout' %}">ログアウト</a></li>
                         </ul>
                     </div>
                 </div>
             {% else %}
-                <a href="{% url 'accounts:Login' %}">ログイン</a>
+                <a href="{% url 'polls:login' %}">ログイン</a>
                 <div class="signup_cell"><a href="{% url 'polls:register' %}">新規登録</a></div>
             {% endif %}
             

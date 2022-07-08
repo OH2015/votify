@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
+from django.urls import reverse
 from .models import Account, Genre, Question,Choice,Vote,UpdateContent,Comment
 from django.shortcuts import render
-from django.contrib.auth import login
+from django.contrib.auth import login,authenticate, logout
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView # テンプレートタグ
 from rest_framework import generics
@@ -11,6 +12,8 @@ from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -150,8 +153,14 @@ class  AccountRegistration(TemplateView):
         email = request.POST.get('email')
         pw = request.POST.get('pw')
 
+        # ユーザ名重複チェック
         if User.objects.filter(username=id).exists():
-            self.params["message"] = "そのユーザIDは既に登録されています。"
+            self.params["message"] = "そのユーザ名は既に登録されています。"
+            return render(request,"polls/register.html",context=self.params)
+
+        # メールアドレス重複チェック
+        if User.objects.filter(email=email).exists():
+            self.params["message"] = "そのメールアドレスは既に登録されています。"
             return render(request,"polls/register.html",context=self.params)
         
         try:
@@ -164,9 +173,13 @@ class  AccountRegistration(TemplateView):
             return render(request,"polls/register.html",context=self.params)
 
         self.params["message"] = "アカウントを作成しました"
+        self.params["questions"] = Question.objects.order_by('updated_at').filter(author=user).all()
+        self.params["account"] = Account.objects.get(user=user)
+
+        # ログイン
         login(request,user)
 
-        return render(request,"polls/register.html",context=self.params)
+        return render(request,"polls/account_top.html",context=self.params)
 
 # アカウントトップ画面
 class  AccountTop(TemplateView):
@@ -196,7 +209,7 @@ class  AccountInfo(TemplateView):
         if request.user == user:
             return render(request, 'polls/account_info.html',context={"account":account})
         else:
-            return render(request, 'accounts/login.html')
+            return render(request, 'polls/login.html')
 
     # Post処理
     def post(self,request,username):
@@ -217,6 +230,52 @@ class  AccountInfo(TemplateView):
 
         return render(request, 'polls/account_info.html',context={"account":account})
 
+
+#ログイン
+def Login(request):
+    # POST
+    if request.method == 'POST':
+        # フォーム入力のユーザーID・パスワード取得
+        ID = request.POST.get('userid')
+        Pass = request.POST.get('password')
+
+        # Djangoの認証機能
+        user = authenticate(username=ID, password=Pass)
+
+        # ユーザー認証
+        if user:
+            #ユーザーアクティベート判定
+            if user.is_active:
+                # ログイン
+                login(request,user)
+                return redirect('polls:index')
+            else:
+                # アカウント利用不可
+                return HttpResponse("アカウントが有効ではありません")
+        # ユーザー認証失敗
+        else:
+            return HttpResponse("ログインIDまたはパスワードが間違っています")
+    # GET
+    else:
+        return render(request, 'polls/login.html')
+
+
+#ログアウト
+@login_required
+def Logout(request):
+    logout(request)
+    # ログイン画面遷移
+    return HttpResponseRedirect(reverse('polls:login'))
+
+# ゲストログイン
+def guest_login(request):
+    try:
+        guest_user = User.objects.get(username='guest')
+    except User.DoesNotExist:
+        print("failes to login as guest")
+    else:
+        login(request, guest_user)
+    return redirect('polls:index')
     
 
 

@@ -22,7 +22,7 @@
     </select>
     <input v-on:keydown.enter="search" v-model="keyword" placeholder="検索ワードを入力">
     <input type="button" v-on:click="search" class="search-btn" value="🔍">
-
+    
     
     <div class="questions-header">
         <select id="select_sort" v-on:change="sort">
@@ -31,6 +31,7 @@
         <span class="reverse" v-on:click="reverse">↑↓</span>
     </div>
     
+    [[ no_results ]]
     <div v-for="question in questions">
         <a v-bind:href="'vote/' + question.id + '/'" class="question">
             <p>[[ question.title ]]</p>
@@ -123,6 +124,11 @@
         }
         ,mounted() {
             this.search();
+        }
+        ,computed:{
+            no_results: function(){
+                return (this.questions.length > 0) ? '' : '検索結果０件'
+            }
         }
         // djangoのテンプレートエンジンと競合するので{}から[]に変更
         ,delimiters: ['[[', ']]']

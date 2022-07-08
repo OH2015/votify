@@ -26,7 +26,6 @@ class QuestionIndexViewTests(TestCase):
         """
         質問が一つもなければ適切なメッセージが表示されること
         """
-        # http://polls/index/
         response = self.client.get(reverse('polls:index'))
         # レスポンスステータスが200番であること
         self.assertEqual(response.status_code, 200)
@@ -42,7 +41,6 @@ class QuestionIndexViewTests(TestCase):
         """
         # 30日前で作成
         question = create_question(title="Past question.", days=-30)
-        # http://polls/index/
         response = self.client.get(reverse('polls:index'))
         # 作成した質問がレスポンスオブジェクトに帰ってきていること
         self.assertQuerysetEqual(
@@ -57,7 +55,6 @@ class QuestionIndexViewTests(TestCase):
         """
         # 30日後で作成
         create_question(title="Future question.", days=30)
-        # https://polls/index/
         response = self.client.get(reverse('polls:index'))
         # No polls are available.の文字が表示されること
         self.assertContains(response, "No polls are available.")
@@ -73,7 +70,6 @@ class QuestionIndexViewTests(TestCase):
         question = create_question(title="Past question.", days=-30)
         # 30日後で作成
         create_question(title="Future question.", days=30)
-        # https://polls/index
         response = self.client.get(reverse('polls:index'))
         # コンテキストが過去の方だけになっていること
         self.assertQuerysetEqual(
@@ -90,7 +86,6 @@ class QuestionIndexViewTests(TestCase):
         question1 = create_question(title="Past question 1.", days=-30)
         # 5日前
         question2 = create_question(title="Past question 2.", days=-5)
-        # https://polls/index/
         response = self.client.get(reverse('polls:index'))
         # 両方がコンテキストに含まれていること
         self.assertQuerysetEqual(
@@ -107,7 +102,6 @@ class QuestionDetailViewTests(TestCase):
         """
         # 5日後
         future_question = create_question(title='Future question.', days=5)
-        # https://polls/index
         url = reverse('polls:detail', args=(future_question.id,))
         # レスポンス取得
         response = self.client.get(url)
@@ -121,7 +115,6 @@ class QuestionDetailViewTests(TestCase):
         """
         # ５日前の質問
         past_question = create_question(title='Past Question.', days=-5)
-        # https://polls/index
         url = reverse('polls:detail', args=(past_question.id,))
         # レスポンス取得
         response = self.client.get(url)

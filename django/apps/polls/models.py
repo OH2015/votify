@@ -19,25 +19,16 @@ class Genre(models.Model):
 # 質問
 class Question(models.Model):
     title = models.CharField(max_length=20)
-    explanation = models.CharField(max_length=200)
+    explanation = models.TextField(max_length=200)
     watched = models.IntegerField(default=0)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE )
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    @admin.display(
-        boolean=True,
-        ordering='updated_at',
-        description='Published recently?',
-    )
-
     def __str__(self):
         return self.title
 
-    def was_published_recently(self):
-        now = timezone.now()
-        return now - datetime.timedelta(days=1) <= self.created_at <= now
 
 # 選択肢
 class Choice(models.Model):
@@ -77,16 +68,17 @@ class Comment(models.Model):
     # 日付文字列取得
     def get_date(self):
       delta = timezone.now() - self.created_at
-      if delta.seconds < 3600:
-         return str(math.floor(delta / timedelta(minutes=1))) + "分前"
-      elif delta.days < 1:
-         return str(math.floor(delta / timedelta(hours=1))) + "時間前"
+      if delta.days < 1:
+        if delta.seconds < 3600:
+            return str(math.floor(delta / timedelta(minutes=1))) + "分前"
+        else:
+            return str(math.floor(delta / timedelta(hours=1))) + "時間前"
       elif delta.days < 30:
-         return str(delta.days) + "日前"
+        return str(delta.days) + "日前"
       elif delta.days < 365:
-         return str(math.floor(delta.days / 30)) + "ヶ月前"
+        return str(math.floor(delta.days / 30)) + "ヶ月前"
       else:
-         return str(math.floor(delta / timedelta(years=1))) + "年前"
+        return str(math.floor(delta / timedelta(years=1))) + "年前"
 
 
 # 更新内容
@@ -110,10 +102,7 @@ class Account(models.Model):
 
     # 追加フィールド
     # プロフィール文章
-    profile = models.CharField(max_length=1000,default='')
-    # プロフィール画像(S3のコスト節約のため廃止)
-    # account_image = models.ImageField(upload_to="uploads/profile_images/",default='uploads/profile_images/no_image.png',null=True)
-
+    profile = models.TextField(max_length=1000,default='')
 
     def __str__(self):
         return self.user.username

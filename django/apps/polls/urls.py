@@ -25,6 +25,12 @@ urlpatterns = [
 
     # 新規登録
     path('register', views.AccountRegistration.as_view(), name='register'),
+    # ログイン
+    path('login/',views.Login,name='login'),
+    # ログアウト
+    path("logout/",views.Logout,name="logout"),
+    # ゲストログイン
+    path('guest_login/', views.guest_login, name = 'guest_login'), #かんたんログイン用
     # 個人トップ画面
     path('<str:username>/account_top/', views.AccountTop.as_view(), name='account_top'),
     # 個人情報

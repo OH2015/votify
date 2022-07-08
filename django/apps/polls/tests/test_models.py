@@ -28,26 +28,9 @@ class QuestionModelTests(TestCase):
 
         self.assertEqual(actual_question.title, title)
 
-    def test_was_published_recently_with_future_question(self):
-        """
-        was_published_recentlyが未来の日付に対してFalseを返すこと
-        """
-        future_question = create_question(title="", days=30)
-        self.assertIs(future_question.was_published_recently(), False)
 
-    def test_was_published_recently_with_old_question(self):
-        """
-        was_published_recentlyが１日より前の日付に対してFalseを返すこと
-        """
-        old_question = create_question(title="", days=-1.1)
-        self.assertIs(old_question.was_published_recently(), False)
 
-    def test_was_published_recently_with_recent_question(self):
-        """
-        was_published_recentlyが１日以内の日付に対してTrueを返すこと
-        """
-        recent_question = create_question(title="", days=-0.9)
-        self.assertIs(recent_question.was_published_recently(), True)
+
 
 
 

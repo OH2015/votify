@@ -11,7 +11,7 @@
 {% block content %}
 <div id="app">
     [[ message ]]
-    <form method="post" action="/create_question/" onkeydown="return event.key != 'Enter';">
+    <form method="post" action="/create_question/">
         {% csrf_token %}
         <div id="container">
             
@@ -21,10 +21,11 @@
                 <option>{{ genre.title }}</option>
                 {% endfor %}
             </select>
+            <input hidden>
             <br>
             <input type="text" id="title" name="question_title" placeholder="タイトル" required>            
             <br>
-            <textarea c=100 r=3 id="explanation" name="explanation" placeholder="説明文（省略可）"></textarea>
+            <textarea id="explanation" name="explanation" placeholder="説明文（省略可）"></textarea>
             
             <div id="content" class="containner-fluid">
                 <input class="button btn-add" type="button" v-on:click="add_choice(-1)" value="追加">
@@ -101,9 +102,7 @@ input[type="search"] {
 input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: searchfield-cancel-button;
 }
-textarea{
-    width:100%;
-}
+
 #container{
     max-width: 600px;
     width:100%;
@@ -117,6 +116,8 @@ textarea{
     margin-bottom: 20px;
 }
 #explanation{
+    height: 200px;
+    width:100%;
     margin-bottom: 20px;
 }
 #genre{

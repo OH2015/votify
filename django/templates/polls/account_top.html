@@ -19,6 +19,9 @@
 </div>
 
 <div class="question-outer">
+    {% if not questions %}
+    <p>まだ投稿はありません</p>
+    {% endif %}
     {% for question in questions %}
     <div class="question-row">
         <a href="{% url 'polls:vote' question.pk %}" class="question">

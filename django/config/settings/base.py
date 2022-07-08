@@ -15,7 +15,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.polls.apps.PollsConfig',
-    'apps.accounts.apps.AccountsConfig',
     'rest_framework',
     'bootstrap4',
     'environ',

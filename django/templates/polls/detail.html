@@ -19,12 +19,17 @@
     
     <input hidden id="question_id" value="{{ question.id }}">
     <input hidden id="voted_choice_id" value="{{ voted_choice_id }}">
+
     {% csrf_token %}
+
     <p id="created_at">公開日 {{ question.created_at|date:"Y/n/j" }}</p>
+
     {% if question.genre %}
     <p>#{{ question.genre.title }}</p>
     {% endif %}
+
     <h2>{{ question.title }}</h2>
+
     <p>[[ voteSum ]]票</p>
     
     
@@ -33,7 +38,7 @@
         <canvas id="chart"></canvas>
         
         {% if request.user.is_authenticated and not request.user == question.author %}
-        <a href='{% url "polls:revote" question.id %}' class="btn btn-primary">再投票</a>
+        <a id='revote' href='{% url "polls:revote" question.id %}' class="btn btn-primary">再投票</a>
         {% endif %}
     </div>
     
@@ -43,15 +48,15 @@
             <i class="fa-solid fa-circle-user fa-3x"></i>
             {{ question.author.username }}
         </a>
-        <p class="explanation">{{ question.explanation }}</p>
+        <p class="explanation">{{ question.explanation|default:"説明文はありません"|linebreaksbr }}</p>
     </div>
 
     <!-- コメント -->
     <div id="content-comments" class="containner-fluid">
         <div class="comment-form">
-            <textarea cols="30" rows="4" id="comment-draft" v-model="comment_draft"></textarea>
+            <textarea maxlength ="1000" id="comment-draft" v-model="comment_draft" oninput="auto_grow(this)"></textarea>
             <br>
-            <button v-on:click="postComment()">コメント</button>
+            <button id="btn-comment" class="btn btn-primary" v-on:click="postComment()">コメント</button>
         </div>
 
         <div class="row" v-for="( comment,index) in comments">
@@ -96,11 +101,15 @@
         padding-top: 30px;
         border-top: solid gray 1px;
     }
+    #revote{
+        margin-bottom: 20px;
+    }
     #user-icon{
         text-decoration: none;
         color: black;
     }
     .explanation{
+        white-space: pre-wrap;
         padding-top: 10px;
     }
     #content-comments{
@@ -116,8 +125,16 @@
         margin-top: 20px;
     }
 
-    .comment-form{margin-top:30px;}
-    #comment-draft{max-width: 500px;width:100%;}
+    .comment-form{
+        margin-top:30px;
+    }
+    #comment-draft{
+        max-width: 500px;
+        width:100%;
+        height:28px;
+        resize:none;
+        overflow: hidden;
+    }
     .comment-container{
         display: flex;
     }
@@ -131,6 +148,11 @@
 </style>
 
 <script>
+    function auto_grow(element) {
+        element.style.height = "5px";
+        element.style.height = (element.scrollHeight)+"px";
+    }
+
     Vue.createApp({
         data() {
             return {
@@ -146,7 +168,7 @@
             // コメント投稿
             postComment(event){
                 if(!this.comment_draft)return;
-
+                
                 axios.defaults.xsrfCookieName = 'csrftoken'
                 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
                 
@@ -155,6 +177,9 @@
                 axios.post('/post_comment/' + this.question_id + '/', params)
                 .then(res => {
                     this.comment_draft = ""
+                    setTimeout( function() {    
+                        auto_grow(document.getElementById('comment-draft'))
+                    }, 1 );
                     this.getComments()
                 })
                 .catch(error => {
@@ -186,10 +211,12 @@
                 const data = {
                     labels: labels,
                     datasets: [{
-                        label: '投票結果',
-                        backgroundColor: '#66CCFF',
-                        borderColor: 'rgb(255, 99, 132)',
+                        label: '投票数',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1,
                         data: votes,
+                        barPercentage:0.8,
                     }]
                 };
 
@@ -202,16 +229,19 @@
                         scales:{
                             x:{
                                 display:false,
-                                ticks: {
-                                    // Include a dollar sign in the ticks
-                                    callback: function(value, index, ticks) {
-                                        return '$' + value;
-                                    }
-                                }
+                                minBarLength:500,
+
                             },
-       
+                        },
+                        animation:{
+                            duration:3000,
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
                         }
-                    }
+                    },
                 };
 
                 // チャート生成

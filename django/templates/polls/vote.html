@@ -16,31 +16,50 @@
     <form method="post" action="{% url 'polls:vote' question.id %}">
         {% csrf_token %}
         <input hidden id="question_id" value="{{ question.id }}">
+
+        <!-- 公開日 -->
+        <p id="created_at">公開日 {{ question.created_at|date:"Y/n/j" }}</p>
+
+        <!-- ジャンル -->
+        {% if question.genre %}
+        <p>#{{ question.genre.title }}</p>
+        {% endif %}
+
+        <!-- タイトル -->
+        <h2 id="title">{{ question.title }}</h2>
         
-        <h2>{{ question.title }}</h2>
-        <div id="question-info">
-            <a href="{% url 'polls:account_top' question.author.username %}">{{ question.author.username }}</a>
-            <p>{{ question.explanation }}</p>
-            <p>{{ question.genre.title|default_if_none:"ジャンルなし" }}</p>
-        </div>
-        
+        <!-- 選択肢 -->
         <div id="choices-container" class="container container-fluid">
             <div v-for="(choice,index) in choices" class="choice row">
                 <input type="radio" name="choice" :value="choice.id" :id="choice.id">
                 <label :for="choice.id">[[ choice.choice_text ]]</label>
             </div>
-            <button class="btn-submit">投票</button>
+            <button class="btn btn-primary" id="btn-submit">投票</button>
+        </div>
+
+        <!-- 詳細 -->
+        <div id="content-info">
+            <a id="user-icon" href='{% url "polls:account_top" question.author.username %}'>
+                <i class="fa-solid fa-circle-user fa-3x"></i>
+                {{ question.author.username }}
+            </a>
+            <p class="explanation">{{ question.explanation|default:"説明文はありません" }}</p>
         </div>
     </form>
 </div>
 
 <style>
     #app{
-        text-align: center;
+        margin: auto;
+        max-width: 700px;
     }
-    #question-info{
-        font-size: 14px;
-        margin-bottom: 30px;
+    #created_at{
+        text-align: right;
+        right: 0px;
+    }
+    #title{
+        text-align: center;
+        margin-bottom: 20px;
     }
     #choices-container{
         width:100%;
@@ -53,34 +72,44 @@
     input[type=radio]{
         display: none;
     }
-    input[type="radio"]:checked + label {
-        background: #31A9EE;/* マウス選択時の背景色を指定する */
-        color: #ffffff; /* マウス選択時のフォント色を指定する */
-    }
+    /* 通常時 */
     label {
-        display: block; /* ブロックレベル要素化する */
-        height: 45px; /* ボックスの高さを指定する */
-        
-        padding-left: 5px; /* ボックス内左側の余白を指定する */
-        padding-right: 15px; /* ボックス内御右側の余白を指定する */
-        /* color: #b20000; フォントの色を指定 */
-        text-align: center; /* テキストのセンタリングを指定する */
+        display: block; 
+        min-height: 45px; 
+        background-color: rgba(54, 162, 235, 0.2);
+        text-align: center; 
         font-weight: bold;
-        line-height: 30px; /* 行の高さを指定する */
-        cursor: pointer; /* マウスカーソルの形（リンクカーソル）を指定する */
-        border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
-        border-radius: 5px; /* 角丸を指定する */
+        line-height: 30px; 
+        cursor: pointer; 
+        border: 1px solid #006DD9;
+        border-radius: 5px; 
     }
+    /* ホバー中 */
     label:hover{
         background-color: #31A9EE;
+        color: #ffffff; 
     }
-    .btn-submit{
-        border-radius: 10px;
-        background-color: #FFFF99;
-        font-weight: bold;
+    /* 選択状態 */
+    input[type="radio"]:checked + label {
+        background: #31A9EE;
+        color: #ffffff; 
+        border: 1px solid black;
+    }
+    #btn-submit{
         width: 200px;
-        padding: 10px;
-        margin-top: 50px;
+        margin-top: 30px;
+        margin-bottom: 50px;
+    }
+    #content-info{
+        padding-top: 30px;
+        border-top: solid gray 1px;
+    }
+    #user-icon{
+        text-decoration: none;
+        color: black;
+    }
+    .explanation{
+        padding-top: 10px;
     }
 </style>
 

@@ -13,15 +13,10 @@ class CommentInline(admin.TabularInline):
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    fieldsets = [
-        (None,               {'fields': ['title','genre']}),
-        ('Date information', {'fields': ['author'], 'classes': ['collapse']}),
-    ]
     list_display = ['title']
     
     search_fields = ['title']
     inlines = [ChoiceInline,CommentInline]
-
 
 
 # Register your models here.
