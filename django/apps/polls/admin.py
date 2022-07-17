@@ -1,6 +1,5 @@
-from dataclasses import fields
 from django.contrib import admin
-from .models import Genre, Question,Choice,Comment, Vote
+from .models import Question,Choice,Comment, UpdateContent, Vote
 from .models import Account
 
 
@@ -22,8 +21,8 @@ class QuestionAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Question,QuestionAdmin)
 admin.site.register(Account)
-admin.site.register(Genre)
 admin.site.register(Comment)
 admin.site.register(Vote)
+admin.site.register(UpdateContent)
 
     

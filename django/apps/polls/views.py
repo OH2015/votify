@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.urls import reverse
-from .models import Account, Genre, Question,Choice,Vote,UpdateContent,Comment
+from .models import Account, Question,Choice,Vote,UpdateContent,Comment
 from django.shortcuts import render
 from django.contrib.auth import login,authenticate, logout
 from django.contrib.auth.models import User
@@ -24,7 +24,7 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['genres'] = Genre.objects.all()
+        ctx['genres'] = [g[0] for g in Question.genre.field.choices]
         return ctx
 
 
@@ -36,7 +36,11 @@ class VoteView(TemplateView):
         # 閲覧回数をカウント
         question.watched += 1
         question.save()
-        self.params = {'question': question,'voted_choice_id':-1}
+        auth_texts = ['匿名可','要ログイン','マイナンバー連携者限定']
+        self.params = {
+            'question': question
+            ,'voted_choice_id':-1
+            ,'auth_text': auth_texts[question.auth_level]}
         
         # ログイン中
         if request.user.is_authenticated:
@@ -49,17 +53,24 @@ class VoteView(TemplateView):
                 return render(request,"polls/detail.html",self.params)
             # 未投票
             else:
+                # 未投票 → 投票ページへ
                 return render(request,"polls/vote.html",self.params)
         # 匿名
         else:
             # 投票済み
             if str(pk) in request.session:
                 self.params['voted_choice_id'] = request.session[str(pk)]
-                print(request.session[str(pk)])
+                # 投票済み → 結果画面へ
                 return render(request,"polls/detail.html",self.params)
             # 未投票
             else:
-                return render(request,"polls/vote.html",self.params)
+                # 投票権なし → 結果画面へ
+                if question.auth_level > 0:
+                    return render(request,"polls/detail.html",self.params)
+
+                # 投票権あり → 投票ページへ
+                else:
+                    return render(request,"polls/vote.html",self.params)
 
     # 投票処理
     def post(self,request,pk):
@@ -68,16 +79,13 @@ class VoteView(TemplateView):
 
         # ログイン中
         if request.user.is_authenticated:
-            # 自分の投稿
-            if request.user == question.author:
-                return redirect('polls:vote',pk)
-            # 投票済み
-            elif Vote.objects.filter(user=request.user,question=question).exists():
+            # 自分の投稿, 投票済み
+            if request.user == question.author or Vote.objects.filter(user=request.user,question=question).exists():
                 return redirect('polls:vote',pk)
         # 匿名
         else:
-            # 投票済み
-            if str(pk) in request.session:
+            # 投票済み, 投票権なし
+            if str(pk) in request.session or question.auth_level > 0:
                 return redirect('polls:vote',pk)
 
         # ログイン中
@@ -120,20 +128,24 @@ def Diagram(request):
 @method_decorator(login_required, name='dispatch')
 class CreateQuestion(TemplateView):
     def get(self,request):
-        return render(request, 'polls/create.html', {'genres':Genre.objects.all()})
+        return render(request, 'polls/create.html', {'genres':[g[0] for g in Question.genre.field.choices]})
 
     def post(self,request):
-        choice_num = request.POST['choice_num']
-        genre = request.POST['genre']
-        print(genre)
-        if genre:
-            genre = Genre.objects.get(title=genre) 
-        else:
-            genre = None
+        # 選択肢の数
+        choice_num = int(request.POST['choice_num'])
+        print(request.POST['genre'])
             
-        question = Question.objects.create(title=request.POST['question_title'],explanation=request.POST['explanation'],genre=genre,author=request.user)
-        for i in range(int(choice_num)):
-            Choice.objects.create(choice_text=request.POST[f'choice_title{i}'],question=question)
+        # 質問作成
+        question = Question.objects.create(
+            title=request.POST['question_title']
+            ,explanation=request.POST['explanation']
+            ,genre=request.POST['genre']
+            ,auth_level=request.POST['auth_level']
+            ,author=request.user)
+
+        # 選択肢作成
+        for i in range(choice_num):
+            Choice.objects.create(choice_text=request.POST[f'choice{i}'],question=question)
 
         return redirect('polls:index')
 
@@ -280,7 +292,7 @@ def guest_login(request):
 
 
 # 
-# DRF
+# DRF(DjangoRestFramework)
 # 
 
 # Questionオブジェクトのリストを返すAPIビュー

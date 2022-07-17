@@ -1,20 +1,9 @@
 import math
 from django.contrib.auth import get_user_model
 from django.db import models
-import datetime
 from datetime import timedelta
 from django.utils import timezone
-from django.contrib import admin
 from django.contrib.auth.models import User
-
-# ジャンル
-class Genre(models.Model):
-    title = models.CharField(max_length=20)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.title
 
 # 質問
 class Question(models.Model):
@@ -22,7 +11,16 @@ class Question(models.Model):
     explanation = models.TextField(max_length=200)
     watched = models.IntegerField(default=0)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE )
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True)
+    genre = models.CharField(choices=[
+        ('学問','学問'),
+        ('ニュース','ニュース'),
+        ('SNS','SNS'),
+        ('娯楽','娯楽'),
+        ('ライフワーク','ライフワーク'),
+        ('その他','その他'),
+    ],max_length=10,default=('その他','その他'))
+    # 認証レベル(0:ログイン不要,1:ログイン必要,2:マイナンバー連携必要)
+    auth_level = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -33,7 +31,7 @@ class Question(models.Model):
 # 選択肢
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=200)
+    choice_text = models.CharField(max_length=25)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

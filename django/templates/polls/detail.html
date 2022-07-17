@@ -15,18 +15,21 @@
 
 {% block content %}
 <div id="app">
-    [[ message ]]{{error_message}}
+    [[ message ]]
     
     <input hidden id="question_id" value="{{ question.id }}">
     <input hidden id="voted_choice_id" value="{{ voted_choice_id }}">
 
     {% csrf_token %}
 
+    <!-- 公開日付 -->
     <p id="created_at">公開日 {{ question.created_at|date:"Y/n/j" }}</p>
 
-    {% if question.genre %}
-    <p>#{{ question.genre.title }}</p>
-    {% endif %}
+    <!-- ジャンル -->
+    <p id="genre">#{{ question.genre }}</p>
+
+    <!-- 認証レベル -->
+    <p id="auth_text">{{ auth_text }}</p>
 
     <h2>{{ question.title }}</h2>
 
@@ -53,11 +56,13 @@
 
     <!-- コメント -->
     <div id="content-comments" class="containner-fluid">
+        {% if request.user.is_authenticated %}
         <div class="comment-form">
             <textarea maxlength ="1000" id="comment-draft" v-model="comment_draft" oninput="auto_grow(this)"></textarea>
             <br>
             <button id="btn-comment" class="btn btn-primary" v-on:click="postComment()">コメント</button>
         </div>
+        {% endif %}
 
         <div class="row" v-for="( comment,index) in comments">
             <div class="comment-container">
@@ -88,7 +93,7 @@
     canvas{
         width: 100%;
     }
-    #created_at{
+    #created_at,#auth_text,#genre{
         text-align: right;
         right: 0px;
     }
@@ -198,14 +203,13 @@
             },
             // グラフ描画
             renderGraph(){
-                Chart.defaults.font.size = 20;
+                Chart.defaults.font.size = 18;
                 let labels = []
                 let votes = []
                 this.choices.forEach(element => {
                     labels.push(element.choice_text)
                     votes.push(element.votes)
                 });
-                
 
                 // データ
                 const data = {
@@ -229,8 +233,7 @@
                         scales:{
                             x:{
                                 display:false,
-                                minBarLength:500,
-
+                                // minBarLength:500,
                             },
                         },
                         animation:{

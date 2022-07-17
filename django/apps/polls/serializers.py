@@ -1,13 +1,8 @@
 from rest_framework import serializers
-from .models import Account, Question,Choice,Comment,Genre, Vote
+from .models import Account, Question,Choice,Comment, Vote
 from django.contrib.auth.models import User
-from django.utils import timezone
 
-class GenreSerializer(serializers.ModelSerializer):
-   class Meta:
-      model = Genre
 
-      fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
    class Meta:
@@ -23,7 +18,6 @@ class AccountSerializer(serializers.ModelSerializer):
 
 class QuestionSerializer(serializers.ModelSerializer):
    author = UserSerializer()
-   genre = GenreSerializer()
 
    class Meta:
       model = Question

@@ -13,7 +13,7 @@
 
 <div id="app">
     [[ message ]]{{error_message}}
-    <form method="post" action="{% url 'polls:vote' question.id %}">
+    <form method="post" action="{% url 'polls:vote' question.id %}" name="form1">
         {% csrf_token %}
         <input hidden id="question_id" value="{{ question.id }}">
 
@@ -21,9 +21,7 @@
         <p id="created_at">公開日 {{ question.created_at|date:"Y/n/j" }}</p>
 
         <!-- ジャンル -->
-        {% if question.genre %}
-        <p>#{{ question.genre.title }}</p>
-        {% endif %}
+        <p id="genre">#{{ question.genre }}</p>
 
         <!-- タイトル -->
         <h2 id="title">{{ question.title }}</h2>
@@ -31,10 +29,10 @@
         <!-- 選択肢 -->
         <div id="choices-container" class="container container-fluid">
             <div v-for="(choice,index) in choices" class="choice row">
-                <input type="radio" name="choice" :value="choice.id" :id="choice.id">
+                <input type="radio" name="choice" :value="choice.id" :id="choice.id" required>
                 <label :for="choice.id">[[ choice.choice_text ]]</label>
             </div>
-            <button class="btn btn-primary" id="btn-submit">投票</button>
+            <input @click="submit" class="btn btn-primary" id="btn-submit" type="button" value="投票">
         </div>
 
         <!-- 詳細 -->
@@ -53,7 +51,7 @@
         margin: auto;
         max-width: 700px;
     }
-    #created_at{
+    #created_at,#genre{
         text-align: right;
         right: 0px;
     }
@@ -123,6 +121,16 @@
             }
         }
         ,methods: {
+            submit: function(){
+                let flg = false
+                for(var i=0; i<document.form1.choice.length;i++){
+                    if(document.form1.choice[i].checked){
+                        flg = true;
+                    }
+                }
+                if(flg)document.form1.submit();
+                else this.message="選択肢を選択してください";
+            }
         }
         ,mounted() {
             // question_id取得

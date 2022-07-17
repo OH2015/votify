@@ -11,7 +11,7 @@ class Command(BaseCommand):
             user = User.objects.get(username='guest')
         except User.DoesNotExist:
             user = User.objects.create_user('guest', 'guest@sample.com', 'guest_pass123@')
-            Account.objects.create(user=user,first_name='hello',last_name='world')
+            Account.objects.create(user=user)
             print("creating guest is succseeded.")
         else:
             print("guest is already exists.")

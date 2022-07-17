@@ -17,7 +17,7 @@
     <select v-model="genre" v-on:change="search" class="select-genre">
         <option value="">全て</option>
         {% for genre in genres %}
-        <option value="{{ genre.id }}">{{ genre.title }}</option>
+        <option value="{{ genre }}">{{ genre }}</option>
         {% endfor %}
     </select>
     <input v-on:keydown.enter="search" v-model="keyword" placeholder="検索ワードを入力">
@@ -36,7 +36,7 @@
         <a v-bind:href="'vote/' + question.id + '/'" class="question">
             <p>[[ question.title ]]</p>
             
-            <p class="watched">[[ question.author.username ]] [[ ( question.genre || {} ).title ]]   [[ question.watched ]]view</p>
+            <p class="watched">[[ question.author.username ]] [[ question.genre ]]   [[ question.watched ]]view</p>
         </a>
     </div>
     
@@ -98,6 +98,7 @@
                 })
                 .then(res => {
                     this.questions = res.data
+                    console.log(this.questions)
                     this.sort()
                 })
                 .catch(res => {
