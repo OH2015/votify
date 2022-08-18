@@ -1,11 +1,12 @@
-import os
+import environ
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+env = environ.Env()
+env.read_env(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-skhk7tx@d%r3%$%l_hn*po2xa+g1lr8j-%o5$pm)c_q1mt@=d1'
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -14,11 +15,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.polls.apps.PollsConfig',
     'rest_framework',
     'bootstrap4',
     'environ',
     'storages',
+    'polls.apps.PollsConfig',
 ]
 
 MIDDLEWARE = [
@@ -86,4 +87,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # アップロードファイルアクセスURL
 MEDIA_URL = '/media/'
+
+# 認証機能で使用するモデル
+AUTH_USER_MODEL = 'polls.User'
+
+# メール送信設定
+EMAIL_HOST = 'mail13.onamae.ne.jp'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'info@votify.jp'
+EMAIL_HOST_PASSWORD = env.get_value('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL='info@votify.jp'
+SERVER_EMAIL = 'info@votify.jp'
+EMAIL_USE_TLS = True
+
 

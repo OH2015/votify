@@ -40,7 +40,7 @@
 <div class="overlay">
     <div class="window">
         <label class="close" for="pop-up">×</label>
-        <form method="post" action="{% url 'polls:account_top' account.user.username %}">
+        <form method="post" action="{% url 'polls:account_top' user.id %}">
             {% csrf_token %}
             <input hidden name="id" id="id">
             <h5>この投稿を削除してもよろしいですか？</h5>

@@ -1,18 +1,12 @@
 from rest_framework import serializers
-from .models import Account, Question,Choice,Comment, Vote
-from django.contrib.auth.models import User
+from .models import Question,Choice,Comment, Vote
+from django.contrib.auth import get_user_model
 
 
 
 class UserSerializer(serializers.ModelSerializer):
    class Meta:
-      model = User
-
-      fields = '__all__'
-
-class AccountSerializer(serializers.ModelSerializer):
-   class Meta:
-      model = Account
+      model = get_user_model()
 
       fields = '__all__'
 

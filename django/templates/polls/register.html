@@ -13,6 +13,7 @@
 
 <form enctype="multipart/form-data" method="post" action="{% url 'polls:register' %}">
     {% csrf_token %}
+    
     <div class="container container-fluid">
         <div class="row">
             {{ message }}
@@ -21,7 +22,7 @@
             <div class="col-sm-12"><label>アカウント名</label></div>
         </div>
         <div class="row row-input">
-            <div class="col-sm-12"><input name="id" required></div>
+            <div class="col-sm-12"><input name="username" required></div>
         </div>
         <div class="row row-label">
             <div class="col-sm-12"><label>メール</label></div>
@@ -33,18 +34,10 @@
             <div class="col-sm-12"><label>パスワード</label></div>
         </div>
         <div class="row row-input">
-            <div class="col-sm-12"><input name="pw" type="password" required></div>
+            <div class="col-sm-12"><input name="password" type="password" required></div>
         </div>
+        <input name="profile" value="よろしくお願いします" hidden>
 
-        <div class="row row-label">
-            <div class="col-sm-12"><label>プロフィール画像</label></div>
-        </div>
-        <div class="row row-input">
-            <div class="col-sm-12"><input id="file" type="file" name="image" accept=".png,.jpg,.jpeg"></div>
-        </div>
-        <div class="row row-input">
-            <div class="col-sm-12"><img id="img"></div>
-        </div>
         <div class="row row-input">
             <div class="col-sm-12"><button class="btn-primary btn-lg">登録</button></div>
         </div>

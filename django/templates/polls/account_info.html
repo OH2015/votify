@@ -17,7 +17,7 @@
     <div class="row account">
         <div class="col-sm-10">
             <p id="username-title">ユーザ名:</p>
-            <p id="username">{{ account.user.username }}</p>
+            <p id="username">{{ user.username }}</p>
         </div>
         <div class="col-sm-2">
             <label class="open" for="pop-up" @click="open('username')">編集</label>
@@ -26,27 +26,34 @@
     <div class="row e-mail">
         <div class="col-sm-10">
             <p id="email-title">メール:</p>
-            <p id="email">{{ account.user.email }}</p>
+            <p id="email">{{ user.email }}</p>
         </div>
-        <div class="col-sm-2">
+        <!-- <div class="col-sm-2">
             <label class="open" for="pop-up"  @click="open('email')">編集</label>
-        </div>
+        </div> -->
     </div>
 
     <div class="row profile">
         <div class="col-sm-10">
             <p id="profile-title">プロフィール:</p>
-            <p id="profile">{{ account.profile|linebreaksbr }}</p>
+            <p id="profile">{{ user.profile|linebreaksbr }}</p>
         </div>
         <div class="col-sm-2">
             <label class="open" for="pop-up" @click="open('profile')">編集</label>
+        </div>
+    </div>
+    <div class="row account_delete">
+        <div class="col-sm-10">
+        </div>
+        <div class="col-sm-2">
+            <input type="button" @click="account_delete" value="退会">
         </div>
     </div>
     <input type="checkbox" id="pop-up">
     <div class="overlay">
         <div class="window">
             <label class="close" for="pop-up">×</label>
-            <form id="popup" method="post" action="{% url 'polls:account_info' account.user.username %}">
+            <form id="popup" method="post" action="{% url 'polls:account_info' user.id %}">
                 {% csrf_token %}
                 <p>[[ title ]]</p>
                 <input class="in-popup" name="username" v-if="edit == 'username'" :value="value">
@@ -157,6 +164,11 @@
                 }
                 
             },
+            account_delete(){
+                if(window.confirm('アカウントに紐づくデータは全て削除されますがよろしいですか？')){
+                    window.location.href = '/{{ user.id }}/account_delete/';
+                }
+            }
         }
         ,mounted() {
 

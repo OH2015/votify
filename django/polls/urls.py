@@ -23,18 +23,22 @@ urlpatterns = [
     # コメント投稿
     path('post_comment/<int:pk>/', views.PostComment.as_view() , name='post_comment'),
 
-    # 新規登録
-    path('register', views.AccountRegistration.as_view(), name='register'),
+    # 仮登録
+    path('register', views.RegisterView.as_view(), name='register'),
+    # 本登録
+    path('register_complete/<str:token>/', views.RegisterCompleteView.as_view(), name='register_complete'),
     # ログイン
     path('login/',views.Login,name='login'),
     # ログアウト
     path("logout/",views.Logout,name="logout"),
     # ゲストログイン
-    path('guest_login/', views.guest_login, name = 'guest_login'), #かんたんログイン用
+    path('guest_login/', views.guest_login, name = 'guest_login'), 
     # 個人トップ画面
-    path('<str:username>/account_top/', views.AccountTop.as_view(), name='account_top'),
+    path('<str:id>/account_top/', views.AccountTop.as_view(), name='account_top'),
     # 個人情報
-    path('<str:username>/account_info', views.AccountInfo.as_view(), name='account_info'),
+    path('<str:id>/account_info/', views.AccountInfo.as_view(), name='account_info'),
+    # 退会
+    path('<str:id>/account_delete/', views.AccountDelete.as_view(), name='account_delete'),
 
     # API
     path('api/questions/', views.QuestionListAPIView.as_view()),

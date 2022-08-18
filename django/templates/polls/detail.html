@@ -31,9 +31,8 @@
     <!-- 認証レベル -->
     <p id="auth_text">{{ auth_text }}</p>
 
-    <h2>{{ question.title }}</h2>
-
-    <p>[[ voteSum ]]票</p>
+    <!-- タイトル -->
+    <h3>{{ question.title }}</h3>
     
     
     <!-- 選択肢 -->
@@ -47,9 +46,9 @@
     
     <!-- 詳細 -->
     <div id="content-info">
-        <a id="user-icon" href='{% url "polls:account_top" question.author.username %}'>
+        <a class="user-icon" href='{% url "polls:account_top" question.author.id %}'>
             <i class="fa-solid fa-circle-user fa-3x"></i>
-            {{ question.author.username }}
+            <span id="author">{{ question.author.username }}</span>
         </a>
         <p class="explanation">{{ question.explanation|default:"説明文はありません"|linebreaksbr }}</p>
     </div>
@@ -67,7 +66,7 @@
         <div class="row" v-for="( comment,index) in comments">
             <div class="comment-container">
                 <div class="comment-icon">
-                    <a :href="'/' + comment.user.username + '/account_top/'"><i id="user-icon" class="fa-solid fa-circle-user fa-2x"></i></a>
+                    <a :href="'/' + comment.user.username + '/account_top/'"><i class="fa-solid fa-circle-user fa-2x user-icon"></i></a>
                 </div>
                 <div class="comment-contents">
                     <div class="comment-header">
@@ -94,6 +93,7 @@
         width: 100%;
     }
     #created_at,#auth_text,#genre{
+        font-size: 12px;
         text-align: right;
         right: 0px;
     }
@@ -109,11 +109,16 @@
     #revote{
         margin-bottom: 20px;
     }
-    #user-icon{
+    .user-icon{
         text-decoration: none;
         color: black;
     }
+    #author{
+        font-size: 20px;
+        padding: 10px;
+    }
     .explanation{
+        font-size: 14px;
         white-space: pre-wrap;
         padding-top: 10px;
     }
@@ -149,6 +154,7 @@
     }
     .comment-text p {
         white-space: pre-wrap;
+        font-size: 13px;
     }
 </style>
 
@@ -203,25 +209,42 @@
             },
             // グラフ描画
             renderGraph(){
-                Chart.defaults.font.size = 18;
+                Chart.defaults.font.size = screen.width / 100 + 4;
                 let labels = []
                 let votes = []
+                let myvotes = []
                 this.choices.forEach(element => {
                     labels.push(element.choice_text)
-                    votes.push(element.votes)
+                    if(element.id == this.voted_choice_id){
+                        myvotes.push(1)
+                        votes.push(element.votes-1)
+                    }else{
+                        myvotes.push(0)
+                        votes.push(element.votes)
+                    }
                 });
 
                 // データ
                 const data = {
                     labels: labels,
-                    datasets: [{
-                        label: '投票数',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgb(54, 162, 235)',
-                        borderWidth: 1,
-                        data: votes,
-                        barPercentage:0.8,
-                    }]
+                    datasets: [
+                        {
+                            label: '全体(' + this.voteSum + ')',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgb(54, 162, 235)',
+                            borderWidth: 1,
+                            data: votes,
+                            barPercentage:0.8,
+                        },
+                        {
+                            label: '自分',
+                            backgroundColor: 'rgba(248, 248, 154, 0.2)',
+                            borderColor: 'rgb(160, 162, 160)',
+                            borderWidth: 1,
+                            data: myvotes,
+                            barPercentage:0.8,
+                        },
+                    ]
                 };
 
                 // チャート情報
@@ -233,17 +256,16 @@
                         scales:{
                             x:{
                                 display:false,
-                                // minBarLength:500,
+                                stacked: true,
                             },
-                        },
+                            y:{
+                                stacked: true,
+                            }
+                        },               
                         animation:{
                             duration:3000,
                         },
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
+
                     },
                 };
 

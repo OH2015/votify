@@ -3,7 +3,48 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from datetime import timedelta
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import PermissionsMixin, UserManager
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.core.mail import send_mail
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.utils.translation import gettext_lazy as _
+from config.consts import GUEST_NAME
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    username_validator = UnicodeUsernameValidator()
+
+    username = models.CharField(_("username"), max_length=50, validators=[username_validator], blank=True)
+    email = models.EmailField(_("email_address"), unique=True)
+    profile = models.TextField(max_length=200,default='')
+    is_staff = models.BooleanField(_("staff status"), default=False)
+    is_active = models.BooleanField(_("active"), default=True)
+    date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    objects = UserManager()
+    USERNAME_FIELD = "email"
+    EMAIL_FIELD = "email"
+    REQUIRED_FIELDS = ['username']
+
+    class Meta:
+        verbose_name = _("user")
+        verbose_name_plural = _("users")
+
+    def clean(self):
+        super().clean()
+        self.email = self.__class__.objects.normalize_email(self.email)
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        send_mail(subject, message, from_email, [self.email], **kwargs)
+
+    def get_guest_user():
+        try:
+            guest = get_user_model().objects.get(username=GUEST_NAME)
+        except get_user_model().DoesNotExist:
+            guest = None
+        return guest
 
 # 質問
 class Question(models.Model):
@@ -42,7 +83,7 @@ class Choice(models.Model):
 class Vote(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -55,7 +96,7 @@ class Vote(models.Model):
 # コメント
 class Comment(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     text = models.TextField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -91,16 +132,3 @@ class UpdateContent(models.Model):
 
     def __str__(self):
         return self.content_text
-
-
-# ユーザーアカウントのモデルクラス
-class Account(models.Model):
-    # Djangoのデフォルトユーザモデルと1v1で紐づく
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    # 追加フィールド
-    # プロフィール文章
-    profile = models.TextField(max_length=1000,default='')
-
-    def __str__(self):
-        return self.user.username

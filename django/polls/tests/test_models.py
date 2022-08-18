@@ -1,24 +1,13 @@
-import datetime
 from django.test import TestCase
-from django.utils import timezone
-from django.urls import reverse
-
-from django.contrib.auth.models import User
 from ..models import Question
-
-def create_question(title, days):
-    """
-    与えられた引数でQuestionのインスタンスを生成する(引数の日付は現在時刻との日付差、正が未来、負が過去)
-    """
-    
-    user = User.objects.create_user('test_user', 'test@sample.com', 'test_password')
-    return Question.objects.create(title=title,author=user)
+from django.contrib.auth import get_user_model
 
 
 class QuestionModelTests(TestCase):
     def test_saving_and_retrieving_post(self):
         """内容を指定してデータを保存し、すぐに取り出した時に保存した時と同じ値が返されることをテスト"""
-        question = create_question(title="", days=0)
+        user = get_user_model().objects.create(username='テスト',email='sample@sample.com',password='pass')
+        question = Question.objects.create(author=user)
         title = "test_auestion_text"
         question.title = title
         question.save()

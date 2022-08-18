@@ -25,13 +25,16 @@
     
     
     <div class="questions-header">
-        <select id="select_sort" v-on:change="sort">
-            <option value="0" selected>閲覧回数の多い順</option>
-        </select>
-        <span class="reverse" v-on:click="reverse">↑↓</span>
+        [[ no_results ]]
+        <div>
+            <select id="select_sort" v-on:change="sort">
+                <option value="0" selected>閲覧回数の多い順</option>
+            </select>
+            <span class="reverse" v-on:click="reverse">↑↓</span>
+        </div>
     </div>
     
-    [[ no_results ]]
+    
     <div v-for="question in questions">
         <a v-bind:href="'vote/' + question.id + '/'" class="question">
             <p>[[ question.title ]]</p>
@@ -51,9 +54,10 @@
         margin-right: 50px;
     }
     .questions-header{
+        display: flex;
+        justify-content: space-between;
         margin-top: 20px;
         margin-bottom: 10px;
-        text-align: right;
     }
     .reverse:hover{
         cursor: pointer;
@@ -98,7 +102,6 @@
                 })
                 .then(res => {
                     this.questions = res.data
-                    console.log(this.questions)
                     this.sort()
                 })
                 .catch(res => {
@@ -128,7 +131,7 @@
         }
         ,computed:{
             no_results: function(){
-                return (this.questions.length > 0) ? '' : '検索結果０件'
+                return '検索結果' + this.questions.length + '件'
             }
         }
         // djangoのテンプレートエンジンと競合するので{}から[]に変更
