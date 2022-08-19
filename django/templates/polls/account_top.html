@@ -28,7 +28,7 @@
             <p>{{question.title}}</p>
             <p class="watched">{{question.genre}}   {{question.watched}}view</p>
         </a>
-        {% if account.user == request.user %}
+        {% if user == request.user %}
             <label class="open" for="pop-up" onclick="state({{question.id}})"><img class="trash" src="{% static 'polls/images/trash-alt-solid.svg' %}"></label>
         {% endif %}
     </div>
