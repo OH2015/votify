@@ -21,23 +21,35 @@
     <input hidden id="voted_choice_id" value="{{ voted_choice_id }}">
 
     {% csrf_token %}
+    <div id="head">
+        <!-- タイトル -->
+        <h3>{{ question.title }}</h3>
 
-    <!-- 公開日付 -->
-    <p id="created_at">公開日 {{ question.created_at|date:"Y/n/j" }}</p>
-
-    <!-- ジャンル -->
-    <p id="genre">#{{ question.genre }}</p>
-
-    <!-- 認証レベル -->
-    <p id="auth_text">{{ auth_text }}</p>
-
-    <!-- タイトル -->
-    <h3>{{ question.title }}</h3>
+        <div>
+            <!-- 公開日付 -->
+            <p id="created_at">公開日 {{ question.created_at|date:"Y/n/j" }}</p>
+            
+            <!-- ジャンル -->
+            <p id="genre">#{{ question.genre }}</p>
+            
+            <!-- 認証レベル -->
+            <p id="auth_text">{{ auth_text }}</p>
+        </div>
+        
+    </div>
     
     
     <!-- 選択肢 -->
     <div id="content-choices" class="containner-fluid">
-        <canvas id="chart"></canvas>
+        <!-- 棒グラフ、円グラフ -->
+        <input type="radio" name="a" v-model="graph_type" v-on:change="onChangeGraph" value="bar" id="bar" checked>
+        <label class="label" for="bar">棒グラフ</label>
+        <input type="radio" name="a" v-model="graph_type" v-on:change="onChangeGraph" value="pie" id="pie">
+        <label class="label" for="pie">円グラフ</label>
+        
+        <div v-bind:class="graph_type">
+            <canvas id="chart"></canvas>
+        </div>
         
         {% if request.user.is_authenticated and not request.user == question.author %}
         <a id='revote' href='{% url "polls:revote" question.id %}' class="btn btn-primary">再投票</a>
@@ -85,9 +97,33 @@
 </div>
 
 <style>
+    input[type=radio] {
+        display: none;
+    }
+    .label {
+        margin: 5px; 
+        border: 1px solid #006DD9;
+        border-radius: 5px;
+        cursor: pointer;
+        padding: 5px;
+        font-weight: bold;
+    }
+    input[type="radio"]:checked + label {
+        background: #31A9EE;/* マウス選択時の背景色を指定する */
+        color: #ffffff; /* マウス選択時のフォント色を指定する */
+    }
+    .pie{
+        margin: auto;
+        margin-bottom: 50px;
+        max-width: 500px;
+    }
     #app{
         margin: auto;
         max-width: 700px;
+    }
+    #head{
+        display: flex;
+        justify-content: space-between;
     }
     canvas{
         width: 100%;
@@ -167,12 +203,22 @@
     Vue.createApp({
         data() {
             return {
+                // 画面表示メッセージ
                 message: "",
+                // 表示中の質問ID
                 question_id: 0,
+                // 投稿した選択肢ID
                 voted_choice_id:0,
+                // グラフ種類
+                graph_type:'bar',
+                // コメント下書き
                 comment_draft: "",
+                // 選択肢リスト
                 choices: [],
+                // コメントリスト
                 comments: [],
+                // グラフの設定
+                graph_config:{},
             }
         }
         ,methods: {
@@ -224,57 +270,83 @@
                     }
                 });
 
-                // データ
-                const data = {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: '全体(' + this.voteSum + ')',
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            borderColor: 'rgb(54, 162, 235)',
-                            borderWidth: 1,
-                            data: votes,
-                            barPercentage:0.8,
+              
+                let config = null
+                if(this.graph_type == 'bar'){
+                    config = {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: '全体(' + this.voteSum + ')',
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    borderColor: 'rgb(54, 162, 235)',
+                                    borderWidth: 1,
+                                    data: votes,
+                                    barPercentage:0.8,
+                                },
+                                {
+                                    label: '自分',
+                                    backgroundColor: 'rgba(248, 248, 154, 0.2)',
+                                    borderColor: 'rgb(160, 162, 160)',
+                                    borderWidth: 1,
+                                    data: myvotes,
+                                    barPercentage:0.8,
+                                },
+                            ]
                         },
-                        {
-                            label: '自分',
-                            backgroundColor: 'rgba(248, 248, 154, 0.2)',
-                            borderColor: 'rgb(160, 162, 160)',
-                            borderWidth: 1,
-                            data: myvotes,
-                            barPercentage:0.8,
-                        },
-                    ]
-                };
-
-                // チャート情報
-                const config = {
-                    type: 'bar',
-                    data: data,
-                    options: {
-                        indexAxis: 'y',
-                        scales:{
-                            x:{
-                                display:false,
-                                stacked: true,
+                        options: {
+                            indexAxis: 'y',
+                            scales:{
+                                x:{
+                                    display:false,
+                                    stacked: true,
+                                },
+                                y:{
+                                    stacked: true,
+                                }
+                            },               
+                            animation:{
+                                duration:3000,
                             },
-                            y:{
-                                stacked: true,
-                            }
-                        },               
-                        animation:{
-                            duration:3000,
+                        }
+                    }
+                }else if(this.graph_type == 'pie'){
+                    config = {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    backgroundColor: ["#5a79ba", "#68be8d", "#cc7eb1", "#f6ad49", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
+                                    borderWidth: 1,
+                                    data: votes,
+                                    barPercentage:0.8,
+                                },
+                            ]
                         },
-
-                    },
-                };
+                        options: {
+                            animation:{
+                                duration:3000,
+                            },
+                        },
+                    }
+                }
 
                 // チャート生成
-                const chart = new Chart(
+                window.chart = new Chart(
                     document.getElementById('chart'),
                     config
                 );
             },
+            // グラフタイプ変更時
+            onChangeGraph(){
+                if(window.chart){
+                    window.chart.destroy()
+                }
+                this.renderGraph()
+            }
 
         }
         ,mounted() {
