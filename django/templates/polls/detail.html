@@ -257,21 +257,23 @@
             renderGraph(){
                 Chart.defaults.font.size = screen.width / 100 + 4;
                 let labels = []
-                let votes = []
+                let other_votes = []
+                let total_votes = []
                 let myvotes = []
                 this.choices.forEach(element => {
                     labels.push(element.choice_text)
+                    total_votes.push(element.votes)
                     if(element.id == this.voted_choice_id){
                         myvotes.push(1)
-                        votes.push(element.votes-1)
+                        other_votes.push(element.votes-1)
                     }else{
                         myvotes.push(0)
-                        votes.push(element.votes)
+                        other_votes.push(element.votes)
                     }
                 });
 
-              
                 let config = null
+                // 棒グラフ
                 if(this.graph_type == 'bar'){
                     config = {
                         type: 'bar',
@@ -279,15 +281,15 @@
                             labels: labels,
                             datasets: [
                                 {
-                                    label: '全体(' + this.voteSum + ')',
+                                    label: 'その他(' + other_votes.reduce((sum,el) => sum + el,0) + ')',
                                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                                     borderColor: 'rgb(54, 162, 235)',
                                     borderWidth: 1,
-                                    data: votes,
+                                    data: other_votes,
                                     barPercentage:0.8,
                                 },
                                 {
-                                    label: '自分',
+                                    label: '自分(' + myvotes.reduce((sum,el) => sum + el,0) + ')',
                                     backgroundColor: 'rgba(248, 248, 154, 0.2)',
                                     borderColor: 'rgb(160, 162, 160)',
                                     borderWidth: 1,
@@ -312,6 +314,7 @@
                             },
                         }
                     }
+                // 円グラフ
                 }else if(this.graph_type == 'pie'){
                     config = {
                         type: 'pie',
@@ -321,7 +324,7 @@
                                 {
                                     backgroundColor: ["#5a79ba", "#68be8d", "#cc7eb1", "#f6ad49", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
                                     borderWidth: 1,
-                                    data: votes,
+                                    data: total_votes,
                                     barPercentage:0.8,
                                 },
                             ]
@@ -342,9 +345,11 @@
             },
             // グラフタイプ変更時
             onChangeGraph(){
+                // グラフ削除
                 if(window.chart){
                     window.chart.destroy()
                 }
+                // グラフ再描画
                 this.renderGraph()
             }
 
