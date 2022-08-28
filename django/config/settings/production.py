@@ -31,3 +31,7 @@ AWS_STORAGE_BUCKET_NAME = 'plbucket'
 AWS_S3_REGION_NAME = 'us-east-1'
 AWS_ACCESS_KEY_ID = env.get_value('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env.get_value('AWS_SECRET_ACCESS_KEY')
+
+
+# CSRF検証用
+CSRF_TRUSTED_ORIGINS = ['https://votify.jp'] 
