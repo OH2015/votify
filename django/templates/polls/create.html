@@ -40,10 +40,11 @@
             <div id="content" class="containner-fluid">
                 <input class="button btn-add" type="button" v-on:click="add_choice(-1)" value="追加">
                 <div class="row" v-for="(choice,index) in choices" :key="index">
-                    <div class="col-sm-12">
+                    <div class="col-sm-10">
                         <textarea rows="1" @input="applyChanges" @keydown.delete="on_delete" v-model="choices[index]" :name="'choice' + index" :id="index" class="choice" maxlength="25" required></textarea>
-                        <span>　</span>
-                        <img class="trash" src="{% static 'polls/images/trash-alt-solid.svg' %}" v-on:click="remove_choice(index)">
+                    </div>
+                    <div class="col-sm-2">
+                        <div v-if="index > 1" class="close" v-on:click="remove_choice(index)">x</div>
                     </div>
                 </div>
                 <input hidden name="choice_num" v-bind:value="choices.length">
@@ -144,16 +145,24 @@
     margin-bottom: 20px;
 }
 .choice{
-    width: 80%;
-    margin-bottom: 10px;
+    width: 100%;
     resize:none;
     overflow: hidden;
 }
-.trash{
-    width: 25px;
-    height: 25px;
+.row{
+    height: 30px;
+    margin-bottom: 10px;
 }
-.trash:hover{
+.row *{
+    height: 100%;
+}
+.close{
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
+.close:hover{
     cursor: pointer;
 }
 .btn-add{
