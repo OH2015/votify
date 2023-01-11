@@ -4,4 +4,5 @@ To run this application
 ex)yum install Docker docker-compose
 
 2.Execute next command
-   docker-compose up
+   docker-compose up -d
+  
