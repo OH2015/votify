@@ -32,12 +32,17 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, 
 
 #header > .logo_cell {
     height: 100%;
-	cursor: pointer;
+	width: 350px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
 }
 
-#header > .logo_cell > a > .main_logo {
-	height: 100%;
-	background-size: cover;
+#header > .logo_cell > a {
+	text-decoration: none;
+	color: white;
+	font-weight: bold;
 }
 
 #header .last_cell{

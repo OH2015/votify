@@ -3,6 +3,6 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /app
 RUN mkdir WORKDIR
 ADD requirements.txt .
-ADD . .
+# ADD . .
 RUN pip install -r requirements.txt
 

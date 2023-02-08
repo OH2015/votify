@@ -10,13 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
 
       fields = '__all__'
 
-class QuestionSerializer(serializers.ModelSerializer):
-   author = UserSerializer()
-
-   class Meta:
-      model = Question
-
-      fields = '__all__'
 
 class ChoiceSerializer(serializers.ModelSerializer):
    votes = serializers.SerializerMethodField()
@@ -27,6 +20,16 @@ class ChoiceSerializer(serializers.ModelSerializer):
 
    def get_votes(self, instance):
       return Vote.objects.filter(choice=instance).all().count()
+
+
+class QuestionSerializer(serializers.ModelSerializer):
+   author = UserSerializer()
+   choices = ChoiceSerializer(many=True,read_only=True)
+
+   class Meta:
+      model = Question
+
+      fields = ('id','title','explanation','watched','author','genre','auth_level','created_at','choices')
 
 
 class CommentSerializer(serializers.ModelSerializer):
