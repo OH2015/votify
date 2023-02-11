@@ -2,7 +2,12 @@ from django.urls import path,include
 from . import views
 from django.conf.urls.static import static
 from django.conf import settings
+from .views import VoteViewSet
 
+from rest_framework import routers
+
+defaultRouter = routers.DefaultRouter()
+defaultRouter.register('vote',VoteViewSet)
 
 app_name = 'polls'
 
@@ -41,6 +46,8 @@ urlpatterns = [
     path('<str:id>/account_delete/', views.AccountDelete.as_view(), name='account_delete'),
 
     # API
+    # api/vote/に各CRUDエンドポイントを作成
+    path('api/',include(defaultRouter.urls)),
     path('api/questions/', views.QuestionListAPIView.as_view()),
     path('api/questions/<int:pk>/', views.QuestionRetrieveAPIView.as_view()),
     path('api/choices/<int:pk>/', views.ChoiceListAPIView.as_view()),

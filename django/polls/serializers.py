@@ -39,3 +39,9 @@ class CommentSerializer(serializers.ModelSerializer):
       model = Comment
       fields = ('id','question', 'user', 'text', 'created_at', 'updated_at','get_date')
 
+
+class VoteSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = Vote
+      fields = '__all__'
+

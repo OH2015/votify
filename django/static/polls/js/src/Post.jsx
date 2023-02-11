@@ -1,6 +1,7 @@
-import React,{useState} from 'react'
+import React,{useCallback, useState} from 'react'
 import styled from 'styled-components'
-import Comment from './Comment'
+import Choice from './Choice'
+import Footer from './Footer'
 
 const QuestionContainer = styled.div`
     width: 100%;
@@ -9,81 +10,66 @@ const QuestionContainer = styled.div`
     padding: 5px;
     box-shadow: 3px 3px 3px;
 `
-const ProgressBar = styled.div`
-    position: absolute;
-    display: inline-flex;
-    background-color: rgb(193, 235, 77);
-    width: 50%;
-    height: 50px;
-    border-radius: 5px;
-`
-const PercentageArea = styled.div`
-    position: absolute;
-    display: inline-flex;
-    background-color: rgba(151, 143, 143, 0.655);
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-`
 
-const ChoiceText = styled.div`
-    display: inline-flex;
-    z-index: 1;
+const QuestionTitle = styled.h3`
 `
-
-const ChoiceBox = styled.div`
-    width: 90%;
-    height:50px;
-    display: flex;
-    position: relative;
-    margin: 5px;
-    border-radius: 5px;
-    align-items: center;
-    &:hover{
-        cursor: pointer;
-    }
+const Explanation = styled.div`
 `
-
-const CommentToggle = styled.div`
-    &:hover{
-        cursor: pointer;
-    }
-`
-
 
 // 投稿コンポーネント
-const Post = ({post}) => {
-    const [opend,setOpend] = useState(false);
+const Post = ({id,title,explanation,choices: ini_choices}) => {
+    // 選択肢のリストをステートとして保持
+    const [choices, setChoices] = useState(ini_choices);
 
-    const choiceClickHandler = () => {
-        console.log("click!")
-    }
+    // 選択肢が押下された時の処理
+    const choiceClickHandler = async (choice_id) => {
+        // 選択された選択肢
+        const choice = choices.find(e=>e.id == choice_id);
+        // 投票済みの選択肢
+        const posted = choices.find(e=>e.vote_id);
+        // 選択済みならスキップ
+        if(choice.vote_id)return;
+        // 投票先にPOST
+        const res = await axios.post('http://localhost:8000/api/vote/',{
+            "question": id,
+            "choice": choice_id,
+            "user": null
+        },)
+        // 帰ってきたvote_idをセット
+        choice.vote_id = res.data.id;
+        // 得票数+1
+        choice.votes += 1;
+        
+        // 既に選択済みのPOSTをDELETE
+        if(posted){   
+            await axios.delete(`http://localhost:8000/api/vote/${posted.vote_id}/`)
+            // vote_idをリセット
+            posted.vote_id = null
+            // 得票数-1
+            posted.votes -= 1
+        }
+        // 選択肢のリストを上書き
+        setChoices([...choices]);
+    };
 
-    const toggleClickHandler = () =>{
-        setOpend(true);
-    }
+    // 得票率を計算して返却
+    const getProgress = useCallback(votes => {
+        const sum = choices.reduce((sum,el) => sum + el.votes,0)
+        return (sum ? votes / sum : 0) * 100;
+    },[]);
 
     return (
         <QuestionContainer>
-            <h3>{post.title}</h3>
-            <div>
-                {post.explanation}
-            </div>
-            <div>
-                {post.choices.map(choice => {
-                    return (
-                        <ChoiceBox key={choice.id} onClick={choiceClickHandler}>
-                            <ChoiceText>{choice.choice_text}</ChoiceText>
-                            <PercentageArea/>
-                            <ProgressBar/>
-                        </ChoiceBox>
-                    )
-                })}
-            </div>
-            <div>
-                {!opend && <CommentToggle onClick={toggleClickHandler}>コメントを表示する</CommentToggle>}
-                {opend && <Comment/>}
-            </div>
+            <QuestionTitle>{title}</QuestionTitle>
+            <Explanation>{explanation}</Explanation>
+            {choices.map((choice) => {
+                return (
+                    <div key={choice.id} onClick={() => choiceClickHandler(choice.id)}>
+                        <Choice {...choice} progress={getProgress(choice.votes)}/>
+                    </div>
+                )
+            })}
+            <Footer/>
         </QuestionContainer>
     )
 }

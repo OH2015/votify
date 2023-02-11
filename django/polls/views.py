@@ -8,9 +8,9 @@ from django.shortcuts import render
 from django.contrib.auth import login,authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.views.generic import TemplateView # テンプレートタグ
-from rest_framework import generics
-from .serializers import ChoiceSerializer, QuestionSerializer, CommentSerializer
+from rest_framework import generics,viewsets
 from rest_framework.response import Response
+from .serializers import ChoiceSerializer, QuestionSerializer, CommentSerializer, VoteSerializer
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import HttpResponseBadRequest, JsonResponse
@@ -414,5 +414,10 @@ class CommentListAPIView(generics.ListAPIView):
         serializer = CommentSerializer(self.queryset, many=True)
 
         return Response(serializer.data)
+
+
+class VoteViewSet(viewsets.ModelViewSet):
+    queryset = Vote.objects.all()
+    serializer_class = VoteSerializer
 
 
