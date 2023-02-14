@@ -2,12 +2,13 @@ from django.urls import path,include
 from . import views
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import VoteViewSet
+from .views import VoteViewSet,CommentViewSet
 
 from rest_framework import routers
 
 defaultRouter = routers.DefaultRouter()
 defaultRouter.register('vote',VoteViewSet)
+defaultRouter.register('comment',CommentViewSet)
 
 app_name = 'polls'
 

@@ -47,7 +47,7 @@ const ChoiceBox = styled.div`
 const Choice = memo(({id,choice_text,vote_id,progress}) => {
     return (
         <ChoiceBox key={id} voted={vote_id} >
-            <ChoiceText>{choice_text} </ChoiceText>
+            <ChoiceText>{choice_text}</ChoiceText>
             <PercentText>{Math.floor(progress)}%</PercentText>
             <PercentageArea/>
             <ProgressBar progress={progress}/>

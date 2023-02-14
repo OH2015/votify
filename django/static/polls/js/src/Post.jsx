@@ -17,7 +17,7 @@ const Explanation = styled.div`
 `
 
 // 投稿コンポーネント
-const Post = ({id,title,explanation,choices: ini_choices}) => {
+const Post = ({id,title,explanation,choices: ini_choices,comments}) => {
     // 選択肢のリストをステートとして保持
     const [choices, setChoices] = useState(ini_choices);
 
@@ -30,7 +30,7 @@ const Post = ({id,title,explanation,choices: ini_choices}) => {
         // 選択済みならスキップ
         if(choice.vote_id)return;
         // 投票先にPOST
-        const res = await axios.post('http://localhost:8000/api/vote/',{
+        const res = await axios.post('http://localhost/api/vote/',{
             "question": id,
             "choice": choice_id,
             "user": null
@@ -42,7 +42,7 @@ const Post = ({id,title,explanation,choices: ini_choices}) => {
         
         // 既に選択済みのPOSTをDELETE
         if(posted){   
-            await axios.delete(`http://localhost:8000/api/vote/${posted.vote_id}/`)
+            await axios.delete(`http://localhost/api/vote/${posted.vote_id}/`)
             // vote_idをリセット
             posted.vote_id = null
             // 得票数-1
@@ -69,7 +69,7 @@ const Post = ({id,title,explanation,choices: ini_choices}) => {
                     </div>
                 )
             })}
-            <Footer/>
+            <Footer questionId={id}/>
         </QuestionContainer>
     )
 }

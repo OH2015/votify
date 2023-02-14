@@ -16,19 +16,15 @@ const CommentFooter = styled.div`
 `
 
 // コメントコンポーネント
-export default Comment = () => {
+export default Comment = ({id, user, text}) => {
     return (
         <CommentContainer>
             <CommentHeader>
-                <h5>ユーザ名</h5>
+                <h5>{user.username}</h5>
                 <span>　</span>
                 <span>1日前</span>
             </CommentHeader>
-            <CommentText>コメントコメントコメントコメント<br/>
-            コメントコメントコメントコメントコメント<br/>
-            コメントコメントコメントコメントコメント<br/>
-            コメントコメントコメントコメントコメント<br/>
-            コメントコメントコメントコメントコメント<br/>
+            <CommentText>{text}
             </CommentText>
             <CommentFooter/>
         </CommentContainer>

@@ -32,7 +32,7 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, 
 
 #header > .logo_cell {
     height: 100%;
-	width: 350px;
+	width: 400px;
 	display: flex;
 	align-items: center;
 	justify-content: center;

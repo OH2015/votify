@@ -37,6 +37,7 @@
             {% if user.is_authenticated %}
                 <div class="user-cell">
                     <a href='{% url "polls:account_top" user.id %}'><i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i></a>
+                    <input id="hidden_user_id" hidden value="{{ user.id }}">
                     <div class="header-user-menu">
                         <ul>
                             <li><a href='{% url "polls:account_top" user.id %}'>{{ user.username }}</a></li>

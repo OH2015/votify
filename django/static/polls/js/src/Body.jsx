@@ -9,12 +9,13 @@ const RootElement = styled.div`
 
 // ボディコンポーネント
 const Body = () => {
-    const [posts,setPosts] = useState([]);
+    const [posts,setPosts] = useState([]); //投稿一覧
+    
+    // 初期処理
     useEffect(() => {
         const getQuestions = async () => {
           const res = await axios.get('/api/questions/');
           setPosts(res.data);
-          console.log(res.data)
         }
         getQuestions();
     }, []);

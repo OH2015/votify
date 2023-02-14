@@ -95,7 +95,7 @@ class Vote(models.Model):
 
 # コメント
 class Comment(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE,related_name='comments')
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     text = models.TextField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)

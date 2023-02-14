@@ -415,9 +415,23 @@ class CommentListAPIView(generics.ListAPIView):
 
         return Response(serializer.data)
 
-
+# 投票モデルのCRUDエンドポイント
 class VoteViewSet(viewsets.ModelViewSet):
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
+
+# コメントモデルのCRUDエンドポイント
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.order_by('-created_at').all()
+    serializer_class = CommentSerializer
+
+    # GET
+    def get_queryset(self):
+        queryset = Comment.objects.order_by('-created_at').all()
+        question_id = self.request.query_params.get('question_id', None)
+        # localhost/api/comment/?question_id=1などで検索可能にする
+        if question_id is not None:
+            queryset = queryset.filter(question_id=question_id)
+        return queryset
 
 
