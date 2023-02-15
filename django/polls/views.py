@@ -6,14 +6,13 @@ from .models import Question,Choice,Vote,UpdateContent,Comment
 from .forms import UserForm
 from django.shortcuts import render
 from django.contrib.auth import login,authenticate, logout
-from django.contrib.auth.hashers import make_password
 from django.views.generic import TemplateView # テンプレートタグ
 from rest_framework import generics,viewsets
 from rest_framework.response import Response
-from .serializers import ChoiceSerializer, QuestionSerializer, CommentSerializer, VoteSerializer
+from .serializers import QuestionSerializer, CommentSerializer, VoteSerializer
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
@@ -26,101 +25,6 @@ from django.template.loader import render_to_string
 # トップ画面
 class IndexView(TemplateView):
     template_name = 'polls/index.html'
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['genres'] = [g[0] for g in Question.genre.field.choices]
-        return ctx
-
-
-# 投票画面
-class VoteView(TemplateView):
-    # GET(pk:question_id)
-    def get(self, request,pk):
-        question = get_object_or_404(Question, pk=pk)
-        # 閲覧回数をカウント
-        question.watched += 1
-        question.save()
-        auth_texts = ['匿名可','要ログイン','マイナンバー連携者限定']
-        self.params = {
-            'question': question
-            ,'voted_choice_id':-1
-            ,'auth_text': auth_texts[question.auth_level]}
-        
-        # ログイン中
-        if request.user.is_authenticated:
-            # 自分の投稿
-            if request.user == question.author:
-                return render(request,"polls/detail.html",self.params)
-            # 投票済み
-            elif Vote.objects.filter(user=request.user, question=question).exists():
-                self.params['voted_choice_id'] = Vote.objects.get(question=question, user=request.user).choice.id
-                return render(request,"polls/detail.html",self.params)
-            # 未投票
-            else:
-                # 未投票 → 投票ページへ
-                return render(request,"polls/vote.html",self.params)
-        # 匿名
-        else:
-            # 投票済み
-            if str(pk) in request.session:
-                self.params['voted_choice_id'] = request.session[str(pk)]
-                # 投票済み → 結果画面へ
-                return render(request,"polls/detail.html",self.params)
-            # 未投票
-            else:
-                # 投票権なし → 結果画面へ
-                if question.auth_level > 0:
-                    return render(request,"polls/detail.html",self.params)
-
-                # 投票権あり → 投票ページへ
-                else:
-                    return render(request,"polls/vote.html",self.params)
-
-    # 投票処理
-    def post(self,request,pk):
-        question = get_object_or_404(Question, pk=pk)
-        choice = Choice.objects.get(id=request.POST['choice'])
-
-        # ログイン中
-        if request.user.is_authenticated:
-            # 自分の投稿, 投票済み
-            if request.user == question.author or Vote.objects.filter(user=request.user,question=question).exists():
-                return redirect('polls:vote',pk)
-        # 匿名
-        else:
-            # 投票済み, 投票権なし
-            if str(pk) in request.session or question.auth_level > 0:
-                return redirect('polls:vote',pk)
-
-        # ログイン中
-        if request.user.is_authenticated:
-            Vote.objects.create(question=choice.question,choice=choice,user=request.user)
-        # 匿名
-        else:
-            Vote.objects.create(question=choice.question,choice=choice,user=None)
-
-        # セッションに投票済み登録
-        request.session[str(choice.question.id)] = choice.id
-        return redirect('polls:vote',pk)
-
-
-# 再投票
-class RevoteView(TemplateView):
-    # GET(pk:question_id)
-    def get(self, request,pk):
-        vote = Vote.objects.get(user=request.user,question=pk)
-        vote.delete()
-        del request.session[str(pk)]
-
-        return redirect('polls:vote',pk)
-
-
-# コメント投稿API
-class PostComment(TemplateView):
-    def post(self,request,pk):
-        Comment.objects.create(question_id=pk,user=request.user,text=request.POST.get('text'))
-        return JsonResponse({})
 
 # 更新履歴
 def UpdateHistory(request):
@@ -354,7 +258,6 @@ def guest_login(request):
     return redirect('polls:index')
     
 
-
 # 
 # DRF(DjangoRestFramework)
 # 
@@ -380,39 +283,6 @@ class QuestionListAPIView(generics.ListAPIView):
 
         self.queryset = Question.objects.filter(condition1 & condition2).all()
         serializer = QuestionSerializer(self.get_queryset(),many=True)
-        return Response(serializer.data)
-
-
-# 特定のQuestionオブジェクトの参照APIビュー
-class QuestionRetrieveAPIView(generics.RetrieveAPIView):
-    # 操作カスタマイズ
-    def get(self,request,pk):
-        # クエリー
-        queryset = Question.objects.get(id=pk)
-        serializer = QuestionSerializer(queryset)
-
-        return Response(serializer.data)
-
-
-# Choiceオブジェクトのリストを返すAPIビュー
-class ChoiceListAPIView(generics.ListAPIView):
-    # 独自に拡張
-    def list(self,request,pk):
-        self.queryset = Choice.objects.filter(question_id=pk).all()
-
-        queryset = self.get_queryset()
-        serializer = ChoiceSerializer(queryset, many=True)
-
-        return Response(serializer.data)
-
-
-# Commentオブジェクトのリストを返すAPIビュー
-class CommentListAPIView(generics.ListAPIView):
-    # 独自に拡張
-    def list(self,request,pk):
-        self.queryset = Comment.objects.order_by('-created_at').filter(question_id=pk).all()
-        serializer = CommentSerializer(self.queryset, many=True)
-
         return Response(serializer.data)
 
 # 投票モデルのCRUDエンドポイント
