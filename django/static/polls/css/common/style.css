@@ -44,23 +44,11 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, 
 	color: white;
 	font-weight: bold;
 }
-
-#header .last_cell{
-    right: 0px;
-    width: 320px;
-	height: 100%;
-	padding-right: 20px;
-}
-#header .last_cell .header_user_name{
-	padding: 1px;
-	text-align: right;
-	width:80px;
-	height:100%;
-}
 #header-menus{
 	display: flex;
     justify-content: flex-end;
 	align-items: center;
+	margin-right: 20px;
 	height: 100%;
     width: 100%;
 }

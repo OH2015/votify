@@ -299,7 +299,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Comment.objects.order_by('-created_at').all()
         question_id = self.request.query_params.get('question_id', None)
-        # localhost/api/comment/?question_id=1などで検索可能にする
+        # /api/comment/?question_id=1などで検索可能にする
         if question_id is not None:
             queryset = queryset.filter(question_id=question_id)
         return queryset

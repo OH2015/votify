@@ -10,7 +10,7 @@ const CommentToggle = styled.div`
 const Container = styled.div`
     border-top: solid gray 1px;
     width: 100%;
-    margin-top:50px;
+    margin-top:30px;
 `
 const CommentForm = styled.div`
     padding-bottom: 10px;
@@ -40,7 +40,7 @@ const Footer = memo(({questionId}) => {
     useEffect(() => {
         const getCommentList = async() => {
             // コメント取得
-            const result = await axios.get(`http://localhost/api/comment/?question_id=${questionId}`);
+            const result = await axios.get(`/api/comment/?question_id=${questionId}`);
             setCommentList(result.data);
         }
         getCommentList()
@@ -62,7 +62,7 @@ const Footer = memo(({questionId}) => {
         const user_id = document.getElementById('hidden_user_id').value;
 
         // コメントをPOST送信
-        const result = await axios.post('http://localhost/api/comment/',{
+        const result = await axios.post('/api/comment/',{
             "question": questionId,
             "text": comment,
             "user_id": parseInt(user_id),
@@ -76,7 +76,7 @@ const Footer = memo(({questionId}) => {
 
     return (
         <div>
-            {opend ? (
+            {(opend || commentList.length == 0) ? (
             <Container className="containner-fluid">
                 <CommentForm>
                     <Draft maxLength={1000} onInput={inputHandler} value={comment}/>

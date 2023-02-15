@@ -4,6 +4,7 @@ import Choice from './Choice'
 import Footer from './Footer'
 
 const QuestionContainer = styled.div`
+    margin-bottom: 20px;
     width: 100%;
     border: gray 1px solid;
     border-radius: 5px;
@@ -30,7 +31,7 @@ const Post = ({id,title,explanation,choices: ini_choices,comments}) => {
         // 選択済みならスキップ
         if(choice.vote_id)return;
         // 投票先にPOST
-        const res = await axios.post('http://localhost/api/vote/',{
+        const res = await axios.post('/api/vote/',{
             "question": id,
             "choice": choice_id,
             "user": null
@@ -42,7 +43,7 @@ const Post = ({id,title,explanation,choices: ini_choices,comments}) => {
         
         // 既に選択済みのPOSTをDELETE
         if(posted){   
-            await axios.delete(`http://localhost/api/vote/${posted.vote_id}/`)
+            await axios.delete(`/api/vote/${posted.vote_id}/`)
             // vote_idをリセット
             posted.vote_id = null
             // 得票数-1
