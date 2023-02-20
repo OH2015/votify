@@ -28,27 +28,31 @@ const Post = ({id,title,explanation,choices: ini_choices,comments}) => {
         const choice = choices.find(e=>e.id == choice_id);
         // 投票済みの選択肢
         const posted = choices.find(e=>e.vote_id);
-        // 選択済みならスキップ
-        if(choice.vote_id)return;
-        // 投票先にPOST
-        const res = await axios.post('/api/vote/',{
-            "question": id,
-            "choice": choice_id,
-            "user": null
-        },)
-        // 帰ってきたvote_idをセット
-        choice.vote_id = res.data.id;
-        // 得票数+1
-        choice.votes += 1;
-        
-        // 既に選択済みのPOSTをDELETE
-        if(posted){   
-            await axios.delete(`/api/vote/${posted.vote_id}/`)
-            // vote_idをリセット
-            posted.vote_id = null
-            // 得票数-1
-            posted.votes -= 1
+
+        // 選択済みなら解除
+        if(choice.vote_id){
+            await axios.delete(`/api/vote/${choice.vote_id}/`)
+            choice.vote_id = null // vote_idをリセット
+            choice.votes -= 1 // 得票数-1
+        }else{
+            // 投票先にPOST
+            const res = await axios.post('/api/vote/',{
+                "question": id,
+                "choice": choice_id,
+                "user": null
+            },)
+            // 帰ってきたvote_idをセット
+            choice.vote_id = res.data.id;
+            choice.votes += 1; // 得票数+1
+            
+            // 既に選択済みのPOSTをDELETE
+            if(posted){   
+                await axios.delete(`/api/vote/${posted.vote_id}/`)
+                posted.vote_id = null // vote_idをリセット
+                posted.votes -= 1 // 得票数-1
+            }
         }
+        
         // 選択肢のリストを上書き
         setChoices([...choices]);
     };

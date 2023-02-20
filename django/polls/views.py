@@ -225,7 +225,7 @@ def Login(request):
             #ユーザーアクティベート判定
             if user.is_active:
                 # ログイン
-                login(request,user)
+                login(request,user,backend='django.contrib.auth.backends.ModelBackend')
                 return redirect('polls:index')
             else:
                 # アカウント利用不可
@@ -254,7 +254,7 @@ def guest_login(request):
         if result:
             redirect('polls:guest_login')
     else:
-        login(request, guest_user)
+        login(request, guest_user,backend='django.contrib.auth.backends.ModelBackend')
     return redirect('polls:index')
     
 

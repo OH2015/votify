@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'environ',
     'storages',
     'polls.apps.PollsConfig',
+    'social_django', # OAuth認証
 ]
 
 MIDDLEWARE = [
@@ -30,7 +31,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'social_django.middleware.SocialAuthExceptionMiddleware',  # OAuth認証
 ]
+
+# OAuth用に追加
+UTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',  # Google OAuth2用
+)
 
 ROOT_URLCONF = 'config.urls'
 
@@ -45,6 +53,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'social_django.context_processors.backends',       # OAuth
+                'social_django.context_processors.login_redirect', # OAuth
             ],
         },
     },
@@ -92,12 +103,29 @@ MEDIA_URL = '/media/'
 AUTH_USER_MODEL = 'polls.User'
 
 # メール送信設定
-EMAIL_HOST = 'mail13.onamae.ne.jp'
+# 本番用
+# EMAIL_HOST = 'mail13.onamae.ne.jp'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'info@votify.jp'
+# EMAIL_HOST_PASSWORD = env.get_value('EMAIL_HOST_PASSWORD')
+# DEFAULT_FROM_EMAIL='info@votify.jp'
+# SERVER_EMAIL = 'info@votify.jp'
+
+# テスト用(メールサーバ代がかかるため)
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'info@votify.jp'
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'fibo2955@gmail.com'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER # send_mailのfromがNoneの場合自動で入る。
 EMAIL_HOST_PASSWORD = env.get_value('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL='info@votify.jp'
-SERVER_EMAIL = 'info@votify.jp'
 EMAIL_USE_TLS = True
 
-
+# OAuth
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+LOGIN_URL = 'login'
+LOGOUT_URL = '/'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '150637606230-obhuv1372472qk1qjrgs2uvk4lkohk5g.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'

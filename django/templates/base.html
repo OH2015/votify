@@ -37,7 +37,6 @@
             {% if user.is_authenticated %}
                 <div class="user-cell">
                     <a href='{% url "polls:account_top" user.id %}'><i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i></a>
-                    <input id="hidden_user_id" hidden value="{{ user.id }}">
                     <div class="header-user-menu">
                         <ul>
                             <li><a href='{% url "polls:account_top" user.id %}'>{{ user.username }}</a></li>
@@ -49,9 +48,9 @@
                 </div>
             {% else %}
                 <a href="{% url 'polls:login' %}">ログイン</a>
-                <!-- <div class="signup_cell"><a href="{% url 'polls:register' %}">新規登録</a></div> -->
+                <div class="signup_cell"><a href="{% url 'polls:register' %}">新規登録</a></div>
             {% endif %}
-            
+            <input id="hidden_user_id" hidden value="{{ user.id }}">
         </div>
 
     </div>
@@ -77,9 +76,7 @@
         <li><a href="{% url 'polls:diagram' %}">構成図</a></li>
         <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSdTPn1bsOk2LXV3JlKGnLv6zDZxzva85Q6XY9gc2itfKwTxEw/viewform?usp=sf_link" target="_blank" rel="noopener noreferrer">問い合わせ</a></li>
         </ul>
-        <p class="copyright">
-        COPYRIGHT © Votify Inc. All rights Reserved.
-        </p>
+        <p class="copyright">COPYRIGHT © Votify Inc. All rights Reserved.</p>
     </footer>
 </body>
 

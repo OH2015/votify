@@ -24,7 +24,7 @@
     {% endif %}
     {% for question in questions %}
     <div class="question-row">
-        <a href="{% url 'polls:vote' question.pk %}" class="question">
+        <a href="" class="question">
             <p>{{question.title}}</p>
             <p class="watched">{{question.genre}}   {{question.watched}}view</p>
         </a>

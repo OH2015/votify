@@ -1,46 +1,51 @@
 {% extends 'base.html' %}
 {% block extra-static %}
 {% load static %}
-<link rel="stylesheet" href='{% static "polls/css/login.css" %}'/>
+<link rel="stylesheet" href='{% static "polls/css/login.css" %}' />
 {% endblock %}
 {% block title %}ログイン{% endblock %}
 
 {% block content %}
-  <form method="post" action="{% url 'polls:login' %}">
-    {% csrf_token %}
-    <div id="container" class="container container-fluid">
-       <div class="row">
-         <div class="col-sm-4">
-            <label for="email">メールアドレス:</label>
-         </div>
-         <div class="col-sm-8">
-            <input type="text" name="email" required> 
-        </div>
-      </div>
-      <div class="row">
-         <div class="col-sm-4">
-            <label for="password">パスワード：</label>
-         </div>
-         <div class="col-sm-8">
-            <input type="password" name="password" required>
-         </div>
-      </div>
-       <div class="row">
-         <div class="col-sm-4">
-         </div>
-         <div class="col-sm-8">
-            <input type="submit" class="btn" value="ログイン">
-         </div>
-       </div>
-       <div class="row">
-          <div class="col-sm-12"><a href="{% url 'polls:register' %}">アカウントを作成</a></div>
-         </div>
-         <div class="row">
-          <div class="col-sm-12"><a href="{% url 'polls:guest_login' %}">ゲストログイン</a></div>
-       </div>
-    </div>
 
-    
- </form>
-   
+<form method="post" action="{% url 'polls:login' %}">
+{% csrf_token %}
+<div id="container" class="container container-fluid">
+   <div class="row">
+      <div class="col-sm-4">
+         <label for="email">メールアドレス:</label>
+      </div>
+      <div class="col-sm-8">
+         <input type="text" name="email" required>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-4">
+         <label for="password">パスワード：</label>
+      </div>
+      <div class="col-sm-8">
+         <input type="password" name="password" required>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-4">
+      </div>
+      <div class="col-sm-8">
+         <input type="submit" class="btn" value="ログイン">
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-12"><a href="{% url 'polls:register' %}">新規登録</a></div>
+   </div>
+   <div class="row">
+      <div class="col-sm-12"><a href="{% url 'polls:guest_login' %}">ゲストログイン</a></div>
+   </div>
+   <div class="row">
+      <a class="login-with-google-btn" href="{% url 'social:begin' 'google-oauth2' %}">Googleでログイン</a>
+   </div>
+</div>
+</form>
+
+
+
+
 {% endblock %}

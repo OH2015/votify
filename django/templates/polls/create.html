@@ -14,25 +14,8 @@
     <form method="post" action="/create_question/" name="form1">
         {% csrf_token %}
         <div id="container">
-            <!-- ジャンル -->
-            <select name="genre" id="genre" required>
-                <option value="" disabled selected style="display:none;">選択してください</option>
-                {% for genre in genres %}
-                <option value="{{genre}}">{{ genre }}</option>
-                {% endfor %}
-            </select>
-            <br>
-
-            <!-- 認証レベル -->
-            <select name="auth_level" id="auth_level">
-                <option value="0">誰でも</option>
-                <option value="1">ログインユーザーのみ</option>
-                <!-- <option value="2">マイナンバー連携ユーザのみ</option> -->
-            </select>
-            投票可
-            
-            <input hidden>
-            <br>
+            <input hidden name="genre">
+            <input hidden name="auth_level" value="0">
             <input type="text" id="title" name="question_title" placeholder="タイトル" required>            
             <br>
             <textarea id="explanation" name="explanation" placeholder="説明文（省略可）"></textarea>
@@ -137,7 +120,6 @@
     margin-bottom: 20px;
 }
 #explanation{
-    height: 200px;
     width:100%;
     margin-bottom: 20px;
 }
