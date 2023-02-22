@@ -11,7 +11,7 @@
 {% block content %}
 
 
-<form enctype="multipart/form-data" method="post" action="{% url 'polls:register' %}">
+<form method="post" action="{% url 'polls:register' %}">
     {% csrf_token %}
     
     <div class="container container-fluid">
@@ -39,37 +39,12 @@
         <input name="profile" value="よろしくお願いします" hidden>
 
         <div class="row row-input">
-            <div class="col-sm-12"><button class="btn-primary btn-lg">登録</button></div>
+            <div class="col-sm-12"><button class="btn-primary btn">登録</button></div>
         </div>
     </div>
 </form>
 
-<script>
-$('#file').change(function(e){
-    $("#img").attr("src", "");$("#img").attr("title", "");
-    //ファイルオブジェクトを取得する
-    let file = e.target.files[0];
-    let reader = new FileReader();
-    
-    //キャンセルされた場合終了
-    if(file == null)return;
 
-    //画像でない場合は処理終了
-    if(file.type.indexOf("image") < 0){
-        alert("画像ファイルを指定してください。");
-        return false;
-    }
-
-    //アップロードした画像を設定する
-    reader.onload = (file => {
-        return e => {
-            $("#img").attr("src", e.target.result);
-            $("#img").attr("title", file.name);
-        };
-    })(file);
-    reader.readAsDataURL(file);
-});
-</script>
 {% endblock %}
 
 
