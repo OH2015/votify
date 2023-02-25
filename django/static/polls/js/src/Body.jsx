@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Post from "./Post";
+import QuestionForm from "./QuestionForm";
 
 const RootElement = styled.div`
   max-width: 800px;
@@ -50,9 +51,20 @@ const PlusIcon = styled.span`
   }
 `;
 
+
+
 // ボディコンポーネント
 const Body = () => {
   const [posts, setPosts] = useState([]); //投稿一覧
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleOpenPopup = () => {
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
 
   // 初期処理
   useEffect(() => {
@@ -65,7 +77,10 @@ const Body = () => {
 
   return (
     <RootElement>
-      <RoundButton onClick={() => location.href='/create_question'}><PlusIcon></PlusIcon></RoundButton>
+      <RoundButton onClick={handleOpenPopup}>
+        <PlusIcon></PlusIcon>
+      </RoundButton>
+      {showPopup && <QuestionForm handleClosePopup={handleClosePopup}/>}
       {posts.map((post) => (
         <Post key={post.id} {...post} />
       ))}

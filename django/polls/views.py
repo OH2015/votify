@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.urls import reverse
@@ -35,29 +36,27 @@ def Diagram(request):
     return render(request,"polls/diagram.html")
 
 # 投稿
-@method_decorator(login_required, name='dispatch')
 class CreateQuestion(TemplateView):
     def get(self,request):
         return render(request, 'polls/create.html', {'genres':[g[0] for g in Question.genre.field.choices]})
 
     def post(self,request):
-        # 選択肢の数
-        choice_num = int(request.POST['choice_num'])
-        print(request.POST['genre'])
-            
+        # JSONデータ
+        data = json.loads(request.body)
         # 質問作成
         question = Question.objects.create(
-            title=request.POST['question_title']
-            ,explanation=request.POST['explanation']
-            ,genre=request.POST['genre']
-            ,auth_level=request.POST['auth_level']
-            ,author=request.user)
-
+            title=data['title']
+            ,explanation=data['explanation']
+            ,genre=data['genre']
+            ,auth_level=data['auth_level']
+            ,author=get_user_model().get_guest_user())
         # 選択肢作成
-        for i in range(choice_num):
-            Choice.objects.create(choice_text=request.POST[f'choice{i}'],question=question)
+        for choice in data['choices']:
+            Choice.objects.create(choice_text=choice,question=question)
 
-        return redirect('polls:index')
+        print('質問を1件作成しました')
+
+        return None
 
 
 # アカウント登録
