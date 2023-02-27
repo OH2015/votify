@@ -9,7 +9,7 @@ const RootElement = styled.div`
   text-align: center;
 `;
 
-const RoundButton = styled.button`
+export const RoundButton = styled.button`
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -21,7 +21,7 @@ const RoundButton = styled.button`
   margin-bottom: 25px;
 `;
 
-const PlusIcon = styled.span`
+export const PlusIcon = styled.span`
   position: absolute;
   top: 0;
   left: 0;

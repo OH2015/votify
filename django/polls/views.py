@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from .serializers import QuestionSerializer, CommentSerializer, VoteSerializer
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
@@ -56,7 +56,7 @@ class CreateQuestion(TemplateView):
 
         print('質問を1件作成しました')
 
-        return None
+        return JsonResponse({'success': True, 'question_id': question.id})
 
 
 # アカウント登録
