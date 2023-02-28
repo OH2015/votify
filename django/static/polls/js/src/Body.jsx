@@ -51,12 +51,14 @@ export const PlusIcon = styled.span`
   }
 `;
 
-
-
 // ボディコンポーネント
 const Body = () => {
   const [posts, setPosts] = useState([]); //投稿一覧
   const [showPopup, setShowPopup] = useState(false);
+  // パラメータからIDを取得
+  const questionId = new URLSearchParams(window.location.search).get(
+    "question_id"
+  );
 
   const handleOpenPopup = () => {
     setShowPopup(true);
@@ -69,7 +71,8 @@ const Body = () => {
   // 初期処理
   useEffect(() => {
     const getQuestions = async () => {
-      const res = await axios.get("/api/questions/");
+      const url = `/api/questions/${questionId ? `?question_id=${questionId}` : ""}`;
+      const res = await axios.get(url);
       setPosts(res.data);
     };
     getQuestions();
@@ -80,7 +83,7 @@ const Body = () => {
       <RoundButton onClick={handleOpenPopup}>
         <PlusIcon></PlusIcon>
       </RoundButton>
-      {showPopup && <QuestionForm handleClosePopup={handleClosePopup}/>}
+      {showPopup && <QuestionForm handleClosePopup={handleClosePopup} />}
       {posts.map((post) => (
         <Post key={post.id} {...post} />
       ))}

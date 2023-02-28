@@ -267,10 +267,12 @@ class QuestionListAPIView(generics.ListAPIView):
 
     # 独自に拡張
     def list(self,request):
+        queryset = self.get_queryset()
         condition1 = Q()
         condition2 = Q()
         keyword = request.query_params.get('keyword')
         genre = request.query_params.get('genre')
+        question_id = request.query_params.get('question_id')
 
         # キーワードがあれば絞り込み
         if keyword:
@@ -279,9 +281,13 @@ class QuestionListAPIView(generics.ListAPIView):
         # ジャンルがあれば絞り込み
         if genre:
             condition2 = Q(genre=genre)
+        
+        # IDがあれば絞り込み
+        if question_id:
+            queryset = queryset.filter(id=question_id)
 
-        self.queryset = Question.objects.filter(condition1 & condition2).all()
-        serializer = QuestionSerializer(self.get_queryset(),many=True)
+        queryset = queryset.filter(condition1 & condition2)
+        serializer = QuestionSerializer(queryset,many=True)
         return Response(serializer.data)
 
 # 投票モデルのCRUDエンドポイント
