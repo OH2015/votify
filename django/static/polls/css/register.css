@@ -1,9 +1,12 @@
+input{
+    width: 100%;
+}
 .container-fluid{
     max-width: 400px;
     padding-top: 30px;
     margin: auto;
 
-    background-color: #CFF6F6;
+    background-color: #b4b2b265;
     border: solid 1px gray;
     border-radius: 10px;
 }

@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.urls import reverse
@@ -12,7 +13,7 @@ from rest_framework.response import Response
 from .serializers import QuestionSerializer, CommentSerializer, VoteSerializer
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
@@ -35,29 +36,27 @@ def Diagram(request):
     return render(request,"polls/diagram.html")
 
 # 投稿
-@method_decorator(login_required, name='dispatch')
 class CreateQuestion(TemplateView):
     def get(self,request):
         return render(request, 'polls/create.html', {'genres':[g[0] for g in Question.genre.field.choices]})
 
     def post(self,request):
-        # 選択肢の数
-        choice_num = int(request.POST['choice_num'])
-        print(request.POST['genre'])
-            
+        # JSONデータ
+        data = json.loads(request.body)
         # 質問作成
         question = Question.objects.create(
-            title=request.POST['question_title']
-            ,explanation=request.POST['explanation']
-            ,genre=request.POST['genre']
-            ,auth_level=request.POST['auth_level']
-            ,author=request.user)
-
+            title=data['title']
+            ,explanation=data['explanation']
+            ,genre=data['genre']
+            ,auth_level=data['auth_level']
+            ,author=get_user_model().get_guest_user())
         # 選択肢作成
-        for i in range(choice_num):
-            Choice.objects.create(choice_text=request.POST[f'choice{i}'],question=question)
+        for choice in data['choices']:
+            Choice.objects.create(choice_text=choice,question=question)
 
-        return redirect('polls:index')
+        print('質問を1件作成しました')
+
+        return JsonResponse({'success': True, 'question_id': question.id})
 
 
 # アカウント登録
@@ -268,10 +267,12 @@ class QuestionListAPIView(generics.ListAPIView):
 
     # 独自に拡張
     def list(self,request):
+        queryset = self.get_queryset()
         condition1 = Q()
         condition2 = Q()
         keyword = request.query_params.get('keyword')
         genre = request.query_params.get('genre')
+        question_id = request.query_params.get('question_id')
 
         # キーワードがあれば絞り込み
         if keyword:
@@ -280,9 +281,13 @@ class QuestionListAPIView(generics.ListAPIView):
         # ジャンルがあれば絞り込み
         if genre:
             condition2 = Q(genre=genre)
+        
+        # IDがあれば絞り込み
+        if question_id:
+            queryset = queryset.filter(id=question_id)
 
-        self.queryset = Question.objects.filter(condition1 & condition2).all()
-        serializer = QuestionSerializer(self.get_queryset(),many=True)
+        queryset = queryset.filter(condition1 & condition2)
+        serializer = QuestionSerializer(queryset,many=True)
         return Response(serializer.data)
 
 # 投票モデルのCRUDエンドポイント
