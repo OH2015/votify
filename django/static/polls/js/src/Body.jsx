@@ -55,7 +55,7 @@ export const PlusIcon = styled.span`
 const Body = () => {
   const [posts, setPosts] = useState([]); //投稿一覧
   const [showPopup, setShowPopup] = useState(false);
-  // パラメータからIDを取得
+  // URLパラメータからIDを取得
   const questionId = new URLSearchParams(window.location.search).get(
     "question_id"
   );
