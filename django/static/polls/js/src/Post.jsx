@@ -1,7 +1,7 @@
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import Choice from "./Choice";
-import Footer from "./Footer";
+import Comment from "./Comment";
 
 const QuestionContainer = styled.div`
   margin-bottom: 20px;
@@ -31,16 +31,55 @@ const CopyButton = styled.button`
   font-size: 15px;
   text-align: right;
 `;
+const CommentToggle = styled.button`
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+const CommentForm = styled.div`
+  padding-bottom: 10px;
+  padding-top: 10px;
+  border-bottom: solid gray 1px;
+  display: flex;
+  align-items: center;
+`;
+const Draft = styled.textarea`
+  width: calc(100% - 150px);
+  height: 28px;
+  resize: none;
+  overflow: hidden;
+  margin-right: 30px;
+`;
+const CommentButton = styled.button`
+  width: 100px;
+`;
 
 // 投稿コンポーネント
 const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
   // 選択肢のリストをステートとして保持
   const [choices, setChoices] = useState(ini_choices);
   const [copied, setCopied] = useState(false);
+  const [opend, setOpend] = useState(false); // コメント表示/非表示
+  const [commentList, setCommentList] = useState([]); // コメントのリスト
   const inputRef = useRef(null);
-  
-  // 現在のURL取得
+  const ref = useRef(null);
+
+  // URL取得
   const urlText = `${window.location.hostname}/?question_id=${id}`;
+
+  // 初期処理
+  useEffect(() => {
+    const getCommentList = async () => {
+      // コメント取得
+      const result = await axios.get(`/api/comment/?question_id=${id}`);
+      setCommentList(result.data);
+    };
+    getCommentList();
+  }, []);
 
   // 選択肢が押下された時の処理
   const choiceClickHandler = async (choice_id) => {
@@ -93,6 +132,49 @@ const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
     }, 1000);
   };
 
+  // コメント表示/非表示切り替え処理
+  const toggleClickHandler = () => {
+    setOpend(!opend);
+  };
+  // 削除処理
+  const deleteClickHandler = async () => {
+    if (confirm("この投稿を削除してもよろしいですか？")) {
+      await axios.delete(`/api/question/${id}/`);
+      location.href = "/";
+    }
+  };
+  // コメント入力欄の大きさ制御
+  const autoResize = () => {
+    const draft = ref.current;
+    draft.style.height = "28px";
+    draft.style.height = `${draft.scrollHeight}px`;
+  };
+  // コメント入力欄削除
+  const deleteDraft = () => {
+    const draft = ref.current;
+    draft.value = "";
+  };
+  // コメント投稿処理
+  const submit_comment = async () => {
+    const draft = ref.current;
+    let user_id = document.getElementById("hidden_user_id").value;
+    if (user_id == "None") {
+      user_id = 0;
+    }
+
+    // コメントをPOST送信
+    const result = await axios.post("/api/comment/", {
+      question: id,
+      text: draft.value,
+      user_id: user_id,
+    });
+    deleteDraft();
+    autoResize();
+
+    setCommentList(commentList.concat(result.data));
+    setOpend(true);
+  };
+
   return (
     <QuestionContainer>
       <QuestionHeader>
@@ -111,7 +193,25 @@ const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
           </div>
         );
       })}
-      <Footer questionId={id} />
+
+      <CommentToggle onClick={toggleClickHandler}>
+        コメント({commentList.length})
+      </CommentToggle>
+      <CommentToggle onClick={deleteClickHandler}>削除</CommentToggle>
+
+      {opend && (
+        <>
+          <CommentForm>
+            <Draft maxLength={1000} ref={ref} onInput={autoResize} />
+            <CommentButton className="btn btn-primary" onClick={submit_comment}>
+              送信
+            </CommentButton>
+          </CommentForm>
+          {commentList.map((comment) => (
+            <Comment key={comment.id} {...comment} />
+          ))}
+        </>
+      )}
     </QuestionContainer>
   );
 };

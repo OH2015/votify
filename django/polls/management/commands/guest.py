@@ -12,6 +12,7 @@ class Command(BaseCommand):
             get_user_model().objects.get(username='ゲスト')
         except get_user_model().DoesNotExist:
             get_user_model().objects.create_user(
+                id=0,
                 username=GUEST_NAME,
                 email=GUEST_EMAIL,
                 password=GUEST_PW,

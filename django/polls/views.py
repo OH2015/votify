@@ -290,6 +290,11 @@ class QuestionListAPIView(generics.ListAPIView):
         serializer = QuestionSerializer(queryset,many=True)
         return Response(serializer.data)
 
+# 質問モデルのCRUDエンドポイント
+class QuestionViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+
 # 投票モデルのCRUDエンドポイント
 class VoteViewSet(viewsets.ModelViewSet):
     queryset = Vote.objects.all()

@@ -104,10 +104,7 @@ const QuestionForm = ({ handleClosePopup }) => {
     }
     formData.choices = filledChoices;
     const res = await axios.post("/create_question/", formData);
-    if (res.data.success) {
-      window.alert("質問を作成しました！");
-      // その質問のページに飛ばす
-    }
+    location.href = "/";
   };
 
   return (
