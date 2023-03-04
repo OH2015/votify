@@ -136,12 +136,16 @@ const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
   const toggleClickHandler = () => {
     setOpend(!opend);
   };
-  // 削除処理
+  // 投稿削除処理
   const deleteClickHandler = async () => {
     if (confirm("この投稿を削除してもよろしいですか？")) {
       await axios.delete(`/api/question/${id}/`);
       location.href = "/";
     }
+  };
+  // コメント削除処理
+  const handleCommentDelete = (deletedCommentId) => {
+    setCommentList(commentList.filter((comment) => comment.id !== deletedCommentId));
   };
   // コメント入力欄の大きさ制御
   const autoResize = () => {
@@ -208,7 +212,7 @@ const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
             </CommentButton>
           </CommentForm>
           {commentList.map((comment) => (
-            <Comment key={comment.id} {...comment} />
+            <Comment key={comment.id} {...comment} onDelete={handleCommentDelete}/>
           ))}
         </>
       )}

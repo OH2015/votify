@@ -44,7 +44,6 @@ urlpatterns = [
     # API
     # api/vote/に各CRUDエンドポイントを作成
     path('api/',include(defaultRouter.urls)),
-    path('api/questions/', views.QuestionListAPIView.as_view()),
 ]
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,5 @@
 import json
 from django.shortcuts import get_object_or_404, redirect, render
-from django.db.models import Q
 from django.urls import reverse
 
 from .models import Question,Choice,Vote,UpdateContent,Comment
@@ -261,39 +260,21 @@ def guest_login(request):
 # DRF(DjangoRestFramework)
 # 
 
-# Questionオブジェクトのリストを返すAPIビュー
-class QuestionListAPIView(generics.ListAPIView):
+# 質問モデルのCRUDエンドポイント
+class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
 
-    # 独自に拡張
+    # GET処理のカスタマイズ
     def list(self,request):
         queryset = self.get_queryset()
-        condition1 = Q()
-        condition2 = Q()
-        keyword = request.query_params.get('keyword')
-        genre = request.query_params.get('genre')
         question_id = request.query_params.get('question_id')
-
-        # キーワードがあれば絞り込み
-        if keyword:
-            condition1 = Q(title__contains=keyword)
-
-        # ジャンルがあれば絞り込み
-        if genre:
-            condition2 = Q(genre=genre)
         
         # IDがあれば絞り込み
         if question_id:
             queryset = queryset.filter(id=question_id)
 
-        queryset = queryset.filter(condition1 & condition2)
-        serializer = QuestionSerializer(queryset,many=True)
-        return Response(serializer.data)
-
-# 質問モデルのCRUDエンドポイント
-class QuestionViewSet(viewsets.ModelViewSet):
-    queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
+        return Response(QuestionSerializer(queryset,many=True).data)
 
 # 投票モデルのCRUDエンドポイント
 class VoteViewSet(viewsets.ModelViewSet):

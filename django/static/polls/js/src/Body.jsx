@@ -71,7 +71,7 @@ const Body = () => {
   // 初期処理
   useEffect(() => {
     const getQuestions = async () => {
-      const url = `/api/questions/${questionId ? `?question_id=${questionId}` : ""}`;
+      const url = `/api/question/${questionId ? `?question_id=${questionId}` : ""}`;
       const res = await axios.get(url);
       setPosts(res.data);
     };
