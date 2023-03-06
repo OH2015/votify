@@ -26,10 +26,6 @@ const PopupContent = styled.div`
   overflow-y: auto; /* 縦方向にスクロールバーを表示する */
 `;
 
-const FormButtons = styled.div`
-  margin-top: 20px;
-`;
-
 const MinusIcon = styled.span`
   position: absolute;
   top: 0;
@@ -54,6 +50,21 @@ const MinusIcon = styled.span`
   &::before {
     transform: rotate(90deg);
   }
+`;
+
+const FlexBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+
+  > button {
+    margin: 0 5px;
+  }
+`;
+
+const Button = styled.button`
+  width: 120px;
 `;
 
 // ボディコンポーネント
@@ -147,44 +158,32 @@ const QuestionForm = ({ handleClosePopup }) => {
               />
             ))}
           </div>
-          <FormButtons className="form-group">
-            <div className="row">
-              <div className="col-sm-6">
-                <RoundButton onClick={(event) => handleChange(event, "plus")}>
-                  <PlusIcon></PlusIcon>
-                </RoundButton>
-              </div>
-              <div className="col-sm-6">
-                {formData.choices.length > 2 && (
-                  <RoundButton
-                    onClick={(event) => handleChange(event, "minus")}
-                  >
-                    <MinusIcon></MinusIcon>
-                  </RoundButton>
-                )}
-              </div>
-            </div>
-          </FormButtons>
-          <FormButtons className="form-group">
-            <div className="row">
-              <div className="col-sm-6">
-                <button
-                  onClick={handleSubmit}
-                  className="btn btn-primary btn-block"
-                >
-                  作成
-                </button>
-              </div>
-              <div className="col-sm-6">
-                <button
-                  onClick={handleClosePopup}
-                  className="btn btn-secondary btn-block"
-                >
-                  キャンセル
-                </button>
-              </div>
-            </div>
-          </FormButtons>
+          <FlexBox>
+            <RoundButton onClick={(event) => handleChange(event, "plus")}>
+              <PlusIcon></PlusIcon>
+            </RoundButton>
+            {formData.choices.length > 2 && (
+              <RoundButton onClick={(event) => handleChange(event, "minus")}>
+                <MinusIcon></MinusIcon>
+              </RoundButton>
+            )}
+          </FlexBox>
+          <FlexBox>
+            <Button
+              onClick={handleSubmit}
+              className="btn btn-primary btn-block"
+            >
+              作成
+            </Button>
+            <Button
+              onClick={handleClosePopup}
+              className="btn btn-secondary btn-block"
+            >
+              キャンセル
+            </Button>
+            {/* </div> */}
+            {/* </div> */}
+          </FlexBox>
         </div>
       </PopupContent>
     </PopupOverlay>

@@ -10,15 +10,14 @@ const RootElement = styled.div`
 `;
 
 export const RoundButton = styled.button`
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   background-color: #2196f3;
   border: none;
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  margin-bottom: 25px;
 `;
 
 export const PlusIcon = styled.span`
