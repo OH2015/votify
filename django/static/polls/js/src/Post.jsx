@@ -83,37 +83,41 @@ const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
 
   // 選択肢が押下された時の処理
   const choiceClickHandler = async (choice_id) => {
-    // 選択された選択肢
-    const choice = choices.find((e) => e.id == choice_id);
-    // 投票済みの選択肢
-    const posted = choices.find((e) => e.vote_id);
+    try {
+      // 選択された選択肢
+      const choice = choices.find((e) => e.id == choice_id);
+      // 投票済みの選択肢
+      const posted = choices.find((e) => e.vote_id);
 
-    // 選択済みなら解除
-    if (choice.vote_id) {
-      await axios.delete(`/api/vote/${choice.vote_id}/`);
-      choice.vote_id = null; // vote_idをリセット
-      choice.votes -= 1; // 得票数-1
-    } else {
-      // 投票先にPOST
-      const res = await axios.post("/api/vote/", {
-        question: id,
-        choice: choice_id,
-        user: null,
-      });
-      // 帰ってきたvote_idをセット
-      choice.vote_id = res.data.id;
-      choice.votes += 1; // 得票数+1
+      // 選択済みなら解除
+      if (choice.vote_id) {
+        await axios.delete(`/api/vote/${choice.vote_id}/`);
+        choice.vote_id = null; // vote_idをリセット
+        choice.votes -= 1; // 得票数-1
+      } else {
+        // 投票先にPOST
+        const res = await axios.post("/api/vote/", {
+          question: id,
+          choice: choice_id,
+          user: null,
+        });
+        // 帰ってきたvote_idをセット
+        choice.vote_id = res.data.id;
+        choice.votes += 1; // 得票数+1
 
-      // 既に選択済みのPOSTをDELETE
-      if (posted) {
-        await axios.delete(`/api/vote/${posted.vote_id}/`);
-        posted.vote_id = null; // vote_idをリセット
-        posted.votes -= 1; // 得票数-1
+        // 既に選択済みのPOSTをDELETE
+        if (posted) {
+          await axios.delete(`/api/vote/${posted.vote_id}/`);
+          posted.vote_id = null; // vote_idをリセット
+          posted.votes -= 1; // 得票数-1
+        }
       }
-    }
 
-    // 選択肢のリストを上書き
-    setChoices([...choices]);
+      // 選択肢のリストを上書き
+      setChoices([...choices]);
+    } catch (error) { // axios失敗時
+      alert("通信に失敗しました")
+    }
   };
 
   // 得票率を計算して返却
@@ -145,7 +149,9 @@ const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
   };
   // コメント削除処理
   const handleCommentDelete = (deletedCommentId) => {
-    setCommentList(commentList.filter((comment) => comment.id !== deletedCommentId));
+    setCommentList(
+      commentList.filter((comment) => comment.id !== deletedCommentId)
+    );
   };
   // コメント入力欄の大きさ制御
   const autoResize = () => {
@@ -212,7 +218,11 @@ const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
             </CommentButton>
           </CommentForm>
           {commentList.map((comment) => (
-            <Comment key={comment.id} {...comment} onDelete={handleCommentDelete}/>
+            <Comment
+              key={comment.id}
+              {...comment}
+              onDelete={handleCommentDelete}
+            />
           ))}
         </>
       )}
