@@ -59,7 +59,7 @@ const CommentButton = styled.button`
 `;
 
 // 投稿コンポーネント
-const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
+const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading }) => {
   // 選択肢のリストをステートとして保持
   const [choices, setChoices] = useState(ini_choices);
   const [copied, setCopied] = useState(false);
@@ -88,6 +88,7 @@ const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
       const choice = choices.find((e) => e.id == choice_id);
       // 投票済みの選択肢
       const posted = choices.find((e) => e.vote_id);
+      setIsLoading(true)
 
       // 選択済みなら解除
       if (choice.vote_id) {
@@ -115,8 +116,11 @@ const Post = ({ id, title, explanation, choices: ini_choices, comments }) => {
 
       // 選択肢のリストを上書き
       setChoices([...choices]);
+
+      setIsLoading(false)
     } catch (error) { // axios失敗時
       alert("通信に失敗しました")
+      setIsLoading(false)
     }
   };
 
