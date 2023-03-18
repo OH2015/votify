@@ -59,7 +59,7 @@ const CommentButton = styled.button`
 `;
 
 // 投稿コンポーネント
-const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading }) => {
+const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logined }) => {
   // 選択肢のリストをステートとして保持
   const [choices, setChoices] = useState(ini_choices);
   const [copied, setCopied] = useState(false);
@@ -211,7 +211,8 @@ const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading }) =>
       <CommentToggle onClick={toggleClickHandler}>
         コメント({commentList.length})
       </CommentToggle>
-      <CommentToggle onClick={deleteClickHandler}>削除</CommentToggle>
+      {logined && <CommentToggle onClick={deleteClickHandler}>削除</CommentToggle>}
+      
 
       {opend && (
         <>

@@ -86,6 +86,7 @@ const Body = () => {
   const [posts, setPosts] = useState([]); //投稿一覧
   const [showPopup, setShowPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [logined, setLogined] = useState(false);
 
   // URLパラメータからIDを取得
   const questionId = new URLSearchParams(window.location.search).get(
@@ -107,7 +108,9 @@ const Body = () => {
         questionId ? `?question_id=${questionId}` : ""
       }`;
       const res = await axios.get(url);
+      const res2 = await axios.get('/api/check_login/')
       setPosts(res.data);
+      setLogined(res2.data.logined)
     };
     getQuestions();
   }, []);
@@ -125,7 +128,7 @@ const Body = () => {
       </RoundButton>
       {showPopup && <QuestionForm handleClosePopup={handleClosePopup} />}
       {posts.map((post) => (
-        <Post key={post.id} {...post} setIsLoading={setIsLoading}/>
+        <Post key={post.id} {...post} setIsLoading={setIsLoading} logined={logined}/>
       ))}
     </RootElement>
   );

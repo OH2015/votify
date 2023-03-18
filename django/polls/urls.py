@@ -44,6 +44,8 @@ urlpatterns = [
     # API
     # api/vote/に各CRUDエンドポイントを作成
     path('api/',include(defaultRouter.urls)),
+    # ログインチェック
+    path('api/check_login/', views.check_login),
 ]
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

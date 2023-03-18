@@ -254,6 +254,8 @@ def guest_login(request):
     else:
         login(request, guest_user,backend='django.contrib.auth.backends.ModelBackend')
     return redirect('polls:index')
+
+
     
 
 # 
@@ -294,5 +296,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         if question_id is not None:
             queryset = queryset.filter(question_id=question_id)
         return queryset
+
+# ログインチェック(API用)
+def check_login(request):
+    return JsonResponse({"logined":request.user.is_authenticated})
 
 
