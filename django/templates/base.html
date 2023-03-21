@@ -33,7 +33,7 @@
         </div>
 
             
-        <!-- <div id="header-menus">
+        <div id="header-menus">
             {% if user.is_authenticated %}
                 <div class="user-cell">
                     <a href='{% url "polls:account_top" user.id %}'><i id="user-icon" class="fa-solid fa-circle-user fa-3x"></i></a>
@@ -48,9 +48,8 @@
                 </div>
             {% else %}
                 <a href="{% url 'polls:login' %}">ログイン</a>
-                <div class="signup_cell"><a href="{% url 'polls:register' %}">新規登録</a></div>
             {% endif %}
-        </div> -->
+        </div>
         <input id="hidden_user_id" hidden value="{{ user.id }}">
 
     </div>

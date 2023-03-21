@@ -2,11 +2,12 @@ from django.urls import path,include
 from . import views
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import VoteViewSet,CommentViewSet,QuestionViewSet
+from .views import VoteViewSet,CommentViewSet,QuestionViewSet,UserViewSet
 
 from rest_framework import routers
 
 defaultRouter = routers.DefaultRouter()
+defaultRouter.register('user',UserViewSet)
 defaultRouter.register('vote',VoteViewSet)
 defaultRouter.register('comment',CommentViewSet)
 defaultRouter.register('question',QuestionViewSet)
@@ -32,8 +33,6 @@ urlpatterns = [
     path('login/',views.Login,name='login'),
     # ログアウト
     path("logout/",views.Logout,name="logout"),
-    # ゲストログイン
-    path('guest_login/', views.guest_login, name = 'guest_login'), 
     # 個人トップ画面
     path('<str:id>/account_top/', views.AccountTop.as_view(), name='account_top'),
     # 個人情報

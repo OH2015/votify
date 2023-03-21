@@ -1,187 +1,73 @@
 <!-- templates/index.html -->
 {% extends 'base.html' %}
 <!-- タイトル -->
-{% block title %}新規登録{% endblock %}
+{% block title %}アカウント情報{% endblock %}
 <!-- 追加リソース -->
 {% block extra-static %}
-<!-- Vue3 -->
-<script src="https://unpkg.com/vue@3"></script>
 <!-- axios(API非同期通信) -->
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-{% load static %}
-<link href="{% static 'polls/css/register.css' %}" rel="stylesheet" type="text/css">
-{% endblock %}
+{% load static %} {% endblock %}
 <!-- 子・メインコンテンツ -->
 {% block content %}
-<div id="app" class="container container-fluid">
-    <div class="row account">
-        <div class="col-sm-10">
-            <p id="username-title">ユーザ名:</p>
-            <p id="username">{{ user.username }}</p>
-        </div>
-        <!-- <div class="col-sm-2">
-            <label class="open" for="pop-up" @click="open('username')">編集</label>
-        </div> -->
+<form id="form">
+  <div class="container container-fluid">
+    <div class="row">ユーザ名</div>
+    <div class="row">
+      <input name="username" value="{{ user.username }}" />
     </div>
-    <div class="row e-mail">
-        <div class="col-sm-10">
-            <p id="email-title">メール:</p>
-            <p id="email">{{ user.email }}</p>
-        </div>
-        <!-- <div class="col-sm-2">
-            <label class="open" for="pop-up"  @click="open('email')">編集</label>
-        </div> -->
+    <div class="row">メールアドレス</div>
+    <div class="row">
+      <input name="email" value="{{ user.email }}" />
     </div>
-
-    <div class="row profile">
-        <div class="col-sm-10">
-            <p id="profile-title">プロフィール:</p>
-            <p id="profile">{{ user.profile|linebreaksbr }}</p>
-        </div>
-        <div class="col-sm-2">
-            <label class="open" for="pop-up" @click="open('profile')">編集</label>
-        </div>
+    <div class="row">プロフィール</div>
+    <div class="row">
+      <textarea
+        name="profile"
+        value="{user.profile}"
+        oninput="auto_grow(this)"
+        maxlength="1000"
+      ></textarea>
     </div>
     <div class="row account_delete">
-        <div class="col-sm-10">
-        </div>
-        <div class="col-sm-2">
-            <input type="button" @click="account_delete" value="退会">
-        </div>
+      <div class="col-sm-10">
+        <input type="button" onclick="sendData()" value="更新" />
+      </div>
+      <div class="col-sm-2">
+        <input type="button" id="delete" value="退会" />
+      </div>
     </div>
-    <input type="checkbox" id="pop-up">
-    <div class="overlay">
-        <div class="window">
-            <label class="close" for="pop-up">×</label>
-            <form id="popup" method="post" action="{% url 'polls:account_info' user.id %}">
-                {% csrf_token %}
-                <p>[[ title ]]</p>
-                <input class="in-popup" name="username" v-if="edit == 'username'" :value="value">
-                <input class="in-popup" name="email" v-else-if="edit == 'email'" :value="value">
-                <textarea class="in-popup ta-popup" name="profile" v-else-if="edit == 'profile'" :value="value" oninput="auto_grow(this)" maxlength="1000"></textarea>
-                <br><br>
-                <button class="btn btn-primary">更新</button>
-            </form>
-        </div>
-    </div>
-</div>
+  </div>
+</form>
 
 <style>
-    button{
-        min-width: 50px;
-    }
-    .row{
-        padding-bottom: 20px;
-        margin-bottom: 20px;
-        border-bottom: solid 1px gray;
-    }
-
-    .open {
-        cursor:pointer; 
-    }
-    #pop-up {
-        display: none;
-    }
-    .overlay {
-        display: none; 
-    }
-    #pop-up:checked + .overlay {
-        display: block;
-        z-index: 9999;
-        background-color: #00000070;
-        position: fixed;
-        width: 100%;
-        height: 100vh;
-        top: 0;
-        left: 0;
-    }
-    .window {
-        width: 90vw;
-        max-width: 380px;
-        min-height: 240px;
-        background-color: #ffffff;
-        border-radius: 6px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-    #popup{
-        padding: 20px;
-    }
-    .in-popup{
-        width: 100%;
-    }
-    .ta-popup{
-        width:100%;
-        height:28px;
-        resize:none;
-        overflow: hidden;
-    }
-    .text {
-        font-size: 18px;
-        margin: 0;
-    }
-    .close {
-        cursor:pointer;
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        font-size: 20px;
-    }
+  button {
+    min-width: 50px;
+  }
 </style>
 
 <script>
-    function auto_grow(element) {
-        element.style.height = "5px";
-        element.style.height = (element.scrollHeight)+"px";
-    }
-
-    Vue.createApp({
-        data() {
-            return {
-                edit: "",
-                title: "",
-                value: "",
-            }
-        }
-        ,methods: {
-            open(val){
-                if(document.getElementById('username').textContent == 'guest'){
-                    this.edit = '編集不可'
-                }else{
-                    this.edit = val
-                    this.title = document.getElementById(val + '-title').textContent
-                    this.value = document.getElementById(val).innerText
-                    if(val == 'profile'){
-                        setTimeout( function() {
-                            auto_grow(document.getElementsByName('profile')[0])
-                        }, 1 );
-                    }
-                }
-                
-            },
-            account_delete(){
-                if(window.confirm('アカウントに紐づくデータは全て削除されますがよろしいですか？')){
-                    window.location.href = '/{{ user.id }}/account_delete/';
-                }
-            }
-        }
-        ,mounted() {
-
-        }
-        ,computed: {
-            
-        }
-        // djangoのテンプレートエンジンと競合するので{}から[]に変更
-        ,delimiters: ['[[', ']]']
-    }).mount('#app')
+  axios.defaults.xsrfCookieName = "csrftoken";
+  axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+  function auto_grow(element) {
+    element.style.height = "5px";
+    element.style.height = element.scrollHeight + "px";
+  }
+  function sendData() {
+    // formタグの要素を取得
+    const form = document.getElementById("form");
+    const formData = new FormData(form);
+    const json = JSON.stringify(Object.fromEntries(formData));
+    axios
+      .post("/api/user/{{user.id}}/", {"username":"aaa"})
+      .then((response) => {
+        // レスポンス処理
+        alert(response.data);
+      })
+      .catch((error) => {
+        // エラー処理
+        alert(error);
+      });
+  }
 </script>
 
 {% endblock %}
-
-
-

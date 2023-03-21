@@ -2,14 +2,14 @@ import json
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from .models import Question,Choice,Vote,UpdateContent,Comment
+from .models import Question, Choice, Vote, UpdateContent, Comment
 from .forms import UserForm
 from django.shortcuts import render
-from django.contrib.auth import login,authenticate, logout
-from django.views.generic import TemplateView # テンプレートタグ
-from rest_framework import generics,viewsets
+from django.contrib.auth import login, authenticate, logout
+from django.views.generic import TemplateView  # テンプレートタグ
+from rest_framework import generics, viewsets
 from rest_framework.response import Response
-from .serializers import QuestionSerializer, CommentSerializer, VoteSerializer
+from .serializers import QuestionSerializer, CommentSerializer, UserSerializer, VoteSerializer
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import HttpResponseBadRequest, JsonResponse
@@ -26,32 +26,34 @@ from django.template.loader import render_to_string
 class IndexView(TemplateView):
     template_name = 'polls/index.html'
 
+
+
 # 更新履歴
 def UpdateHistory(request):
-    return render(request,"polls/update_history.html",{"contents":UpdateContent.objects.all})
+    return render(request, "polls/update_history.html", {"contents": UpdateContent.objects.all})
+
+
 
 # 構成図
 def Diagram(request):
-    return render(request,"polls/diagram.html")
+    return render(request, "polls/diagram.html")
+
+
 
 # 投稿
 class CreateQuestion(TemplateView):
-    def get(self,request):
-        return render(request, 'polls/create.html', {'genres':[g[0] for g in Question.genre.field.choices]})
+    def get(self, request):
+        return render(request, 'polls/create.html', {'genres': [g[0] for g in Question.genre.field.choices]})
 
-    def post(self,request):
+    def post(self, request):
         # JSONデータ
         data = json.loads(request.body)
         # 質問作成
         question = Question.objects.create(
-            title=data['title']
-            ,explanation=data['explanation']
-            ,genre=data['genre']
-            ,auth_level=data['auth_level']
-            ,author=get_user_model().get_guest_user())
+            title=data['title'], explanation=data['explanation'], genre=data['genre'], auth_level=data['auth_level'], author=get_user_model().get_guest_user())
         # 選択肢作成
         for choice in data['choices']:
-            Choice.objects.create(choice_text=choice,question=question)
+            Choice.objects.create(choice_text=choice, question=question)
 
         print('質問を1件作成しました')
 
@@ -59,17 +61,16 @@ class CreateQuestion(TemplateView):
 
 
 # アカウント登録
-class  RegisterView(TemplateView):
+class RegisterView(TemplateView):
     def __init__(self):
-        self.params = {
-            "message":''}
+        self.params = {"message": ''}
 
     # Get処理
-    def get(self,request):
-        return render(request,"polls/register.html",context=self.params)
+    def get(self, request):
+        return render(request, "polls/register.html", context=self.params)
 
     # Post処理
-    def post(self,request):
+    def post(self, request):
         form = UserForm(request.POST)
         # 入力値のバリデーション
         if form.is_valid():
@@ -78,14 +79,14 @@ class  RegisterView(TemplateView):
             # 重複確認
             if get_user_model().objects.filter(email=form.cleaned_data['email']).exists():
                 self.params["message"] = 'このメールアドレスは既に使用されています。'
-                return render(request,"polls/register.html",context=self.params)
+                return render(request, "polls/register.html", context=self.params)
             elif get_user_model().objects.filter(username=form.cleaned_data['username']).exists():
                 self.params["message"] = 'このユーザー名は既に使用されています。'
-                return render(request,"polls/register.html",context=self.params)
+                return render(request, "polls/register.html", context=self.params)
             # 重複がなければ登録
             else:
                 user = get_user_model().objects.create_user(
-                    username=form.cleaned_data['username'],
+                    username=form.cleaned_data['email'].split('@')[0],
                     email=form.cleaned_data['email'],
                     password=form.cleaned_data['password'],
                     profile=form.cleaned_data['profile'])
@@ -105,16 +106,18 @@ class  RegisterView(TemplateView):
             message = render_to_string('polls/message.txt', context)
             user.email_user(subject, message)
 
-            return render(request,"polls/register_done.html",context=self.params)
+            return render(request, "polls/register_done.html", context=self.params)
         else:
             self.params["message"] = form.errors
-            return render(request,"polls/register.html",context=self.params)
+            return render(request, "polls/register.html", context=self.params)
+
+
 
 # 本登録画面
 class RegisterCompleteView(TemplateView):
     """メール内URLアクセス後のユーザー本登録"""
     template_name = 'polls/register_complete.html'
-    timeout_seconds = 60*60*24 # 一日で無効化
+    timeout_seconds = 60*60*24  # 一日で無効化
 
     def get(self, request, **kwargs):
         """tokenが正しければ本登録."""
@@ -146,40 +149,40 @@ class RegisterCompleteView(TemplateView):
                     user.save()
                     return super().get(request, **kwargs)
 
-        return render(request,"polls/register_complete.html")
+        return render(request, "polls/register_complete.html")
 
 
 # アカウントトップ画面
-class  AccountTop(TemplateView):
+class AccountTop(TemplateView):
     # Get処理
-    def get(self,request,id):
+    def get(self, request, id):
         user = get_object_or_404(get_user_model(), id=id)
-        questions = Question.objects.order_by('updated_at').filter(author=user).all()
-        return render(request,"polls/account_top.html",{"user":user,"questions":questions})
+        questions = Question.objects.order_by(
+            'updated_at').filter(author=user).all()
+        return render(request, "polls/account_top.html", {"user": user, "questions": questions})
 
     # Post処理
-    def post(self,request,id):
-        user = get_object_or_404(get_user_model(), id=id)        
+    def post(self, request, id):
+        user = get_object_or_404(get_user_model(), id=id)
         id = request.POST.get('id')
         # 質問の削除
         question = Question.objects.get(id=id)
         question.delete()
-        return redirect('polls:account_top',user.id)
-
+        return redirect('polls:account_top', user.id)
 
 
 # 個人情報参照画面
-class  AccountInfo(TemplateView):
+class AccountInfo(TemplateView):
     # Get処理
-    def get(self,request,id):
+    def get(self, request, id):
         user = get_object_or_404(get_user_model(), id=id)
         if request.user == user:
-            return render(request, 'polls/account_info.html',context={"user":user})
+            return render(request, 'polls/account_info.html', context={"user": user})
         else:
             return render(request, 'polls/login.html')
 
     # Post処理
-    def post(self,request,id):
+    def post(self, request, id):
         user = get_object_or_404(get_user_model(), id=id)
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -193,12 +196,14 @@ class  AccountInfo(TemplateView):
 
         user.save()
 
-        return render(request, 'polls/account_info.html',context={"user":user})
+        return render(request, 'polls/account_info.html', context={"user": user})
+
+
 
 # 退会
-class  AccountDelete(TemplateView):
+class AccountDelete(TemplateView):
     # Get処理
-    def get(self,request,id):
+    def get(self, request, id):
         user = get_object_or_404(get_user_model(), id=id)
         if user == request.user:
             user.delete()
@@ -206,7 +211,7 @@ class  AccountDelete(TemplateView):
         return redirect('polls:index')
 
 
-#ログイン
+# ログイン
 def Login(request):
     # POST
     if request.method == 'POST':
@@ -215,15 +220,16 @@ def Login(request):
         password = request.POST.get('password')
 
         # Djangoの認証機能
-        user = authenticate(request,email=email, password=password)
+        user = authenticate(request, email=email, password=password)
         print(user)
 
         # ユーザー認証
         if user:
-            #ユーザーアクティベート判定
+            # ユーザーアクティベート判定
             if user.is_active:
                 # ログイン
-                login(request,user,backend='django.contrib.auth.backends.ModelBackend')
+                login(request, user,
+                      backend='django.contrib.auth.backends.ModelBackend')
                 return redirect('polls:index')
             else:
                 # アカウント利用不可
@@ -236,31 +242,22 @@ def Login(request):
         return render(request, 'polls/login.html')
 
 
-#ログアウト
+# ログアウト
 @login_required
 def Logout(request):
     logout(request)
     # トップ画面遷移
     return HttpResponseRedirect(reverse('polls:index'))
 
-# ゲストログイン
-def guest_login(request):
-    try:
-        guest_user = get_user_model().objects.get(username='ゲスト')
-    except get_user_model().DoesNotExist:
-        result = management.call_command('guest')
-        if result:
-            redirect('polls:guest_login')
-    else:
-        login(request, guest_user,backend='django.contrib.auth.backends.ModelBackend')
-    return redirect('polls:index')
 
-
-    
-
-# 
+#
 # DRF(DjangoRestFramework)
-# 
+#
+
+# ユーザーモデルのCRUDエンドポイント
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
 
 # 質問モデルのCRUDエンドポイント
 class QuestionViewSet(viewsets.ModelViewSet):
@@ -268,20 +265,24 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
 
     # GET処理のカスタマイズ
-    def list(self,request):
+    def list(self, request):
         queryset = self.get_queryset()
         question_id = request.query_params.get('question_id')
-        
+
         # IDがあれば絞り込み
         if question_id:
             queryset = queryset.filter(id=question_id)
 
-        return Response(QuestionSerializer(queryset,many=True).data)
+        return Response(QuestionSerializer(queryset, many=True).data)
+
+
 
 # 投票モデルのCRUDエンドポイント
 class VoteViewSet(viewsets.ModelViewSet):
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
+
+
 
 # コメントモデルのCRUDエンドポイント
 class CommentViewSet(viewsets.ModelViewSet):
@@ -297,8 +298,8 @@ class CommentViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(question_id=question_id)
         return queryset
 
+
+
 # ログインチェック(API用)
 def check_login(request):
-    return JsonResponse({"logined":request.user.is_authenticated})
-
-
+    return JsonResponse({"logined": request.user.is_authenticated})
