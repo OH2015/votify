@@ -1,3 +1,8 @@
+"""
+本番環境用の設定
+django起動時に--settings=config.settings.productionと記載することで適用
+"""
+
 from .base import *
 import environ
 
@@ -5,7 +10,7 @@ env = environ.Env()
 env.read_env(BASE_DIR / '.env')
 
 DEBUG = False
-ALLOWED_HOSTS = ['votify.jp','localhost']
+ALLOWED_HOSTS = ['votify.jp', 'localhost']
 
 DATABASES = {
     'default': {
@@ -34,4 +39,8 @@ AWS_SECRET_ACCESS_KEY = env.get_value('AWS_SECRET_ACCESS_KEY')
 
 
 # CSRF検証用
-CSRF_TRUSTED_ORIGINS = ['https://votify.jp'] 
+CSRF_TRUSTED_ORIGINS = ['https://votify.jp']
+
+# Google認証の接続情報
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '150637606230-gq5luas1o9mjt6pfcrhrftfpi93neii7.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
