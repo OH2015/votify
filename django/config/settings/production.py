@@ -44,3 +44,5 @@ CSRF_TRUSTED_ORIGINS = ['https://votify.jp']
 # Google認証の接続情報
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '150637606230-gq5luas1o9mjt6pfcrhrftfpi93neii7.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+# リダイレクトURLにhttpsを使用させる
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
