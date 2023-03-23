@@ -30,13 +30,6 @@ class CommentSerializer(serializers.ModelSerializer):
       model = Comment
       fields = '__all__'
 
-   # POST時にユーザIDからユーザオブジェクトを取得
-   def create(self, validated_data):
-      user_id = validated_data.pop('user_id')
-      user = get_user_model().objects.get(id=user_id)
-      comment = Comment.objects.create(user=user, **validated_data)
-      return comment
-
 
 class QuestionSerializer(serializers.ModelSerializer):
    author = UserSerializer()

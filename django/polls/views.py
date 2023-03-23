@@ -259,6 +259,12 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
+    def update(self, request, *args, **kwargs):
+        # 更新する項目だけのリクエストを許可する
+        kwargs['partial'] = True
+        return super().update(request, *args, **kwargs)
+
+
 # 質問モデルのCRUDエンドポイント
 class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()

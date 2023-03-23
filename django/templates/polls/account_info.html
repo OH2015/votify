@@ -11,38 +11,38 @@
 {% block content %}
 <form id="form">
   <div class="container container-fluid">
-    <div class="row">ユーザ名</div>
     <div class="row">
+      <label>ユーザ名</label>
       <input name="username" value="{{ user.username }}" />
     </div>
-    <div class="row">メールアドレス</div>
     <div class="row">
-      <input name="email" value="{{ user.email }}" />
+      <label>メールアドレス</label>
+      <input name="email" value="{{ user.email }}" disabled />
     </div>
-    <div class="row">プロフィール</div>
     <div class="row">
+      <label>プロフィール</label>
       <textarea
         name="profile"
-        value="{user.profile}"
-        oninput="auto_grow(this)"
         maxlength="1000"
-      ></textarea>
+      >{{user.profile}}</textarea>
     </div>
-    <div class="row account_delete">
-      <div class="col-sm-10">
-        <input type="button" onclick="sendData()" value="更新" />
-      </div>
-      <div class="col-sm-2">
-        <input type="button" id="delete" value="退会" />
-      </div>
+    <div class="row">
+        <input id="update" type="button" onclick="sendData()" value="更新" />
     </div>
   </div>
 </form>
 
 <style>
-  button {
-    min-width: 50px;
-  }
+#form{
+  max-width: 700px;
+  margin: auto;
+}
+.row{
+  margin-bottom: 10px;
+}
+#update{
+  width: 100px;
+}
 </style>
 
 <script>
@@ -56,16 +56,16 @@
     // formタグの要素を取得
     const form = document.getElementById("form");
     const formData = new FormData(form);
-    const json = JSON.stringify(Object.fromEntries(formData));
+    console.log(formData)
     axios
-      .post("/api/user/{{user.id}}/", {"username":"aaa"})
+      .put("/api/user/{{user.id}}/", formData)
       .then((response) => {
         // レスポンス処理
-        alert(response.data);
+        alert("アカウント情報を更新しました！")
       })
       .catch((error) => {
         // エラー処理
-        alert(error);
+        console.log(error);
       });
   }
 </script>
