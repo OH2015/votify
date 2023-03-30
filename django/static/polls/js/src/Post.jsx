@@ -59,7 +59,7 @@ const CommentButton = styled.button`
 `;
 
 // 投稿コンポーネント
-const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logined }) => {
+const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logined, voted }) => {
   // 選択肢のリストをステートとして保持
   const [choices, setChoices] = useState(ini_choices);
   const [copied, setCopied] = useState(false);
@@ -79,6 +79,14 @@ const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logi
       setCommentList(result.data);
     };
     getCommentList();
+    if(voted){
+      choices.forEach((choice)=>{
+        if(choice.id == voted['choice']){
+          choice.vote_id = voted['vote']
+        }
+      })
+      setChoices(choices)
+    }
   }, []);
 
   // 選択肢が押下された時の処理
@@ -108,7 +116,6 @@ const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logi
 
         // 既に選択済みのPOSTをDELETE
         if (posted) {
-          await axios.delete(`/api/vote/${posted.vote_id}/`);
           posted.vote_id = null; // vote_idをリセット
           posted.votes -= 1; // 得票数-1
         }

@@ -27,17 +27,14 @@ class IndexView(TemplateView):
     template_name = 'polls/index.html'
 
 
-
 # 更新履歴
 def UpdateHistory(request):
     return render(request, "polls/update_history.html", {"contents": UpdateContent.objects.all})
 
 
-
 # 構成図
 def Diagram(request):
     return render(request, "polls/diagram.html")
-
 
 
 # 投稿
@@ -110,7 +107,6 @@ class RegisterView(TemplateView):
         else:
             self.params["message"] = form.errors
             return render(request, "polls/register.html", context=self.params)
-
 
 
 # 本登録画面
@@ -199,7 +195,6 @@ class AccountInfo(TemplateView):
         return render(request, 'polls/account_info.html', context={"user": user})
 
 
-
 # 退会
 class AccountDelete(TemplateView):
     # Get処理
@@ -221,7 +216,6 @@ def Login(request):
 
         # Djangoの認証機能
         user = authenticate(request, email=email, password=password)
-        print(user)
 
         # ユーザー認証
         if user:
@@ -230,7 +224,7 @@ def Login(request):
                 # ログイン
                 login(request, user,
                       backend='django.contrib.auth.backends.ModelBackend')
-                return redirect('polls:index')
+                return HttpResponse("Login Success")
             else:
                 # アカウント利用不可
                 return HttpResponse("アカウントが有効ではありません")
@@ -282,12 +276,52 @@ class QuestionViewSet(viewsets.ModelViewSet):
         return Response(QuestionSerializer(queryset, many=True).data)
 
 
-
 # 投票モデルのCRUDエンドポイント
 class VoteViewSet(viewsets.ModelViewSet):
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
 
+    def create(self, request):
+        # TODO 後でリファクタ
+        data = request.data
+        # 重複チェック
+        if request.user.is_authenticated:
+            if Vote.objects.filter(user=request.user, question_id=data['question']).exists():
+                Vote.objects.filter(user=request.user, question_id=data['question']).delete()
+
+        user = request.user if request.user.is_authenticated else None
+        vote = Vote.objects.create(
+            question_id=data['question'], user=user, choice_id=data['choice'])
+        data['vote'] = vote.id
+        vote.save()
+        # 未ログイン時はセッションに保存
+        if not request.user.is_authenticated:
+            voted_list = request.session.get('voted_list', [])
+            new_voted_list = []
+            for voted in voted_list:
+                if voted['question'] == data['question']:
+                    Vote.objects.get(id=voted['vote']).delete()
+                else:
+                    new_voted_list.append(voted)
+
+            new_voted_list.append(data)
+            request.session['voted_list'] = new_voted_list
+
+        return Response({'id': vote.id})
+
+    def destroy(self, request, pk=None):
+        # TODO 後でリファクタ
+        # 未ログイン時はセッションを削除
+        if not request.user.is_authenticated:
+            voted_list = request.session.get('voted_list', [])
+            new_voted_list = []
+            for voted in voted_list:
+                if voted['vote'] != int(pk):
+                    new_voted_list.append(voted)
+
+            request.session['voted_list'] = new_voted_list
+
+        return super().destroy(request)
 
 
 # コメントモデルのCRUDエンドポイント
@@ -300,12 +334,27 @@ class CommentViewSet(viewsets.ModelViewSet):
         queryset = Comment.objects.order_by('-created_at').all()
         question_id = self.request.query_params.get('question_id', None)
         # /api/comment/?question_id=1などで検索可能にする
-        if question_id is not None:
+        if question_id:
             queryset = queryset.filter(question_id=question_id)
         return queryset
-
 
 
 # ログインチェック(API用)
 def check_login(request):
     return JsonResponse({"logined": request.user.is_authenticated})
+
+
+# TODO　後でリファクタ
+def get_voted_list(request):
+    if request.user.is_authenticated:
+        voted_list = []
+        votes = list(Vote.objects.filter(user=request.user).all().values())
+        for vote in votes:
+            voted_list.append(
+                {"vote": vote['id'],
+                 "question": vote['question_id'],
+                 "choice": vote['choice_id']
+                 })
+    else:
+        voted_list = request.session.get('voted_list', [])
+    return JsonResponse(voted_list, safe=False)

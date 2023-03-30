@@ -45,6 +45,8 @@ urlpatterns = [
     path('api/',include(defaultRouter.urls)),
     # ログインチェック
     path('api/check_login/', views.check_login),
+    # 投票済みリスト取得
+    path('api/get_voted_list/', views.get_voted_list),
 ]
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

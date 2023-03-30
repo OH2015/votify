@@ -87,6 +87,7 @@ const Body = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [logined, setLogined] = useState(false);
+  const [votedList, setVotedList] = useState([]); // 投票済みのリスト
 
   // URLパラメータからIDを取得
   const questionId = new URLSearchParams(window.location.search).get(
@@ -101,6 +102,10 @@ const Body = () => {
     setShowPopup(false);
   };
 
+  const get_voted = (question_id) => {
+    return votedList.find((voted) => voted['question'] === question_id) || null;
+  };
+
   // 初期処理
   useEffect(() => {
     const getQuestions = async () => {
@@ -109,8 +114,10 @@ const Body = () => {
       }`;
       const res = await axios.get(url);
       const res2 = await axios.get('/api/check_login/')
+      const result = await axios.get(`/api/get_voted_list`);
       setPosts(res.data);
       setLogined(res2.data.logined)
+      setVotedList(result.data);
     };
     getQuestions();
   }, []);
@@ -128,7 +135,7 @@ const Body = () => {
       </RoundButton>
       {showPopup && <QuestionForm handleClosePopup={handleClosePopup} />}
       {posts.map((post) => (
-        <Post key={post.id} {...post} setIsLoading={setIsLoading} logined={logined}/>
+        <Post key={post.id} {...post} setIsLoading={setIsLoading} logined={logined} voted={get_voted(post.id)}/>
       ))}
     </RootElement>
   );
