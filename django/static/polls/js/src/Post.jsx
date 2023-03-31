@@ -86,6 +86,7 @@ const Post = ({
       // コメント取得
       const result = await axios.get(`/api/comment/?question_id=${id}`);
       setCommentList(result.data);
+      console.log(result.data);
     };
     getCommentList();
     if (voted) {
@@ -180,18 +181,14 @@ const Post = ({
     draft.style.height = "28px";
     draft.style.height = `${draft.scrollHeight}px`;
   };
-  // コメント入力欄削除
-  const deleteDraft = () => {
-    const draft = ref.current;
-    draft.value = "";
-  };
   // コメント投稿処理
   const submit_comment = async () => {
+    const draft = ref.current;
     if (userId === 0) {
       alert("コメントするにはログインが必要です");
       return;
     }
-    const draft = ref.current;
+    if (draft.value === "") return;
 
     // コメントをPOST送信
     const result = await axios.post("/api/comment/", {
@@ -199,7 +196,7 @@ const Post = ({
       text: draft.value,
       user_id: userId,
     });
-    deleteDraft();
+    draft.value = "";
     autoResize();
 
     setCommentList(commentList.concat(result.data));

@@ -6,12 +6,18 @@ const CommentContainer = styled.div`
 `;
 const CommentHeader = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
-const CommentDeleteButton = styled.button`
+const DispDate = styled.span`
+  font-size: 12px;
+  margin-left: 20px;
+`;
+const CommentDeleteButton = styled.span`
+  margin-left: auto;
   border: none;
   background-color: transparent;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 12px;
   &:hover {
     cursor: pointer;
   }
@@ -24,21 +30,20 @@ const CommentText = styled.p`
 const CommentFooter = styled.div``;
 
 // コメントコンポーネント
-export default Comment = ({ id, user, text, onDelete, userId }) => {
+export default Comment = ({ id, user, text, disp_date, onDelete, userId }) => {
   // 削除処理
   const deleteCommentClickHandler = async () => {
     if (confirm("このコメントを削除してもよろしいですか？")) {
       await axios.delete(`/api/comment/${id}/`);
+      onDelete(id);
     }
-    onDelete(id);
   };
 
   return (
     <CommentContainer>
       <CommentHeader>
         <h6>{user.username}</h6>
-        <span>　</span>
-        <span>1日前</span>
+        <DispDate>{disp_date}</DispDate>
         {userId == user.id && (
           <CommentDeleteButton onClick={deleteCommentClickHandler}>
             削除

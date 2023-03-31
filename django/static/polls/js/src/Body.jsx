@@ -8,6 +8,9 @@ const RootElement = styled.div`
   margin: auto;
   text-align: center;
 `;
+const TopContent = styled.div`
+  margin-bottom: 16px;
+`;
 
 export const RoundButton = styled.button`
   width: 35px;
@@ -135,11 +138,14 @@ const Body = () => {
           <Spiner></Spiner>
         </Loading>
       )}
-
-      <RoundButton onClick={handleOpenPopup}>
-        <PlusIcon></PlusIcon>
-      </RoundButton>
-      {showPopup && <QuestionForm userId={userId} handleClosePopup={handleClosePopup} />}
+      <TopContent>
+        <RoundButton onClick={handleOpenPopup}>
+          <PlusIcon></PlusIcon>
+        </RoundButton>
+      </TopContent>
+      {showPopup && (
+        <QuestionForm userId={userId} handleClosePopup={handleClosePopup} />
+      )}
       {posts.map((post) => (
         <Post
           key={post.id}

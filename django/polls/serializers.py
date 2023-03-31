@@ -25,10 +25,15 @@ class CommentSerializer(serializers.ModelSerializer):
    user = UserSerializer(read_only=True)
    # 送信(POST)用
    user_id = serializers.IntegerField(write_only=True)
+   # 表示日時
+   disp_date = serializers.SerializerMethodField()
 
    class Meta:
       model = Comment
       fields = '__all__'
+
+   def get_disp_date(self, instance):
+      return instance.get_disp_date()
 
 
 class QuestionSerializer(serializers.ModelSerializer):

@@ -105,7 +105,7 @@ class Comment(models.Model):
         return self.text
 
     # 日付文字列取得
-    def get_date(self):
+    def get_disp_date(self):
       delta = timezone.now() - self.created_at
       if delta.days < 1:
         if delta.seconds < 3600:
