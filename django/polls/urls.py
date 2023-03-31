@@ -44,7 +44,7 @@ urlpatterns = [
     # api/vote/に各CRUDエンドポイントを作成
     path('api/',include(defaultRouter.urls)),
     # ログインチェック
-    path('api/check_login/', views.check_login),
+    path('api/get_user_id/', views.get_user_id),
     # 投票済みリスト取得
     path('api/get_voted_list/', views.get_voted_list),
 ]

@@ -59,7 +59,16 @@ const CommentButton = styled.button`
 `;
 
 // 投稿コンポーネント
-const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logined, voted }) => {
+const Post = ({
+  id,
+  title,
+  explanation,
+  choices: ini_choices,
+  author,
+  setIsLoading,
+  userId,
+  voted,
+}) => {
   // 選択肢のリストをステートとして保持
   const [choices, setChoices] = useState(ini_choices);
   const [copied, setCopied] = useState(false);
@@ -79,13 +88,13 @@ const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logi
       setCommentList(result.data);
     };
     getCommentList();
-    if(voted){
-      choices.forEach((choice)=>{
-        if(choice.id == voted['choice']){
-          choice.vote_id = voted['vote']
+    if (voted) {
+      choices.forEach((choice) => {
+        if (choice.id == voted["choice"]) {
+          choice.vote_id = voted["vote"];
         }
-      })
-      setChoices(choices)
+      });
+      setChoices(choices);
     }
   }, []);
 
@@ -96,7 +105,7 @@ const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logi
       const choice = choices.find((e) => e.id == choice_id);
       // 投票済みの選択肢
       const posted = choices.find((e) => e.vote_id);
-      setIsLoading(true)
+      setIsLoading(true);
 
       // 選択済みなら解除
       if (choice.vote_id) {
@@ -124,10 +133,11 @@ const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logi
       // 選択肢のリストを上書き
       setChoices([...choices]);
 
-      setIsLoading(false)
-    } catch (error) { // axios失敗時
-      alert("通信に失敗しました")
-      setIsLoading(false)
+      setIsLoading(false);
+    } catch (error) {
+      // axios失敗時
+      alert("通信に失敗しました");
+      setIsLoading(false);
     }
   };
 
@@ -177,17 +187,17 @@ const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logi
   };
   // コメント投稿処理
   const submit_comment = async () => {
-    const draft = ref.current;
-    let user_id = document.getElementById("hidden_user_id").value;
-    if (user_id == "None") {
-      user_id = 0;
+    if (userId === 0) {
+      alert("コメントするにはログインが必要です");
+      return;
     }
+    const draft = ref.current;
 
     // コメントをPOST送信
     const result = await axios.post("/api/comment/", {
       question: id,
       text: draft.value,
-      user_id: user_id,
+      user_id: userId,
     });
     deleteDraft();
     autoResize();
@@ -218,8 +228,9 @@ const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logi
       <CommentToggle onClick={toggleClickHandler}>
         コメント({commentList.length})
       </CommentToggle>
-      {logined && <CommentToggle onClick={deleteClickHandler}>削除</CommentToggle>}
-      
+      {userId === author.id && (
+        <CommentToggle onClick={deleteClickHandler}>削除</CommentToggle>
+      )}
 
       {opend && (
         <>
@@ -233,6 +244,7 @@ const Post = ({ id, title, explanation, choices: ini_choices, setIsLoading, logi
             <Comment
               key={comment.id}
               {...comment}
+              userId={userId}
               onDelete={handleCommentDelete}
             />
           ))}

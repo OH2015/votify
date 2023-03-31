@@ -86,15 +86,14 @@ const Body = () => {
   const [posts, setPosts] = useState([]); //投稿一覧
   const [showPopup, setShowPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [logined, setLogined] = useState(false);
+  const [userId, setUserId] = useState(0);
   const [votedList, setVotedList] = useState([]); // 投票済みのリスト
 
-  // URLパラメータからIDを取得
-  const questionId = new URLSearchParams(window.location.search).get(
-    "question_id"
-  );
-
   const handleOpenPopup = () => {
+    if (userId === 0) {
+      alert("投稿するにはログインが必要です");
+      return;
+    }
     setShowPopup(true);
   };
 
@@ -103,20 +102,27 @@ const Body = () => {
   };
 
   const get_voted = (question_id) => {
-    return votedList.find((voted) => voted['question'] === question_id) || null;
+    return votedList.find((voted) => voted["question"] === question_id) || null;
   };
 
   // 初期処理
   useEffect(() => {
+    // URLパラメータを取得
+    const questionId = new URLSearchParams(window.location.search).get(
+      "question_id"
+    );
     const getQuestions = async () => {
-      const url = `/api/question/${
-        questionId ? `?question_id=${questionId}` : ""
-      }`;
+      const url = "/api/question/";
+      // パラメータが存在したらAPIのパラメータに追加
+      if (questionId) url += `?question_id=${questionId}`;
+      // 投稿一覧取得
       const res = await axios.get(url);
-      const res2 = await axios.get('/api/check_login/')
+      // ログイン中のユーザのID取得
+      const res2 = await axios.get("/api/get_user_id/");
+      // 投票済みのリスト取得
       const result = await axios.get(`/api/get_voted_list`);
       setPosts(res.data);
-      setLogined(res2.data.logined)
+      setUserId(res2.data.user_id);
       setVotedList(result.data);
     };
     getQuestions();
@@ -133,9 +139,15 @@ const Body = () => {
       <RoundButton onClick={handleOpenPopup}>
         <PlusIcon></PlusIcon>
       </RoundButton>
-      {showPopup && <QuestionForm handleClosePopup={handleClosePopup} />}
+      {showPopup && <QuestionForm userId={userId} handleClosePopup={handleClosePopup} />}
       {posts.map((post) => (
-        <Post key={post.id} {...post} setIsLoading={setIsLoading} logined={logined} voted={get_voted(post.id)}/>
+        <Post
+          key={post.id}
+          {...post}
+          setIsLoading={setIsLoading}
+          userId={userId}
+          voted={get_voted(post.id)}
+        />
       ))}
     </RootElement>
   );

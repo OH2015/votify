@@ -24,7 +24,7 @@ const CommentText = styled.p`
 const CommentFooter = styled.div``;
 
 // コメントコンポーネント
-export default Comment = ({ id, user, text, onDelete, logined }) => {
+export default Comment = ({ id, user, text, onDelete, userId }) => {
   // 削除処理
   const deleteCommentClickHandler = async () => {
     if (confirm("このコメントを削除してもよろしいですか？")) {
@@ -39,8 +39,11 @@ export default Comment = ({ id, user, text, onDelete, logined }) => {
         <h6>{user.username}</h6>
         <span>　</span>
         <span>1日前</span>
-        {logined && <CommentDeleteButton onClick={deleteCommentClickHandler}>削除</CommentDeleteButton>}
-
+        {userId == user.id && (
+          <CommentDeleteButton onClick={deleteCommentClickHandler}>
+            削除
+          </CommentDeleteButton>
+        )}
       </CommentHeader>
       <CommentText>{text}</CommentText>
       <CommentFooter />

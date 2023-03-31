@@ -47,7 +47,7 @@ class CreateQuestion(TemplateView):
         data = json.loads(request.body)
         # 質問作成
         question = Question.objects.create(
-            title=data['title'], explanation=data['explanation'], genre=data['genre'], auth_level=data['auth_level'], author=get_user_model().get_guest_user())
+            title=data['title'], explanation=data['explanation'], genre=data['genre'], auth_level=data['auth_level'], author_id=data['user'])
         # 選択肢作成
         for choice in data['choices']:
             Choice.objects.create(choice_text=choice, question=question)
@@ -340,8 +340,9 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 # ログインチェック(API用)
-def check_login(request):
-    return JsonResponse({"logined": request.user.is_authenticated})
+def get_user_id(request):
+    user_id = 0 if not request.user.is_authenticated else request.user.id
+    return JsonResponse({"user_id": user_id})
 
 
 # TODO　後でリファクタ

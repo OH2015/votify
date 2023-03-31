@@ -68,14 +68,14 @@ const Button = styled.button`
 `;
 
 // ボディコンポーネント
-const QuestionForm = ({ handleClosePopup }) => {
+const QuestionForm = ({ userId, handleClosePopup }) => {
   const [formData, setFormData] = useState({
     title: "",
     explanation: "",
     choices: ["", ""],
     genre: "その他",
     auth_level: 0,
-    user: null,
+    user: userId,
   });
 
   const handleChange = (event, param) => {

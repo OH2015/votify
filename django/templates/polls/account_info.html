@@ -56,7 +56,6 @@
     // formタグの要素を取得
     const form = document.getElementById("form");
     const formData = new FormData(form);
-    console.log(formData)
     axios
       .put("/api/user/{{user.id}}/", formData)
       .then((response) => {
