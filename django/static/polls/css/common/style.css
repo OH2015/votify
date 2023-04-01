@@ -1,11 +1,9 @@
 @charset "UTF-8";
-html {
-  background-color: rgba(163, 245, 211, 1);
-}
 html,
 body {
   overflow-y: scroll;
   height: 100%;
+  background-color: rgba(163, 245, 211, 1);
 }
 
 body,
@@ -112,6 +110,7 @@ ul {
   margin-top: 50px;
   display: table;
   width: 100%;
+  background-color: #FFFAF0;
 }
 
 #main_content .content_center {

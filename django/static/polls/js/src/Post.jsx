@@ -4,6 +4,7 @@ import Choice from "./Choice";
 import Comment from "./Comment";
 
 const QuestionContainer = styled.div`
+  background-color: #F5F5F5;
   margin-bottom: 20px;
   width: 100%;
   border: gray 1px solid;
@@ -15,7 +16,9 @@ const QuestionHeader = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-const QuestionTitle = styled.h3``;
+const QuestionTitle = styled.h3`
+  text-align: left;
+`;
 const Explanation = styled.div`
   text-align: left;
 `;

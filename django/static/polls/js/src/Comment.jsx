@@ -6,7 +6,6 @@ const CommentContainer = styled.div`
 `;
 const CommentHeader = styled.div`
   display: flex;
-  justify-content: space-between;
 `;
 const DispDate = styled.span`
   font-size: 12px;
@@ -44,7 +43,7 @@ export default Comment = ({ id, user, text, disp_date, onDelete, userId }) => {
       <CommentHeader>
         <h6>{user.username}</h6>
         <DispDate>{disp_date}</DispDate>
-        {userId == user.id && (
+        {userId === user.id && (
           <CommentDeleteButton onClick={deleteCommentClickHandler}>
             削除
           </CommentDeleteButton>
