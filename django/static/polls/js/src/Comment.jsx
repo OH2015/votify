@@ -13,6 +13,7 @@ const DispDate = styled.span`
 `;
 const CommentDeleteButton = styled.span`
   margin-left: auto;
+  margin-right: 10px;
   border: none;
   background-color: transparent;
   cursor: pointer;

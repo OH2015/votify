@@ -89,6 +89,9 @@ blockquote {
 ul {
   list-style: none;
 }
+#login{
+  font-weight: bolder;
+}
 .header-user-menu:hover {
   display: block;
 }

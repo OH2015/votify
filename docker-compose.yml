@@ -22,6 +22,7 @@ services:
 
     volumes:
       - ./nginx/:/etc/nginx/conf.d
+      - ./root/ssl/:/etc/nginx/ssl
       - ./django/static/:/usr/share/nginx/html/static
     ports:
       - 80:80

@@ -46,7 +46,7 @@
                     </div>
                 </div>
             {% else %}
-                <a href="{% url 'polls:login' %}">ログイン</a>
+                <a id="login" href="{% url 'polls:login' %}">ログイン</a>
             {% endif %}
         </div>
         <input id="hidden_user_id" hidden value="{{ user.id }}">
