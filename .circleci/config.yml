@@ -5,6 +5,7 @@ jobs:
         docker:
             - image: alpine
         steps:
+            - run: yum install -y git
             - checkout
             - run:
                 name: Echo Test
