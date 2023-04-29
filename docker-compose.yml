@@ -6,6 +6,7 @@ services:
     environment:
       - 'POSTGRES_USER=postgres'
       - 'POSTGRES_PASSWORD=postgres'
+    restart: always
 
   web:
     build: ./django
@@ -16,6 +17,7 @@ services:
       - 8000
     depends_on:
       - db
+    restart: always
 
   nginx:
     image: nginx:1.19.0-alpine
@@ -29,3 +31,4 @@ services:
       - 80:80
     depends_on:
       - web
+    restart: always
