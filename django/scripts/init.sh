@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Djangoプロジェクトフォルダに移動
-cd django
 # テスト実行
 python manage.py test polls --settings=config.settings.production
 # マイグレーションでDBを初期化

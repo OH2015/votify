@@ -9,11 +9,14 @@ services:
     restart: always
 
   web:
+    # djangoフォルダ内のDockerfileから起動
     build: ./django
     volumes:
-      - .:/app
+      - ./django:/app
+    # dbが利用可能になるまで待機してから、init.shを実行
     entrypoint: scripts/wait-for-it.sh db:5432 -- /bin/sh scripts/init.sh
     expose:
+      # nginxと通信するためのポートを解放
       - 8000
     depends_on:
       - db
@@ -21,13 +24,17 @@ services:
 
   nginx:
     image: nginx:1.19.0-alpine
-
     volumes:
-      - ./nginx/:/etc/nginx/conf.d
-      - /root/ssl/:/etc/nginx/ssl
+      # nginx.confを配置
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      # SSL証明書、公開鍵、秘密鍵を配置
+      - ./nginx/ssl:/etc/nginx/ssl
+      # 静的ファイルを配置する
       - ./django/static/:/usr/share/nginx/html/static
     ports:
+      # https通信用ポート解放
       - 443:443
+      # http通信用ポート解放
       - 80:80
     depends_on:
       - web
