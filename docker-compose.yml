@@ -13,6 +13,8 @@ services:
     build: ./django
     volumes:
       - ./django:/app
+    # staticファイルをstaticfilesに収集
+    command: python manage.py collectstatic --noinput
     # dbが利用可能になるまで待機してから、init.shを実行
     entrypoint: scripts/wait-for-it.sh db:5432 -- /bin/sh scripts/init.sh
     expose:
@@ -30,7 +32,7 @@ services:
       # SSL証明書、公開鍵、秘密鍵を配置
       - ./nginx/ssl:/etc/nginx/ssl
       # 静的ファイルを配置する
-      - ./django/static/:/usr/share/nginx/html/static
+      - ./django/staticfiles/:/usr/share/nginx/html/static
     ports:
       # https通信用ポート解放
       - 443:443
