@@ -10,7 +10,7 @@ env = environ.Env()
 env.read_env(BASE_DIR / '.env')
 
 DEBUG = False
-ALLOWED_HOSTS = ['votify.jp', 'localhost']
+ALLOWED_HOSTS = ['votify.jp', 'localhost', '52.199.222.201']
 
 DATABASES = {
     'default': {
