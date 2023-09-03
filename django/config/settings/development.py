@@ -7,7 +7,12 @@ from .base import *
 
 
 DEBUG = True
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+# CORSのホワイトリスト
+CORS_ORIGIN_WHITELIST = ['http://localhost:3000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 
 DATABASES = {
@@ -21,5 +26,9 @@ DATABASES = {
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Google認証の接続情報
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '150637606230-obhuv1372472qk1qjrgs2uvk4lkohk5g.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '150637606230-4hfc0lbb43s7ksnoqact7kalq04d7t54.apps.googleusercontent.com'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+# GOOGLE_OAUTH2_CLIENT_ID = '150637606230-4hfc0lbb43s7ksnoqact7kalq04d7t54.apps.googleusercontent.com'
+# GOOGLE_OAUTH2_CLIENT_SECRET = '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'
+GOOGLE_CLIENT_ID = '150637606230-jtvhjc7kspor9gls59gerknguhrhlh5j.apps.googleusercontent.com'
+SOCIAL_SECRET = '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'

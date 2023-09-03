@@ -1,3 +1,8 @@
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework import status
+from .serializers import *
+from rest_framework.generics import GenericAPIView
 import json
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -9,7 +14,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.views.generic import TemplateView  # テンプレートタグ
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
-from .serializers import QuestionSerializer, CommentSerializer, UserSerializer, VoteSerializer
+from .serializers import QuestionSerializer, CommentSerializer, UserSerializer, VoteSerializer, UpdateContentSerializer
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import HttpResponseBadRequest, JsonResponse
@@ -211,8 +216,9 @@ def Login(request):
     # POST
     if request.method == 'POST':
         # フォーム入力のメールアドレス・パスワード取得
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        request_json = json.loads(request.body)
+        email = request_json.get('email')
+        password = request_json.get('password')
 
         # Djangoの認証機能
         user = authenticate(request, email=email, password=password)
@@ -282,12 +288,17 @@ class VoteViewSet(viewsets.ModelViewSet):
     serializer_class = VoteSerializer
 
     def create(self, request):
+        print(request.session.get('voted_list'))
+
+        print(request.session.get('hoge'))
+        request.session['hoge'] = 4
         # TODO 後でリファクタ
         data = request.data
         # 重複チェック
         if request.user.is_authenticated:
             if Vote.objects.filter(user=request.user, question_id=data['question']).exists():
-                Vote.objects.filter(user=request.user, question_id=data['question']).delete()
+                Vote.objects.filter(user=request.user,
+                                    question_id=data['question']).delete()
 
         user = request.user if request.user.is_authenticated else None
         vote = Vote.objects.create(
@@ -306,6 +317,10 @@ class VoteViewSet(viewsets.ModelViewSet):
 
             new_voted_list.append(data)
             request.session['voted_list'] = new_voted_list
+            request.session['hoge'] = 2
+        else:
+            print('aaa')
+            print(request.user)
 
         return Response({'id': vote.id})
 
@@ -338,10 +353,17 @@ class CommentViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(question_id=question_id)
         return queryset
 
+# 更新内容モデルのCRUDエンドポイント
+
+
+class UpdateContentViewSet(viewsets.ModelViewSet):
+    queryset = UpdateContent.objects.all()
+    serializer_class = UpdateContentSerializer
+
 
 # ログインチェック(API用)
 def get_user_id(request):
-    user_id = 0 if not request.user.is_authenticated else request.user.id
+    user_id = -1 if not request.user.is_authenticated else request.user.id
     return JsonResponse({"user_id": user_id})
 
 
@@ -359,3 +381,26 @@ def get_voted_list(request):
     else:
         voted_list = request.session.get('voted_list', [])
     return JsonResponse(voted_list, safe=False)
+
+
+# ログアウト
+@login_required
+def doLogout(request):
+    logout(request)
+    return JsonResponse({"result": True})
+
+
+@permission_classes((AllowAny, ))
+class GoogleSocialAuthView(GenericAPIView):
+
+    serializer_class = GoogleSocialAuthSerializer
+
+    def post(self, request):
+        """
+        POST with "auth_token"
+        Send an idtoken as from google to get user information
+        """
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = ((serializer.validated_data)['auth_token'])
+        return Response(data, status=status.HTTP_200_OK)

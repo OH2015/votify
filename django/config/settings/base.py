@@ -1,3 +1,4 @@
+import os
 import environ
 from pathlib import Path
 
@@ -15,12 +16,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'bootstrap4',
+
+    'rest_framework', # REST Framework
+    'rest_framework.authtoken', # OAuth認証
+    'bootstrap4', 
     'environ',
     'storages',
     'polls.apps.PollsConfig',
     'social_django', # OAuth認証
+    'corsheaders', # CORS設定
+    'drf_social_oauth2', # OAuth認証
+    'oauth2_provider', # OAuth認証
 ]
 
 MIDDLEWARE = [
@@ -33,12 +39,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'social_django.middleware.SocialAuthExceptionMiddleware',  # OAuth認証
+    'corsheaders.middleware.CorsMiddleware', # CORS設定
 ]
-
-# OAuth用に追加
-UTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',  # Google OAuth2用
-)
 
 ROOT_URLCONF = 'config.urls'
 
@@ -90,6 +92,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
@@ -120,10 +123,26 @@ SERVER_EMAIL = 'admin@votify.jp'
 # EMAIL_HOST_PASSWORD = env.get_value('EMAIL_HOST_PASSWORD')
 # EMAIL_USE_TLS = True
 
-# OAuth
-AUTHENTICATION_BACKENDS = [
-    'social_core.backends.google.GoogleOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
-]
 LOGIN_URL = 'login'
 LOGOUT_URL = '/'
+
+# CORS
+CORS_ALLOW_CREDENTIALS = True
+
+# 日付型のフォーマット
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%Y/%m/%d %H:%M',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+      'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+      'drf_social_oauth2.authentication.SocialAuthentication',
+   ),
+}
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'drf_social_oauth2.backends.DjangoOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+   'https://www.googleapis.com/auth/userinfo.email',
+   'https://www.googleapis.com/auth/userinfo.profile',
+]

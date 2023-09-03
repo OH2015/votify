@@ -2,7 +2,7 @@ from django.urls import path,include
 from . import views
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import VoteViewSet,CommentViewSet,QuestionViewSet,UserViewSet
+from .views import VoteViewSet,CommentViewSet,QuestionViewSet,UserViewSet,UpdateContentViewSet,GoogleSocialAuthView
 
 from rest_framework import routers
 
@@ -11,6 +11,7 @@ defaultRouter.register('user',UserViewSet)
 defaultRouter.register('vote',VoteViewSet)
 defaultRouter.register('comment',CommentViewSet)
 defaultRouter.register('question',QuestionViewSet)
+defaultRouter.register('update_content',UpdateContentViewSet)
 
 app_name = 'polls'
 
@@ -47,6 +48,9 @@ urlpatterns = [
     path('api/get_user_id/', views.get_user_id),
     # 投票済みリスト取得
     path('api/get_voted_list/', views.get_voted_list),
+    # ログアウト
+    path('api/logout/', views.doLogout),
+    
 ]
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
