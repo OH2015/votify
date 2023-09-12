@@ -39,8 +39,8 @@ AWS_SECRET_ACCESS_KEY = env.get_value('AWS_SECRET_ACCESS_KEY')
 
 
 # CSRF検証用
-CSRF_TRUSTED_ORIGINS = ['https://votify.xyz']
-CORS_ALLOWED_ORIGINS = ['https://votify.xyz']
+CSRF_TRUSTED_ORIGINS = ['https://votify.jp', 'https://votify.xyz', 'http://52.199.222.201']
+CORS_ALLOWED_ORIGINS = ['https://votify.jp', 'https://votify.xyz', 'http://52.199.222.201']
 
 
 # Google認証の接続情報
