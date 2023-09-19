@@ -10,7 +10,7 @@ env = environ.Env()
 env.read_env(BASE_DIR / '.env')
 
 DEBUG = False
-ALLOWED_HOSTS = ['votify.xyz', 'localhost', '52.199.222.201']
+ALLOWED_HOSTS = ['votify.xyz']
 
 DATABASES = {
     'default': {
@@ -37,14 +37,10 @@ AWS_S3_REGION_NAME = 'us-east-1'
 AWS_ACCESS_KEY_ID = env.get_value('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env.get_value('AWS_SECRET_ACCESS_KEY')
 
-
 # CSRF検証用
 CSRF_TRUSTED_ORIGINS = ['https://votify.jp', 'https://votify.xyz', 'http://52.199.222.201']
 CORS_ALLOWED_ORIGINS = ['https://votify.jp', 'https://votify.xyz', 'http://52.199.222.201']
 
-
-# Google認証の接続情報
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '150637606230-gq5luas1o9mjt6pfcrhrftfpi93neii7.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-# リダイレクトURLにhttpsを使用させる
-SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
+# Google認証情報
+GOOGLE_CLIENT_ID = '150637606230-ko9qcacpnpn496d8ae6kd46b6l045u85.apps.googleusercontent.com'
+SOCIAL_SECRET = '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'
