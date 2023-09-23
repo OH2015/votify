@@ -1,9 +1,11 @@
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework import status
-from .serializers import *
+from rest_framework import generics, viewsets
+from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 import json
+from .serializers import *
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -12,11 +14,9 @@ from .forms import UserForm
 from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
 from django.views.generic import TemplateView  # テンプレートタグ
-from rest_framework import generics, viewsets
-from rest_framework.response import Response
+from django.views.decorators.csrf import csrf_exempt
 from .serializers import QuestionSerializer, CommentSerializer, UserSerializer, VoteSerializer, UpdateContentSerializer
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -212,6 +212,7 @@ class AccountDelete(TemplateView):
 
 
 # ログイン
+@csrf_exempt
 def Login(request):
     # POST
     if request.method == 'POST':
@@ -243,6 +244,7 @@ def Login(request):
 
 
 # ログアウト
+@csrf_exempt
 @login_required
 def Logout(request):
     logout(request)
