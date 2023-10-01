@@ -44,3 +44,9 @@ CORS_ALLOWED_ORIGINS = ['https://votify.jp', 'https://votify.xyz', 'http://52.19
 # Google認証情報
 GOOGLE_CLIENT_ID = '150637606230-ko9qcacpnpn496d8ae6kd46b6l045u85.apps.googleusercontent.com'
 SOCIAL_SECRET = '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'
+
+# CookieのSameSite属性をNoneに設定
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
