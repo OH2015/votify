@@ -106,7 +106,6 @@ MEDIA_URL = '/media/'
 AUTH_USER_MODEL = 'polls.User'
 
 # メール送信設定
-# 本番用
 EMAIL_HOST = 'mail86.onamae.ne.jp'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'admin@votify.jp'
@@ -114,14 +113,6 @@ DEFAULT_FROM_EMAIL=EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = env.get_value('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 SERVER_EMAIL = 'admin@votify.jp'
-
-# テスト用(メールサーバ代がかかるため)
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'fibo2955@gmail.com'
-# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER # send_mailのfromがNoneの場合自動で入る。
-# EMAIL_HOST_PASSWORD = env.get_value('EMAIL_HOST_PASSWORD')
-# EMAIL_USE_TLS = True
 
 LOGIN_URL = 'login'
 LOGOUT_URL = '/'

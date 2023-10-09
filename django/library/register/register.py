@@ -1,7 +1,9 @@
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from rest_framework.exceptions import AuthenticationFailed
+import random
+import string
 
 
 def register_social_user(provider, user_id, email, name):
@@ -31,7 +33,8 @@ def register_social_user(provider, user_id, email, name):
 
     else:
         user = {
-            'username': email, 'email': email,
+            'username': [random.choice(string.ascii_letters + string.digits) for i in range(10)],
+            'email': email,
             'password': settings.SOCIAL_SECRET
         }
         user = get_user_model().objects.create_user(**user)
