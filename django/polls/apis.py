@@ -109,13 +109,11 @@ class CommentViewSet(viewsets.ModelViewSet):
         return queryset
 
 # 更新内容モデルのCRUDエンドポイント
-
-
 class UpdateContentViewSet(viewsets.ModelViewSet):
     queryset = UpdateContent.objects.all()
     serializer_class = UpdateContentSerializer
 
-
+@csrf_exempt
 def doLogin(request):
     request_json = json.loads(request.body)
     email = request_json.get('email')
@@ -138,8 +136,6 @@ def doLogin(request):
         return HttpResponse("ログインIDまたはパスワードが間違っています")
 
 # ログインチェック(API用)
-
-
 def get_user_id(request):
     user_id = -1 if not request.user.is_authenticated else request.user.id
     return JsonResponse({"user_id": user_id})
@@ -196,8 +192,6 @@ def getUserInfo(request):
         "profile": user.profile})
 
 # 質問作成
-
-
 @csrf_exempt
 def createQuestion(request):
     data = json.loads(request.body)
