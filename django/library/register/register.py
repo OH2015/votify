@@ -33,7 +33,7 @@ def register_social_user(provider, user_id, email, name):
 
     else:
         user = {
-            'username': [random.choice(string.ascii_letters + string.digits) for i in range(10)],
+            'username': ''.join(random.choices(string.ascii_letters + string.digits, k=10)),
             'email': email,
             'password': settings.SOCIAL_SECRET
         }
