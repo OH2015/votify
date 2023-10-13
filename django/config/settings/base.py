@@ -108,14 +108,10 @@ AUTH_USER_MODEL = 'polls.User'
 # メール送信設定
 EMAIL_HOST = 'mail86.onamae.ne.jp'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'admin@votify.jp'
+EMAIL_HOST_USER = 'info@votify.jp'
 DEFAULT_FROM_EMAIL=EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = env.get_value('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
-SERVER_EMAIL = 'admin@votify.jp'
-
-LOGIN_URL = 'login'
-LOGOUT_URL = '/'
 
 # CORS
 CORS_ALLOW_CREDENTIALS = True

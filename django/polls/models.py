@@ -40,9 +40,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         super().clean()
         self.email = self.__class__.objects.normalize_email(self.email)
 
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        send_mail(subject, message, from_email, [self.email], **kwargs)
-
     def get_guest_user():
         try:
             guest = get_user_model().objects.get(username=GUEST_NAME)

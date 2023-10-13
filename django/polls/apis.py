@@ -1,12 +1,14 @@
 import json
 from .serializers import *
 from .models import Question, Vote, UpdateContent, Comment
-from django.contrib.auth import login, logout, authenticate
+from django.core.mail import send_mail
+from django.core.signing import BadSignature, SignatureExpired, loads, dumps
+from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import get_user_model
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework import status
@@ -113,8 +115,9 @@ class UpdateContentViewSet(viewsets.ModelViewSet):
     queryset = UpdateContent.objects.all()
     serializer_class = UpdateContentSerializer
 
+
 @csrf_exempt
-def doLogin(request):
+def do_login(request):
     request_json = json.loads(request.body)
     email = request_json.get('email')
     password = request_json.get('password')
@@ -159,7 +162,7 @@ def get_voted_list(request):
 
 # ログアウト
 @login_required
-def doLogout(request):
+def do_logout(request):
     logout(request)
     return JsonResponse({"result": True})
 
@@ -181,7 +184,7 @@ class GoogleSocialAuthView(GenericAPIView):
 
 
 # ユーザ情報取得
-def getUserInfo(request):
+def get_user_info(request):
     if not request.user.is_authenticated:
         return JsonResponse({"id": None})
     user = get_user_model().objects.get(id=request.user.id)
@@ -193,7 +196,7 @@ def getUserInfo(request):
 
 # 質問作成
 @csrf_exempt
-def createQuestion(request):
+def create_question(request):
     data = json.loads(request.body)
     # 質問作成
     question = Question.objects.create(
@@ -203,3 +206,64 @@ def createQuestion(request):
         Choice.objects.create(choice_text=choice, question=question)
 
     return JsonResponse({'success': True, 'question_id': question.id})
+
+
+# アカウント登録
+@csrf_exempt
+def account_register(request):
+    data = json.loads(request.body)
+    username = data['username']
+    email = data['email']
+    password = data['password']
+
+    if get_user_model().objects.filter(email=email, is_active=True).exists():
+        return JsonResponse({"result": False, "message": 'このメールアドレスは既に使用されています。'})
+    if get_user_model().objects.filter(username=username).exclude(email=email).exists():
+        return JsonResponse({"result": False, "message": 'このユーザ名は既に使用されています。'})
+
+    if get_user_model().objects.filter(email=email, is_active=False).exists():
+        user = get_user_model().objects.get(email=email)
+        user.username = username
+    else:
+        user = get_user_model().objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            is_active=False)
+
+    user.save()
+
+    # メール送信
+    context = {
+        'host': request.META['HTTP_REFERER'],
+        'token': dumps(user.pk),
+        'username': username,
+    }
+    subject = render_to_string('polls/subject.txt', context)
+    message = render_to_string('polls/message.txt', context)
+    send_mail(subject, message, None, [email], fail_silently=False,)
+    return JsonResponse({"result": True, "message": 'メールを送信しました。\n登録を完了するにはメールに記載したURLにアクセスしてください。'})
+
+
+# アカウント本登録
+@ csrf_exempt
+def account_register_complete(request, **kwargs):
+    data = json.loads(request.body)
+    token = data.get('token')
+
+    timeout_seconds = 60*60*24
+    try:
+        user_pk = loads(token, max_age=timeout_seconds)
+    except SignatureExpired:
+        return JsonResponse({"result": False, "message": "URL有効期限切れです。"})
+    except BadSignature:
+        return JsonResponse({"result": False, "message": "無効なトークンです。"})
+
+    try:
+        user = get_user_model().objects.get(pk=user_pk)
+    except get_user_model().DoesNotExist:
+        return JsonResponse({"result": False, "message": "ユーザーが取得できませんでした。"})
+
+    user.is_active = True
+    user.save()
+    return JsonResponse({"result": True, "message": "アカウントの登録が完了しました。"})
