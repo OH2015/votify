@@ -127,20 +127,17 @@ def do_login(request):
     user = authenticate(request, email=email, password=password)
 
     if user:
-        # ユーザーアクティベート判定
         if user.is_active:
-            # ログイン
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             return JsonResponse({"result": True})
         else:
-            # アカウント利用不可
             return JsonResponse({"result": False, "message": "アカウントが無効です。"})
-    # ユーザー認証失敗
     else:
         return JsonResponse({"result": False, "message": "ログイン情報に誤りがあります。"})
 
 
 # TODO　後でリファクタ
+@csrf_exempt
 def get_voted_list(request):
     if request.user.is_authenticated:
         voted_list = []
@@ -166,6 +163,7 @@ def do_logout(request):
 
 
 # ユーザ情報取得
+@csrf_exempt
 def get_user_info(request):
     if not request.user.is_authenticated:
         return JsonResponse({"id": None})
