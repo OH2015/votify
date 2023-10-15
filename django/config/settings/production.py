@@ -7,39 +7,43 @@ from .base import *
 import environ
 
 env = environ.Env()
-env.read_env(BASE_DIR / '.env')
+env.read_env(BASE_DIR / ".env")
 
 DEBUG = False
-ALLOWED_HOSTS = ['votify.xyz']
+ALLOWED_HOSTS = ["votify.xyz"]
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432,
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "db",
+        "PORT": 5432,
     }
 }
 
 # ファイルストレージ
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_STORAGE_BUCKET_NAME = 'plbucket'
-AWS_S3_REGION_NAME = 'us-east-1'
-AWS_ACCESS_KEY_ID = env.get_value('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env.get_value('AWS_SECRET_ACCESS_KEY')
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+AWS_STORAGE_BUCKET_NAME = "plbucket"
+AWS_S3_REGION_NAME = "us-east-1"
+AWS_ACCESS_KEY_ID = env.get_value("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env.get_value("AWS_SECRET_ACCESS_KEY")
 
 # CSRF検証用
-CSRF_TRUSTED_ORIGINS = ['https://votify.jp', 'https://votify.xyz', 'http://52.199.222.201']
-CORS_ALLOWED_ORIGINS = ['https://votify.jp', 'https://votify.xyz', 'http://52.199.222.201']
-
-# Google認証情報
-GOOGLE_CLIENT_ID = '150637606230-ko9qcacpnpn496d8ae6kd46b6l045u85.apps.googleusercontent.com'
-SOCIAL_SECRET = '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'
+CSRF_TRUSTED_ORIGINS = [
+    "https://votify.jp",
+    "https://votify.xyz",
+    "http://52.199.222.201",
+]
+CORS_ALLOWED_ORIGINS = [
+    "https://votify.jp",
+    "https://votify.xyz",
+    "http://52.199.222.201",
+]
 
 # CookieのSameSite属性をNoneに設定(設定しないとCookieがブラウザで弾かれてセットされない)
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SAMESITE = "None"
