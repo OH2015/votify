@@ -107,5 +107,8 @@ CORS_ALLOW_CREDENTIALS = True
 # 日付型のフォーマット
 REST_FRAMEWORK = {
     "DATETIME_FORMAT": "%Y/%m/%d %H:%M",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+    ),
 }
 AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
