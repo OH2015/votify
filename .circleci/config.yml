@@ -1,19 +1,40 @@
 version: 2
  
 jobs:
+    # S3にアップロードするソースをビルドする
     build:
         docker:
-            - image: cimg/base:2023.03
+            - image: node:latest
         steps:
             - checkout
             - run:
-                name: Echo Test
-                command: echo "CircleCI Test"
-    deploy:
-        machine:
-            image: ubuntu-2204:2022.04.1
+                name: Build react app
+                command: export CI=false 
+                    && cd ./react && echo $ENV_FILE | base64 -d > .env.production
+                    && npm install && npm run build 
+            # ビルド済のソースをworkspaceに保管する
+            - persist_to_workspace:
+                root: react
+                paths:
+                    - build
+
+    # S3にフロントエンドのソースをアップロードする
+    s3-deploy:
+        docker:
+            - image: infrastructureascode/aws-cli
         steps:
-            - checkout
+            # ビルド済のソースをworkspaceから取得する
+            - attach_workspace:
+                at: /
+            - run:
+                name: Upload to AWS S3 bucket
+                command: aws s3 sync ./* s3://${AWS_S3_BUCKET_NAME}/ --exact-timestamps --delete
+
+    # EC2にバックエンドのソースをアップロードする
+    ec2-deploy:
+        docker:
+            - image: cimg/base:2023.03
+        steps:
             # CircleCI に登録した秘密鍵を呼び出す
             - add_ssh_keys:
             - run: ssh ${USER_NAME}@${HOST_NAME} 'cd votify && sudo git stash && sudo docker system prune -f && sudo git pull && sudo docker-compose up -d --build'
@@ -23,6 +44,7 @@ workflows:
     build_and_deploy:
         jobs:
             - build
-            - deploy:
+            - s3-deploy:
                 requires:
                     - build
+            - ec2-deploy
