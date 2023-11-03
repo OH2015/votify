@@ -1,0 +1,125 @@
+@charset "UTF-8";
+
+.header-user-menu {
+  display: none;
+  position: absolute;
+  top: 58px;
+  right: 2px;
+  width: 200px;
+  background-color: white;
+}
+ul {
+  list-style: none;
+}
+.header-user-menu:hover {
+  display: block;
+}
+.header-user-menu ul li:hover {
+  text-decoration: underline;
+}
+.user-cell {
+  height: 100%;
+  width: 60px;
+}
+.user-cell:hover {
+  cursor: pointer;
+}
+.user-cell:hover .header-user-menu {
+  display: block;
+}
+
+#main_content {
+  margin-top: 50px;
+  display: table;
+  width: 100%;
+  background-color: #FFFAF0;
+}
+
+#main_content .content_center {
+  min-height: 100vh;
+  padding: 30px;
+}
+
+/* 
+フッター 
+*/
+#footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#footer {
+  position: relative;
+  background: #222;
+  color: #fff;
+  bottom: 0px;
+  text-align: center;
+}
+
+#footer .logo {
+  text-align: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #111;
+}
+
+#footer .logo a {
+  display: inline-block;
+}
+
+#footer .logo img {
+  width: 120px;
+}
+
+#footer .nav a {
+  display: block;
+  padding: 0 10px;
+  color: #ccc;
+}
+
+#footer .nav {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+#footer .nav a:hover {
+  color: #ca353b;
+}
+
+/* 画面幅が480px以下の場合（スマートフォン用） */
+@media screen and (max-width: 480px) {
+}
+
+/* 画面幅が780px以下の場合（タブレット用） */
+@media screen and (max-width: 780px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  #main_content .content_center {
+    width: 100%;
+    min-height: 500px;
+    padding: 20px 10px 15px 10px;
+  }
+
+  #footer {
+    text-align: center;
+    width: 100%;
+  }
+  #footer .nav {
+    display: block;
+  }
+
+  #footer .nav li {
+    border-top: 1px solid #555555;
+  }
+
+  #footer .nav li:last-child {
+    border-bottom: 1px solid #555555;
+  }
+
+  #footer .nav li a {
+    padding: 12px 20px;
+    /* text-align: left; */
+  }
+}
