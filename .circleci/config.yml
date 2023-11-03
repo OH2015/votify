@@ -25,10 +25,10 @@ jobs:
         steps:
             # ビルド済のソースをworkspaceから取得する
             - attach_workspace:
-                at: /tmp/workspace
+                at: /tmp
             - run:
                 name: Upload to AWS S3 bucket
-                command: aws s3 sync /tmp/workspace s3://${AWS_S3_BUCKET_NAME}/ --exact-timestamps --delete
+                command: aws s3 sync /tmp/build s3://${AWS_S3_BUCKET_NAME}/ --exact-timestamps --delete
 
     # EC2にバックエンドのソースをアップロードする
     ec2-deploy:
