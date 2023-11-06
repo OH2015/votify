@@ -98,9 +98,9 @@ class Vote(models.Model):
 
     def __str__(self):
         if self.user:
-            return self.choice.choice_text + " : " + self.user.username
+            return self.choice.choice_text + " <- " + self.user.username
         else:
-            return self.choice.choice_text + " : Anonymous"
+            return self.choice.choice_text + " <- Anonymous"
 
 
 # コメント

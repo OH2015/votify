@@ -3,6 +3,7 @@ import random
 import string
 from .serializers import *
 from .models import Question, Vote, UpdateContent, Comment
+from django.core import serializers
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, SignatureExpired, loads, dumps
 from django.contrib.auth import login, logout, authenticate, get_user_model
@@ -39,7 +40,22 @@ class QuestionViewSet(viewsets.ModelViewSet):
         if question_id:
             queryset = queryset.filter(id=question_id)
 
-        return Response(QuestionSerializer(queryset, many=True).data)
+        return Response(
+            QuestionSerializer(queryset, many=True, context={"request": request}).data
+        )
+
+
+# 質問モデルのCRUDエンドポイント
+class ChoiceViewSet(viewsets.ModelViewSet):
+    queryset = Choice.objects.all()
+    serializer_class = ChoiceSerializer
+
+    def list(self, request):
+        question_id = request.GET.get("question_id", None)
+        queryset = Choice.objects.filter(question=question_id)
+        return Response(
+            ChoiceSerializer(queryset, many=True, context={"request": request}).data
+        )
 
 
 # 投票モデルのCRUDエンドポイント
@@ -48,53 +64,47 @@ class VoteViewSet(viewsets.ModelViewSet):
     serializer_class = VoteSerializer
 
     def create(self, request):
-        request.session["hoge"] = 4
-        # TODO 後でリファクタ
         data = request.data
-        # 重複チェック
+        voted_list = request.session.get("voted_list", [])
+        delete_vote = None
+
+        # 同じ質問に投票している場合はレコード削除
         if request.user.is_authenticated:
-            if Vote.objects.filter(
-                user=request.user, question_id=data["question"]
-            ).exists():
-                Vote.objects.filter(
-                    user=request.user, question_id=data["question"]
-                ).delete()
-
-        user = request.user if request.user.is_authenticated else None
-        vote = Vote.objects.create(
-            question_id=data["question"], user=user, choice_id=data["choice"]
-        )
-        data["vote"] = vote.id
-        vote.save()
-        # 未ログイン時はセッションに保存
-        if not request.user.is_authenticated:
-            voted_list = request.session.get("voted_list", [])
-            new_voted_list = []
-            for voted in voted_list:
+            delete_vote = Vote.objects.filter(
+                user=request.user.id, question_id=data["question"]
+            )
+        else:
+            delete_idx = None
+            for i, voted in enumerate(voted_list):
                 if voted["question"] == data["question"]:
-                    Vote.objects.get(id=voted["vote"]).delete()
-                else:
-                    new_voted_list.append(voted)
+                    delete_idx = i
 
-            new_voted_list.append(data)
-            request.session["voted_list"] = new_voted_list
-            request.session["hoge"] = 2
+            if delete_idx is not None:
+                delete_vote = Vote.objects.filter(id=voted_list[delete_idx]["vote"])
+                voted_list.pop(delete_idx)
+                request.session["voted_list"] = voted_list
 
-        return Response({"id": vote.id})
+        if delete_vote:
+            choice = delete_vote.first().choice
+            delete_vote.delete()
+            # 同じ選択肢の場合はそこで処理終了
+            if choice.id == data["choice"]:
+                return Response({"result": True})
 
-    def destroy(self, request, pk=None):
-        # TODO 後でリファクタ
-        # 未ログイン時はセッションを削除
+        # 投票レコード作成
+        vote = Vote.objects.create(
+            question_id=data["question"],
+            user=request.user if request.user.is_authenticated else None,
+            choice_id=data["choice"],
+        )
+        vote.save()
+
         if not request.user.is_authenticated:
-            voted_list = request.session.get("voted_list", [])
-            new_voted_list = []
-            for voted in voted_list:
-                if voted["vote"] != int(pk):
-                    new_voted_list.append(voted)
+            data["vote"] = vote.id
+            voted_list.append(data)
+            request.session["voted_list"] = voted_list
 
-            request.session["voted_list"] = new_voted_list
-
-        return super().destroy(request)
+        return Response({"result": True})
 
 
 # コメントモデルのCRUDエンドポイント
@@ -166,14 +176,18 @@ def do_logout(request):
 @csrf_exempt
 def get_user_info(request):
     if not request.user.is_authenticated:
-        return JsonResponse({"id": None})
+        return JsonResponse({"id": None, "result": False})
     user = get_user_model().objects.get(id=request.user.id)
     return JsonResponse(
         {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "profile": user.profile,
+            "result": True,
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "profile": user.profile,
+                "auth_provider": user.auth_provider,
+            },
         }
     )
 
@@ -188,7 +202,7 @@ def create_question(request):
         explanation=data["explanation"],
         genre=data["genre"],
         auth_level=data["auth_level"],
-        author_id=data["user"],
+        author=request.user,
     )
     # 選択肢作成
     for choice in data["choices"]:
@@ -230,7 +244,8 @@ def account_register(request):
     message = render_to_string("polls/register_message.txt", context)
     try:
         send_mail(subject, message, None, [email], fail_silently=False)
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse({"result": False, "message": "メールの送信中にエラーが発生しました。"})
 
     return JsonResponse({"result": True})
@@ -366,6 +381,7 @@ def google_login(request):
             ),
             email=email,
             password=google_id,
+            auth_provider="google",
         )
         user.save()
 
@@ -375,3 +391,41 @@ def google_login(request):
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
 
     return JsonResponse({"result": True})
+
+
+# ユーザ名変更
+@csrf_exempt
+def update_username(request):
+    data = json.loads(request.body)
+    username = data.get("username")
+    try:
+        user = get_user_model().objects.get(id=request.user.id)
+    except:
+        return JsonResponse({"result": False, "message": "ユーザ情報の取得に失敗しました。"})
+
+    if (
+        get_user_model()
+        .objects.filter(username=username)
+        .exclude(email=request.user.email)
+        .exists()
+    ):
+        return JsonResponse({"result": False, "message": "このユーザ名は既に使用されています。"})
+
+    user.username = username
+    user.save()
+    return JsonResponse({"result": True, "message": "ユーザ名を更新しました。"})
+
+
+# パスワード変更
+@csrf_exempt
+def update_password(request):
+    data = json.loads(request.body)
+    user = authenticate(
+        request, email=request.user.email, password=data.get("old_password")
+    )
+    if not user:
+        return JsonResponse({"result": False, "message": "現在のパスワードが正しくありません。"})
+
+    user.set_password(data.get("new_password"))
+    user.save()
+    return JsonResponse({"result": True, "message": "パスワードを更新しました。"})

@@ -12,13 +12,34 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ChoiceSerializer(serializers.ModelSerializer):
     votes = serializers.SerializerMethodField()
+    voted = serializers.SerializerMethodField()
 
     class Meta:
         model = Choice
-        fields = ("id", "question", "choice_text", "votes", "created_at", "updated_at")
+        fields = (
+            "id",
+            "question",
+            "choice_text",
+            "votes",
+            "voted",
+            "created_at",
+            "updated_at",
+        )
 
     def get_votes(self, instance):
         return Vote.objects.filter(choice=instance).all().count()
+
+    def get_voted(self, instance):
+        request = self.context.get("request", None)
+        # ログイン時
+        if request.user.id:
+            # 投票のレコードがあるか確認する
+            return Vote.objects.filter(choice=instance, user=request.user.id).exists()
+        # 未ログイン時
+        else:
+            # セッションで投票済か確認する
+            voted_list = request.session.get("voted_list", [])
+            return any(item.get("choice") == instance.id for item in voted_list)
 
 
 class CommentSerializer(serializers.ModelSerializer):

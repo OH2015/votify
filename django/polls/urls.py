@@ -3,6 +3,7 @@ from .apis import (
     VoteViewSet,
     CommentViewSet,
     QuestionViewSet,
+    ChoiceViewSet,
     UserViewSet,
     UpdateContentViewSet,
 )
@@ -16,6 +17,7 @@ defaultRouter.register("user", UserViewSet)
 defaultRouter.register("vote", VoteViewSet)
 defaultRouter.register("comment", CommentViewSet)
 defaultRouter.register("question", QuestionViewSet)
+defaultRouter.register("choice", ChoiceViewSet)
 defaultRouter.register("update_content", UpdateContentViewSet)
 
 app_name = "polls"
@@ -35,6 +37,10 @@ urlpatterns = [
     path("api/password_reset_mail/", apis.password_reset_mail),
     # パスワード再設定
     path("api/password_reset/", apis.password_reset),
+    # ユーザ名変更
+    path("api/update_username/", apis.update_username),
+    # パスワード変更
+    path("api/update_password/", apis.update_password),
     # api/に各CRUDエンドポイントを作成
     path("api/", include(defaultRouter.urls)),
     # ユーザ情報取得
