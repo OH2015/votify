@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Question, Choice, Comment, Vote, UpdateContent
 from django.contrib.auth import get_user_model
+from django.db.models import Count
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -62,6 +63,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     author = UserSerializer()
     choices = ChoiceSerializer(many=True, read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
+    votes = serializers.SerializerMethodField()
 
     class Meta:
         model = Question
@@ -77,6 +79,16 @@ class QuestionSerializer(serializers.ModelSerializer):
             "created_at",
             "choices",
             "comments",
+            "votes",
+        )
+
+    def get_votes(self, instance):
+        return (
+            Question.objects.annotate(
+                vote_count=Count("choices__vote__id", distinct=True)
+            )
+            .get(pk=instance.pk)
+            .vote_count
         )
 
 

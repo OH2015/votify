@@ -45,8 +45,6 @@ urlpatterns = [
     path("api/", include(defaultRouter.urls)),
     # ユーザ情報取得
     path("api/get_user_info/", apis.get_user_info),
-    # 投票済みリスト取得
-    path("api/get_voted_list/", apis.get_voted_list),
     # 質問作成
     path("api/create_question/", apis.create_question),
 ]

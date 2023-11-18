@@ -35,10 +35,16 @@ class QuestionViewSet(viewsets.ModelViewSet):
     def list(self, request):
         queryset = self.get_queryset()
         question_id = request.query_params.get("question_id")
+        user_id = request.query_params.get("user_id")
 
         # IDがあれば絞り込み
         if question_id:
             queryset = queryset.filter(id=question_id)
+
+        # ユーザIDがあれば絞り込み
+        if user_id:
+            user_id = request.user.id if request.user.is_authenticated else None
+            queryset = queryset.filter(author=user_id)
 
         return Response(
             QuestionSerializer(queryset, many=True, context={"request": request}).data
@@ -144,25 +150,6 @@ def do_login(request):
             return JsonResponse({"result": False, "message": "アカウントが無効です。"})
     else:
         return JsonResponse({"result": False, "message": "ログイン情報に誤りがあります。"})
-
-
-# TODO　後でリファクタ
-@csrf_exempt
-def get_voted_list(request):
-    if request.user.is_authenticated:
-        voted_list = []
-        votes = list(Vote.objects.filter(user=request.user).all().values())
-        for vote in votes:
-            voted_list.append(
-                {
-                    "vote": vote["id"],
-                    "question": vote["question_id"],
-                    "choice": vote["choice_id"],
-                }
-            )
-    else:
-        voted_list = request.session.get("voted_list", [])
-    return JsonResponse(voted_list, safe=False)
 
 
 # ログアウト

@@ -1,11 +1,7 @@
 import React, { useCallback, useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import Comment from "./Comment";
 import axios from "axios";
 import { API_URL } from "../config";
-
-axios.defaults.xsrfCookieName = "csrftoken";
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 
 const QuestionContainer = styled.div`
   background-color: #f5f5f5;
@@ -16,28 +12,18 @@ const QuestionContainer = styled.div`
   padding: 5px;
   box-shadow: 3px 3px 3px;
 `;
-const QuestionHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
 const QuestionTitle = styled.h3`
   text-align: left;
 `;
 const Explanation = styled.div`
   text-align: left;
+  white-space: pre-wrap;
 `;
 const CopyText = styled.input`
   position: absolute;
   left: -9999px;
 `;
 
-const CopyButton = styled.button`
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  font-size: 15px;
-  text-align: right;
-`;
 const ProgressBar = styled.div`
   position: absolute;
   display: inline-flex;
@@ -67,7 +53,6 @@ const PercentText = styled.div`
 `;
 
 const ChoiceBox = styled.div`
-  width: 90%;
   height: 50px;
   display: flex;
   position: relative;
@@ -80,19 +65,7 @@ const ChoiceBox = styled.div`
     cursor: pointer;
   }
 `;
-const CommentToggle = styled.button`
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  font-size: 15px;
-  &:hover {
-    cursor: pointer;
-  }
-`;
 const CommentForm = styled.div`
-  padding-bottom: 10px;
-  padding-top: 10px;
-  border-bottom: solid gray 1px;
   display: flex;
   align-items: center;
 `;
@@ -103,22 +76,23 @@ const Draft = styled.textarea`
   overflow: hidden;
   margin-right: 30px;
 `;
-const CommentButton = styled.button`
-  width: 100px;
+const CommentText = styled.p`
+  white-space: pre-wrap;
+  font-size: 15px;
+  text-align: left;
 `;
 
 // 投稿コンポーネント
-const Post = ({ question, setIsLoading, userId }) => {
+const Post = ({ p_question, setIsLoading, userId }) => {
   // 選択肢のリストをステートとして保持
-  const [choices, setChoices] = useState(question.choices);
-  const [copied, setCopied] = useState(false);
+  const [question, setQuestion] = useState(p_question);
   const [opend, setOpend] = useState(false); // コメント表示/非表示
-  const [comments, setComments] = useState(question.comments); // コメントのリスト
+  const [comments, setComments] = useState(p_question.comments); // コメントのリスト
   const inputRef = useRef(null);
   const ref = useRef(null);
 
   // URL取得
-  const urlText = `${window.location.hostname}/?question_id=${question.id}`;
+  const urlText = `${window.location.host}/?question_id=${question.id}`;
 
   // 初期処理
   useEffect(() => {}, []);
@@ -136,7 +110,7 @@ const Post = ({ question, setIsLoading, userId }) => {
         { withCredentials: true }
       )
       .then((response) => {
-        getChoices();
+        getQuestion();
       })
       .catch((e) => {
         alert("API通信中にエラーが発生しました。");
@@ -145,22 +119,13 @@ const Post = ({ question, setIsLoading, userId }) => {
     setIsLoading(false);
   };
 
-  const getComments = async () => {
-    // コメント取得
-    const result = await axios.get(
-      `${API_URL}/api/comment/?question_id=${question.id}`,
-      { withCredentials: true }
-    );
-    setComments(result.data);
-  };
-
-  const getChoices = () => {
+  const getQuestion = () => {
     axios
-      .get(`${API_URL}/api/choice/?question_id=${question.id}`, {
+      .get(`${API_URL}/api/question/?question_id=${question.id}`, {
         withCredentials: true,
       })
       .then((response) => {
-        setChoices(response.data);
+        setQuestion(response.data[0]);
       })
       .catch((e) => {
         alert("API通信中にエラーが発生しました。");
@@ -168,28 +133,28 @@ const Post = ({ question, setIsLoading, userId }) => {
   };
 
   // 得票率を計算して返却
-  const getProgress = useCallback((votes) => {
-    const sum = choices.reduce((sum, choice) => sum + choice.votes, 0);
-    return (sum ? votes / sum : 0) * 100;
-  }, [choices]);
+  const getProgress = useCallback(
+    (votes) => {
+      const sum = question.choices.reduce(
+        (sum, choice) => sum + choice.votes,
+        0
+      );
+      return (sum ? votes / sum : 0) * 100;
+    },
+    [question.choices]
+  );
 
   // クリップボードにリンクをコピーする処理
   const copyUrl = () => {
     inputRef.current.select();
     document.execCommand("Copy");
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 1000);
   };
 
   // コメント表示/非表示切り替え処理
   const toggleClickHandler = () => {
-    if (!opend && !comments.length) {
-      getComments();
-    }
     setOpend(!opend);
   };
+
   // 投稿削除処理
   const deleteClickHandler = async () => {
     if (window.confirm("この投稿を削除してもよろしいですか？")) {
@@ -199,93 +164,150 @@ const Post = ({ question, setIsLoading, userId }) => {
       window.location.href = "/";
     }
   };
+
   // コメント削除処理
-  const handleCommentDelete = (deletedCommentId) => {
-    setComments(
-      comments.filter((comment) => comment.id !== deletedCommentId)
-    );
+  const handleCommentDelete = (id) => {
+    if (window.confirm("このコメントを削除してもよろしいですか？")) {
+      axios
+        .delete(`${API_URL}/api/comment/${id}/`, {
+          withCredentials: true,
+        })
+        .then((response) => {
+          getQuestion();
+        });
+    }
   };
+
   // コメント入力欄の大きさ制御
   const autoResize = () => {
     const draft = ref.current;
     draft.style.height = "28px";
     draft.style.height = `${draft.scrollHeight}px`;
   };
+
   // コメント投稿処理
-  const submit_comment = async () => {
+  const handleSubmitComment = () => {
     const draft = ref.current;
-    if (userId === 0) {
+    if (!userId) {
       alert("コメントするにはログインが必要です");
       return;
     }
     if (draft.value === "") return;
 
-    // コメントをPOST送信
-    const result = await axios.post(
-      `${API_URL}/api/comment/`,
-      {
-        question: question.id,
-        text: draft.value,
-        user_id: userId,
-      },
-      { withCredentials: true }
-    );
-    draft.value = "";
-    autoResize();
-
-    setComments(comments.concat(result.data));
-    setOpend(true);
+    axios
+      .post(
+        `${API_URL}/api/comment/`,
+        {
+          question: question.id,
+          text: draft.value,
+          user_id: userId,
+        },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        draft.value = "";
+        autoResize();
+        getQuestion();
+        setOpend(true);
+      })
+      .catch((e) => {
+        alert("API通信中にエラーが発生しました。");
+      });
   };
 
   return (
     <QuestionContainer>
-      <div className="text-start">{question.author.username}</div>
-      <QuestionHeader>
-        <QuestionTitle>{question.title}</QuestionTitle>
+      <div
+        style={{ display: "flex", justifyContent: "space-between" }}
+        className="text-start"
+      >
+        {question.author.username}
         <CopyText ref={inputRef} value={urlText} readOnly />
-        <CopyButton onClick={copyUrl}>
-          <i className="fas fa-copy"></i>
-          {copied ? "Copied!" : "Copy URL"}
-        </CopyButton>
-      </QuestionHeader>
+        <i
+          style={{ cursor: "pointer" }}
+          class="fa-solid fa-lg fa-ellipsis m-2"
+          data-bs-toggle="dropdown"
+        ></i>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <button class="dropdown-item" onClick={copyUrl}>
+              URLをコピー
+            </button>
+          </li>
+          {userId === question.author.id && (
+            <li>
+              <button class="dropdown-item" onClick={deleteClickHandler}>
+                削除
+              </button>
+            </li>
+          )}
+        </ul>
+      </div>
+      <div>
+        <QuestionTitle>{question.title}</QuestionTitle>
+      </div>
       <Explanation>{question.explanation}</Explanation>
-      {choices.map((choice) => {
-        return (
-          <ChoiceBox
-            key={choice.id}
-            voted={choice.voted}
-            onClick={() => choiceClickHandler(choice)}
-          >
-            <ChoiceText>{choice.choice_text}</ChoiceText>
-            <PercentText>{Math.floor(getProgress(choice.votes))}%</PercentText>
-            <PercentageArea />
-            <ProgressBar progress={getProgress(choice.votes)} />
-          </ChoiceBox>
-        );
-      })}
-
-      <CommentToggle onClick={toggleClickHandler}>
-        コメント({comments.length})
-      </CommentToggle>
-      {userId === question.author.id && (
-        <CommentToggle onClick={deleteClickHandler}>削除</CommentToggle>
-      )}
+      {question.choices.map((choice) => (
+        <ChoiceBox
+          key={choice.id}
+          voted={choice.voted}
+          onClick={() => choiceClickHandler(choice)}
+        >
+          <ChoiceText>{choice.choice_text}</ChoiceText>
+          <PercentText>{Math.floor(getProgress(choice.votes))}%</PercentText>
+          <PercentageArea />
+          <ProgressBar progress={getProgress(choice.votes)} />
+        </ChoiceBox>
+      ))}
+      <div style={{ textAlign: "left" }}>{question.votes}票</div>
+      <div
+        style={{ cursor: "pointer", textAlign: "left" }}
+        onClick={toggleClickHandler}
+      >
+        <i class="fa-solid fa-comment mx-1"></i>
+        {question.comments.length}
+      </div>
 
       {opend && (
         <>
           <CommentForm>
             <Draft maxLength={1000} ref={ref} onInput={autoResize} />
-            <CommentButton className="btn btn-primary" onClick={submit_comment}>
+            <button
+              className="btn btn-primary"
+              onClick={handleSubmitComment}
+            >
               送信
-            </CommentButton>
+            </button>
           </CommentForm>
-          {comments.map((comment) => (
-            <Comment
-              key={comment.id}
-              {...comment}
-              userId={userId}
-              onDelete={handleCommentDelete}
-            />
+          {question.comments.map((comment) => (
+            <div className="mt-2">
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>
+                  <span className="fw-bold">{comment.user.username}</span>
+                  <span className="mx-4">{comment.disp_date}</span>
+                </div>
+                {userId === comment.user.id && (
+                  <div>
+                    <i
+                      style={{ cursor: "pointer" }}
+                      class="fa-solid fa-lg fa-ellipsis m-2"
+                      data-bs-toggle="dropdown"
+                    ></i>
+                    <ul class="dropdown-menu  dropdown-menu-end">
+                      <li>
+                        <button
+                          class="dropdown-item"
+                          onClick={() => handleCommentDelete(comment.id)}
+                        >
+                          削除
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+              <CommentText>{comment.text}</CommentText>
+            </div>
           ))}
         </>
       )}

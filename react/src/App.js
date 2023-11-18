@@ -9,6 +9,7 @@ import QuestionCreate from "./QuestionCreate";
 import "./style.css";
 import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
 import AccountInfo from "./AccountInfo";
+import AccountTop from "./AccountTop";
 import Top from "./top/Top";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
               <Route path="/" element={<Top />} />
               <Route path="/login" element={<Login />} />
               <Route path="/account_info" element={<AccountInfo />} />
+              <Route path="/account_top" element={<AccountTop />} />
               <Route path="/account_register" element={<Register />} />
               <Route
                 path="/account_register_complete"

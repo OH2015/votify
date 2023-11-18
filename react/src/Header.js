@@ -77,9 +77,9 @@ function Header() {
   return (
     <HeaderContainer id="header">
       <LogoCell>
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <a href="/" style={{ textDecoration: "none" }}>
           <span className="text-secondary">Votify 気軽にできる投票サイト</span>
-        </Link>
+        </a>
       </LogoCell>
       <Menus className="header-menus">
         <Link
@@ -94,14 +94,14 @@ function Header() {
             className="user-cell p-1 text-dark"
             style={{ textDecoration: "none" }}
           >
-            <Link to="/account_info" style={{ textDecoration: "none" }}>
+            <Link to="/account_top" style={{ textDecoration: "none" }}>
               <i id="user-icon" className="fa-solid fa-circle-user fa-3x"></i>
             </Link>
             <div className="header-user-menu rounded-3 shadow-lg border">
               <ul className="p-2 m-0">
                 <li>
                   <Link to="/account_info" style={{ textDecoration: "none" }}>
-                    {user.username}
+                    個人情報
                   </Link>
                 </li>
                 <li>

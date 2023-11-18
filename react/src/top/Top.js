@@ -139,7 +139,7 @@ const Top = () => {
       {posts.map((post) => (
         <Post
           key={post.id}
-          question={post}
+          p_question={post}
           setIsLoading={setIsLoading}
           userId={user.id}
         />

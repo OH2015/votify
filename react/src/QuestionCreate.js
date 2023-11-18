@@ -1,50 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { RoundButton, PlusIcon } from "./top/Top";
 import axios from "axios";
 import { API_URL } from "./config";
-
-const MinusIcon = styled.span`
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  margin: auto;
-  width: 10px;
-  height: 10px;
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    margin: auto;
-    width: 2px;
-    height: 10px;
-    background-color: white;
-  }
-  &::before {
-    transform: rotate(90deg);
-  }
-`;
-
-const FlexBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 15px;
-
-  > button {
-    margin: 0 5px;
-  }
-`;
-
-const Button = styled.button`
-  width: 120px;
-`;
 
 // ボディコンポーネント
 const QuestionCreate = ({ handleClosePopup }) => {
@@ -100,103 +58,109 @@ const QuestionCreate = ({ handleClosePopup }) => {
     }));
   };
 
-  const onMinusClicked = (event) => {
+  const onDelteClicked = (idx) => {
+    if (jsonData.choices.length < 3) {
+      window.alert("選択肢は2つ以上必要です。");
+      return;
+    }
     setJsonData((prevjsonData) => ({
       ...prevjsonData,
-      choices: prevjsonData.choices.slice(0, -1),
+      choices: [
+        ...prevjsonData.choices.slice(0, idx),
+        ...prevjsonData.choices.slice(idx + 1),
+      ],
     }));
   };
 
-  const handleSubmit = () => {
-    // 入力値チェック
-    const filledChoices = jsonData.choices.filter((choice) => choice);
-    if (!jsonData.title) {
-      window.alert("タイトルは空にできません");
-      return;
-    }
-    if (filledChoices.length < 2) {
-      window.alert("選択肢は最低2つ必要です");
-      return;
-    }
-    jsonData.choices = filledChoices;
+  const handleSubmit = (event) => {
+    // デフォルトのsubmit処理キャンセル
+    event.preventDefault();
     // API送信
     axios
       .post(API_URL + "/api/create_question/", jsonData, {
         withCredentials: true,
       })
-      .then((res) => {
+      .then((response) => {
         window.location.href = "/";
       })
       .catch((e) => {
-        window.alert("投稿に失敗しました。");
+        window.alert("API通信中にエラーが発生しました。");
       });
   };
 
   return (
     <>
       {logined ? (
-        <div className="container m-auto" style={{ maxWidth: "500px" }}>
-          <div className="form-group">
-            <label htmlFor="title">タイトル</label>
-            <input
-              required
-              value={jsonData.title}
-              onInput={onTitleChange}
-              name="title"
-              className="form-control"
-              placeholder="タイトルを入力してください"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="description">説明欄</label>
-            <textarea
-              value={jsonData.explanation}
-              onInput={onExplanationChange}
-              name="explanation"
-              className="form-control"
-              placeholder="説明を入力してください"
-            ></textarea>
-          </div>
-          <div className="form-group">
-            <label htmlFor="options">選択肢</label>
-            {jsonData.choices.map((choice, idx) => (
+        <form onSubmit={handleSubmit}>
+          <div
+            className="border rounded container m-auto"
+            style={{ maxWidth: "500px" }}
+          >
+            <div className="my-3">
+              <label htmlFor="title">タイトル</label>
               <input
                 required
-                name="choice"
-                data-index={idx}
-                key={idx}
-                value={choice}
-                onInput={onChoiceChange}
+                value={jsonData.title}
+                onInput={onTitleChange}
+                name="title"
                 className="form-control"
-                placeholder="選択肢を入力してください"
+                placeholder="タイトルを入力してください"
               />
-            ))}
+            </div>
+            <div className="my-3">
+              <label htmlFor="description">説明</label>
+              <textarea
+                value={jsonData.explanation}
+                onInput={onExplanationChange}
+                name="explanation"
+                className="form-control"
+                placeholder="説明を入力してください"
+              ></textarea>
+            </div>
+            <div className="my-3">
+              <label htmlFor="options">選択肢</label>
+              <div
+                className="mx-3 btn btn-sm btn-outline-secondary"
+                onClick={(event) => onPlusClicked(event)}
+              >
+                <i className="fa-solid fa-plus"></i>
+              </div>
+              {jsonData.choices.map((choice, idx) => (
+                <div className="input-group">
+                  <input
+                    required
+                    name="choice"
+                    data-index={idx}
+                    key={idx}
+                    value={choice}
+                    onInput={onChoiceChange}
+                    className="form-control my-1"
+                    placeholder="選択肢を入力してください"
+                  />
+                  <div
+                    className="m-auto btn"
+                    onClick={() => onDelteClicked(idx)}
+                  >
+                    <i class="fa-solid fa-trash"></i>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div
+              className="my-3"
+              style={{ display: "flex" }}
+            >
+              <button className="btn btn-primary btn-block">作成</button>
+              <Link
+                to="/"
+                className="btn btn-secondary btn-block mx-3"
+                style={{ textDecoration: "none" }}
+              >
+                キャンセル
+              </Link>
+            </div>
           </div>
-          <FlexBox>
-            <RoundButton onClick={(event) => onPlusClicked(event)}>
-              <PlusIcon></PlusIcon>
-            </RoundButton>
-            {jsonData.choices.length > 2 && (
-              <RoundButton onClick={(event) => onMinusClicked(event)}>
-                <MinusIcon></MinusIcon>
-              </RoundButton>
-            )}
-          </FlexBox>
-          <FlexBox>
-            <Button
-              onClick={handleSubmit}
-              className="btn btn-primary btn-block"
-            >
-              作成
-            </Button>
-            <Button
-              onClick={handleClosePopup}
-              className="btn btn-secondary btn-block"
-            >
-              キャンセル
-            </Button>
-          </FlexBox>
-        </div>
+        </form>
       ) : (
         <div>
           投稿するにはログインを行ってください。
