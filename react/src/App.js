@@ -42,7 +42,7 @@ function App() {
         <footer id="footer" className="footer outer-block">
           <div className="logo">
             <Link to="/">
-              <img src="./logo_transparent.png"></img>
+              <img src="./logo_transparent.png" alt="logo"></img>
             </Link>
           </div>
           <ul className="nav">

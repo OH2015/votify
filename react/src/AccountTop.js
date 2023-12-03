@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { API_URL } from "./config";
@@ -92,7 +92,7 @@ function AccountTop() {
           <Link
             className="text-dark"
             to={`/?question_id=${question.id}`}
-            style={{ textDecoration: "none"}}
+            style={{ textDecoration: "none" }}
           >
             <QuestionContainer>
               <QuestionHeader>

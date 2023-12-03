@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
 import axios from "axios";
 import { API_URL } from "./config";
 
@@ -42,7 +41,7 @@ const QuestionCreate = ({ handleClosePopup }) => {
   };
 
   const onChoiceChange = (event) => {
-    let { name, value } = event.target;
+    let value = event.target.value;
     setJsonData((prevjsonData) => ({
       ...prevjsonData,
       choices: prevjsonData.choices.map((choice, index) =>

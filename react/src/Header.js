@@ -105,7 +105,7 @@ function Header() {
                   </Link>
                 </li>
                 <li>
-                  <a onClick={logout}>ログアウト</a>
+                  <div onClick={logout}>ログアウト</div>
                 </li>
               </ul>
             </div>

@@ -87,7 +87,6 @@ const Post = ({ p_question, setIsLoading, userId }) => {
   // 選択肢のリストをステートとして保持
   const [question, setQuestion] = useState(p_question);
   const [opend, setOpend] = useState(false); // コメント表示/非表示
-  const [comments, setComments] = useState(p_question.comments); // コメントのリスト
   const inputRef = useRef(null);
   const ref = useRef(null);
 

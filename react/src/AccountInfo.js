@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { PopupContent, PopupOverlay } from "./Common";
 import styled from "styled-components";
 import axios from "axios";
@@ -120,7 +120,7 @@ function AccountInfo() {
             <p className="m-0">********</p>
           </div>
           <div className="col-3">
-            {user.auth_provider == "email" ? (
+            {user.auth_provider === "email" ? (
               <Link
                 to="/password_change"
                 className="btn btn-sm btn-outline-secondary w-100"

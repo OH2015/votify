@@ -22,7 +22,7 @@ function PasswordReset() {
     event.preventDefault();
     const token = new URL(window.location.href).searchParams.get("token");
 
-    if (token == null) {
+    if (token === null) {
       window.alert("URLにトークンが含まれていません。");
       return;
     }
