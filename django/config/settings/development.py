@@ -30,3 +30,9 @@ GOOGLE_CLIENT_ID = (
     "150637606230-jtvhjc7kspor9gls59gerknguhrhlh5j.apps.googleusercontent.com"
 )
 SOCIAL_SECRET = "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"
+
+# CookieのSameSite属性をNoneに設定(設定しないとCookieがブラウザで弾かれてセットされない)
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SAMESITE = "None"

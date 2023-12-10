@@ -16,28 +16,33 @@ services:
     # staticファイルをstaticfilesに収集
     command: python manage.py collectstatic --noinput
     # dbが利用可能になるまで待機してから、init.shを実行
-    entrypoint: scripts/wait-for-it.sh db:5432 -- /bin/sh scripts/init.sh
+    entrypoint: /bin/sh scripts/init.dev.sh
     expose:
       # nginxと通信するためのポートを解放
       - 8000
     depends_on:
       - db
+    restart:
+      always
+
+  web:
+    # reactフォルダ内のDockerfileから起動
+    build: ./react
+    volumes:
+      - ./react:/usr/app
+    ports:
+      - "3000:3000"
     restart: always
+    tty: true
 
   nginx:
-    image: nginx:1.19.0-alpine
-    volumes:
-      # nginx.confを配置
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      # SSL証明書、公開鍵、秘密鍵を配置
-      - ./nginx/ssl:/etc/nginx/ssl
-      # 静的ファイルを配置する
-      - ./django/staticfiles/:/usr/share/nginx/html/static
+    image: nginx
     ports:
-      # https通信用ポート解放
-      - 443:443
-      # http通信用ポート解放
-      - 80:80
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./django/staticfiles/:/usr/share/nginx/html/static
     depends_on:
       - ap
-    restart: always

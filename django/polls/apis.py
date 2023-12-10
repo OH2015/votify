@@ -95,7 +95,7 @@ class VoteViewSet(viewsets.ModelViewSet):
             delete_vote.delete()
             # 同じ選択肢の場合はそこで処理終了
             if choice.id == data["choice"]:
-                return Response({"result": True})
+                return JsonResponse({"result": True})
 
         # 投票レコード作成
         vote = Vote.objects.create(
@@ -110,7 +110,7 @@ class VoteViewSet(viewsets.ModelViewSet):
             voted_list.append(data)
             request.session["voted_list"] = voted_list
 
-        return Response({"result": True})
+        return JsonResponse({"result": True})
 
 
 # コメントモデルのCRUDエンドポイント
