@@ -30,7 +30,7 @@ services:
       # nginx.confを配置
       - ./nginx/conf.d:/etc/nginx/conf.d
       # SSL証明書、公開鍵、秘密鍵を配置
-      - /etc/letsencrypt/live/votify.xyz:/etc/nginx/ssl
+      - /etc/letsencrypt/files/votify.xyz:/etc/nginx/ssl
       # 静的ファイルを配置する
       - ./django/staticfiles/:/usr/share/nginx/html/static
     ports:
