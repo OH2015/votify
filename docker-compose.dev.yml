@@ -42,7 +42,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/ssl.dev:/etc/nginx/ssl
       - ./django/staticfiles/:/usr/share/nginx/html/static
     depends_on:
       - ap
