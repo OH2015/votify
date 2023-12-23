@@ -3,7 +3,6 @@ import random
 import string
 from .serializers import *
 from .models import Question, Vote, UpdateContent, Comment
-from django.core import serializers
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, SignatureExpired, loads, dumps
 from django.contrib.auth import login, logout, authenticate, get_user_model
@@ -63,7 +62,6 @@ class ChoiceViewSet(viewsets.ModelViewSet):
             ChoiceSerializer(queryset, many=True, context={"request": request}).data
         )
 
-
 # 投票モデルのCRUDエンドポイント
 class VoteViewSet(viewsets.ModelViewSet):
     queryset = Vote.objects.all()
@@ -73,7 +71,6 @@ class VoteViewSet(viewsets.ModelViewSet):
         data = request.data
         voted_list = request.session.get("voted_list", [])
         delete_vote = None
-
         # 同じ質問に投票している場合はレコード削除
         if request.user.is_authenticated:
             delete_vote = Vote.objects.filter(

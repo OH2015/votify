@@ -82,6 +82,12 @@ const CommentText = styled.p`
   text-align: left;
 `;
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
 // 投稿コンポーネント
 const Post = ({ p_question, setIsLoading, userId }) => {
   // 選択肢のリストをステートとして保持
@@ -94,7 +100,7 @@ const Post = ({ p_question, setIsLoading, userId }) => {
   const urlText = `${window.location.host}/?question_id=${question.id}`;
 
   // 初期処理
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   // 選択肢が押下された時の処理
   const choiceClickHandler = (choice) => {
@@ -106,7 +112,11 @@ const Post = ({ p_question, setIsLoading, userId }) => {
           question: question.id,
           choice: choice.id,
         },
-        { withCredentials: true }
+        {
+          headers: {
+            'X-CSRFTOKEN': getCookie('csrftoken'),
+          }, withCredentials: true
+        }
       )
       .then((response) => {
         getQuestion();
