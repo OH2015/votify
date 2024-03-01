@@ -32,7 +32,7 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       # SSL証明書、公開鍵、秘密鍵を配置
-      - /etc/letsencrypt/files/votify.xyz:/etc/nginx/ssl
+      - /etc/letsencrypt/files/votify.jp:/etc/nginx/ssl
       # バックエンドの静的ファイルを配置する
       - ./django/staticfiles/:/usr/share/nginx/html/static
       # フロントエンドのビルド済ファイルを配置する
