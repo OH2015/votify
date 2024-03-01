@@ -1,36 +1,7 @@
 version: 2
  
 jobs:
-    # S3にアップロードするソースをビルドする
-    build:
-        docker:
-            - image: node:latest
-        steps:
-            - checkout
-            - run:
-                name: Build react app
-                command: export CI=false 
-                    && cd ./react && echo $ENV_FILE | base64 -d > .env.production
-                    && npm install && npm run build 
-            # ビルド済のソースをworkspaceに保管する
-            - persist_to_workspace:
-                root: react
-                paths:
-                    - build
-
-    # S3にフロントエンドのソースをアップロードする
-    s3-deploy:
-        docker:
-            - image: infrastructureascode/aws-cli
-        steps:
-            # ビルド済のソースをworkspaceから取得する
-            - attach_workspace:
-                at: /tmp
-            - run:
-                name: Upload to AWS S3 bucket
-                command: aws s3 sync /tmp/build s3://${AWS_S3_BUCKET_NAME}/ --exact-timestamps --delete
-
-    # EC2にバックエンドのソースをアップロードする
+    # EC2にソースをアップロードする
     ec2-deploy:
         docker:
             - image: cimg/base:2023.03
@@ -44,8 +15,4 @@ workflows:
     version: 2
     build_and_deploy:
         jobs:
-            - build
-            - s3-deploy:
-                requires:
-                    - build
             - ec2-deploy

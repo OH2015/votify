@@ -9,34 +9,36 @@ services:
     restart: always
 
   ap:
-    # djangoフォルダ内のDockerfileから起動
     build: ./django
     volumes:
       - ./django:/app
-    # staticファイルをstaticfilesに収集
     command: python manage.py collectstatic --noinput
-    # dbが利用可能になるまで待機してから、init.shを実行
     entrypoint: scripts/wait-for-it.sh db:5432 -- /bin/sh scripts/init.sh
     expose:
-      # nginxと通信するためのポートを解放
       - 8000
     depends_on:
       - db
     restart: always
 
+  web:
+    build: ./react
+    volumes:
+      - ./react:/usr/app
+    restart: always
+    command: /bin/sh -c 'npm install && npm run build'
+
   nginx:
     image: nginx:1.19.0-alpine
     volumes:
-      # nginx.confを配置
       - ./nginx/conf.d:/etc/nginx/conf.d
       # SSL証明書、公開鍵、秘密鍵を配置
       - /etc/letsencrypt/files/votify.xyz:/etc/nginx/ssl
-      # 静的ファイルを配置する
+      # バックエンドの静的ファイルを配置する
       - ./django/staticfiles/:/usr/share/nginx/html/static
+      # フロントエンドのビルド済ファイルを配置する
+      - ./react/build/:/usr/share/nginx/html/build
     ports:
-      # https通信用ポート解放
       - 443:443
-      # http通信用ポート解放
       - 80:80
     depends_on:
       - ap

@@ -9,16 +9,14 @@ services:
     restart: always
 
   ap:
-    # djangoフォルダ内のDockerfileから起動
+    # ./django/Dockerfileで起動
     build: ./django
     volumes:
       - ./django:/app
-    # staticファイルをstaticfilesに収集
     command: python manage.py collectstatic --noinput
     # dbが利用可能になるまで待機してから、init.shを実行
     entrypoint: /bin/sh scripts/init.dev.sh
     expose:
-      # nginxと通信するためのポートを解放
       - 8000
     depends_on:
       - db
@@ -26,14 +24,14 @@ services:
       always
 
   web:
-    # reactフォルダ内のDockerfileから起動
+    # .react/Dockerfileで起動
     build: ./react
     volumes:
       - ./react:/usr/app
     ports:
       - "3000:3000"
     restart: always
-    tty: true
+    command: /bin/sh -c 'npm install && npm start'
 
   nginx:
     image: nginx
@@ -41,7 +39,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/conf.d.dev:/etc/nginx/conf.d
       - ./nginx/ssl.dev:/etc/nginx/ssl
       - ./django/staticfiles/:/usr/share/nginx/html/static
     depends_on:
