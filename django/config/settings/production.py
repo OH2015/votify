@@ -10,7 +10,7 @@ env = environ.Env()
 env.read_env(BASE_DIR / ".env")
 
 DEBUG = False
-ALLOWED_HOSTS = ["votify.xyz"]
+ALLOWED_HOSTS = ["votify.jp"]
 
 DATABASES = {
     "default": {
@@ -23,22 +23,17 @@ DATABASES = {
     }
 }
 
-# ファイルストレージ
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-AWS_STORAGE_BUCKET_NAME = "plbucket"
-AWS_S3_REGION_NAME = "us-east-1"
-AWS_ACCESS_KEY_ID = env.get_value("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env.get_value("AWS_SECRET_ACCESS_KEY")
+# 画像などのアップロードファイルを保存するパス
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = '/media/'
 
 # CSRF検証用
 CSRF_TRUSTED_ORIGINS = [
     "https://votify.jp",
-    "https://votify.xyz",
     "http://52.199.222.201",
 ]
 CORS_ALLOWED_ORIGINS = [
     "https://votify.jp",
-    "https://votify.xyz",
     "http://52.199.222.201",
 ]
 
